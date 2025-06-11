@@ -1,0 +1,2 @@
+# CarbonCoach
+AI project
