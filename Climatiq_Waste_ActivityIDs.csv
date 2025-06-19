@@ -1,0 +1,557 @@
+activity_id,name,category,sector,source,unit_type
+waste-type_aggregates-disposal_method_closed_loop,Aggregates waste disposal (to closed-loop recycling),Construction Waste,Waste,BEIS,Weight
+waste-type_aggregates-disposal_method_landfill,Aggregates waste disposal (landfill),Construction Waste,Waste,BEIS,Weight
+waste-type_aggregates-disposal_method_open_loop,Aggregates waste disposal (to open-loop recycling),Construction Waste,Waste,BEIS,Weight
+waste-type_aluminum_cans-disposal_method_combusted,Aluminum Cans - Combusted,Metal Waste,Waste,EPA,Weight
+waste-type_aluminum_cans-disposal_method_landfilled,Aluminum Cans - Landfilled,Metal Waste,Waste,EPA,Weight
+waste-type_aluminum_cans-disposal_method_recycled,Aluminum Cans - Recycled,Metal Waste,Waste,EPA,Weight
+waste-type_aluminum_ingot-disposal_method_combusted,Aluminum Ingot - Combusted,Metal Waste,Waste,EPA,Weight
+waste-type_aluminum_ingot-disposal_method_landfilled,Aluminum Ingot - Landfilled,Metal Waste,Waste,EPA,Weight
+waste-type_aluminum_ingot-disposal_method_recycled,Aluminum Ingot - Recycled,Metal Waste,Waste,EPA,Weight
+waste-type_asbestos-disposal_method_landfill,Asbestos waste disposal (landfill),Construction Waste,Waste,BEIS,Weight
+waste-type_asphalt-disposal_method_closed_loop,Asphalt waste disposal (to closed-loop recycling),Construction Waste,Waste,BEIS,Weight
+waste-type_asphalt-disposal_method_landfill,Asphalt waste disposal (landfill),Construction Waste,Waste,BEIS,Weight
+waste-type_asphalt-disposal_method_open_loop,Asphalt waste disposal (to open-loop recycling),Construction Waste,Waste,BEIS,Weight
+waste-type_asphalt_concrete-disposal_method_landfilled,Asphalt Concrete - Landfilled,Construction Waste,Waste,EPA,Weight
+waste-type_asphalt_concrete-disposal_method_recycled,Asphalt Concrete - Recycled,Construction Waste,Waste,EPA,Weight
+waste-type_asphalt_shingles-disposal_method_combusted,Asphalt Shingles - Combusted,Construction Waste,Waste,EPA,Weight
+waste-type_asphalt_shingles-disposal_method_landfilled,Asphalt Shingles - Landfilled,Construction Waste,Waste,EPA,Weight
+waste-type_asphalt_shingles-disposal_method_recycled,Asphalt Shingles - Recycled,Construction Waste,Waste,EPA,Weight
+waste-type_average_for_non_municipal_solid_waste-disposal_method_na,Average for non-municipal solid waste,General Waste,Waste,MfE,Weight
+waste-type_batteries-disposal_method_landfill,Batteries waste disposal (landfill),Electrical Waste,Waste,BEIS,Weight
+waste-type_batteries-disposal_method_open_loop,Batteries waste disposal (to open-loop recycling),Electrical Waste,Waste,BEIS,Weight
+waste-type_batteries_and_accumulators-disposal_method_average_end_of_life,Batteries and accumulators - Average end of life,Electrical Waste,Waste,ADEME,Weight
+waste-type_beef-disposal_method_anaerobically_digested_dry_digestate_with_curing,Beef - Anaerobically Digested (Dry Digestate with Curing),Food and Organic Waste,Waste,EPA,Weight
+waste-type_beef-disposal_method_anaerobically_digested_wet_digestate_with_curing,Beef - Anaerobically Digested (Wet Digestate with Curing),Food and Organic Waste,Waste,EPA,Weight
+waste-type_beef-disposal_method_combusted,Beef - Combusted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_beef-disposal_method_composted,Beef - Composted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_beef-disposal_method_landfilled,Beef - Landfilled,Food and Organic Waste,Waste,EPA,Weight
+waste-type_biological_treatment_of_waste-disposal_method_anaerobic_digestion,Biological treatment of waste - Anaerobic digestion,Food and Organic Waste,Waste,MfE,Weight
+waste-type_biological_treatment_of_waste-disposal_method_composting,Biological treatment of waste - Composting,Food and Organic Waste,Waste,MfE,Weight
+waste-type_books-disposal_method_closed_loop,Books waste disposal (to closed-loop recycling),General Waste,Waste,BEIS,Weight
+waste-type_books-disposal_method_combustion,Books waste disposal (combustion),General Waste,Waste,BEIS,Weight
+waste-type_books-disposal_method_composting,Books waste disposal (composting),General Waste,Waste,BEIS,Weight
+waste-type_books-disposal_method_landfill,Books waste disposal (landfill),General Waste,Waste,BEIS,Weight
+waste-type_branches-disposal_method_anaerobically_digested_dry_digestate_with_curing,Branches - Anaerobically Digested (Dry Digestate with Curing),Food and Organic Waste,Waste,EPA,Weight
+waste-type_branches-disposal_method_combusted,Branches - Combusted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_branches-disposal_method_composted,Branches - Composted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_branches-disposal_method_landfilled,Branches - Landfilled,Food and Organic Waste,Waste,EPA,Weight
+waste-type_bread-disposal_method_anaerobically_digested_dry_digestate_with_curing,Bread - Anaerobically Digested (Dry Digestate with Curing),Food and Organic Waste,Waste,EPA,Weight
+waste-type_bread-disposal_method_anaerobically_digested_wet_digestate_with_curing,Bread - Anaerobically Digested (Wet Digestate with Curing),Food and Organic Waste,Waste,EPA,Weight
+waste-type_bread-disposal_method_combusted,Bread - Combusted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_bread-disposal_method_composted,Bread - Composted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_bread-disposal_method_landfilled,Bread - Landfilled,Food and Organic Waste,Waste,EPA,Weight
+waste-type_bricks-disposal_method_landfill,Bricks waste disposal (landfill),Construction Waste,Waste,BEIS,Weight
+waste-type_bricks-disposal_method_open_loop,Bricks waste disposal (to open-loop recycling),Construction Waste,Waste,BEIS,Weight
+waste-type_cardboard-disposal_method_closed_loop,Cardboard waste disposal (to closed-loop recycling),Paper and Cardboard Waste,Waste,BEIS,Weight
+waste-type_cardboard-disposal_method_combustion,Cardboard waste disposal (combustion),Paper and Cardboard Waste,Waste,BEIS,Weight
+waste-type_cardboard-disposal_method_composting,Cardboard waste disposal (composting),Paper and Cardboard Waste,Waste,BEIS,Weight
+waste-type_cardboard-disposal_method_landfill,Cardboard waste disposal (landfill),Paper and Cardboard Waste,Waste,BEIS,Weight
+waste-type_carpet-disposal_method_combusted,Carpet - Combusted,Plastic Waste,Waste,EPA,Weight
+waste-type_carpet-disposal_method_landfilled,Carpet - Landfilled,Plastic Waste,Waste,EPA,Weight
+waste-type_clay_bricks-disposal_method_landfilled,Clay Bricks - Landfilled,Construction Waste,Waste,EPA,Weight
+waste-type_clothing-disposal_method_closed_loop,Clothing waste disposal (to closed-loop recycling),General Waste,Waste,BEIS,Weight
+waste-type_clothing-disposal_method_combustion,Clothing waste disposal (combustion),General Waste,Waste,BEIS,Weight
+waste-type_clothing-disposal_method_landfill,Clothing waste disposal (landfill),General Waste,Waste,BEIS,Weight
+waste-type_commercial_and_industrial-disposal_method_anaerobic_digestion,Commercial and industrial waste disposal (anaerobic digestion),General Waste,Waste,BEIS,Weight
+waste-type_commercial_and_industrial-disposal_method_closed_loop,Commercial and industrial waste disposal (to closed-loop recycling),General Waste,Waste,BEIS,Weight
+waste-type_commercial_and_industrial-disposal_method_combustion,Commercial and industrial waste disposal (combustion),General Waste,Waste,BEIS,Weight
+waste-type_commercial_and_industrial-disposal_method_composting,Commercial and industrial waste disposal (composting),General Waste,Waste,BEIS,Weight
+waste-type_commercial_and_industrial-disposal_method_landfill,Commercial and industrial waste disposal (landfill),General Waste,Waste,BEIS,Weight
+waste-type_concrete-disposal_method_closed_loop,Concrete waste disposal (to closed-loop recycling),Construction Waste,Waste,BEIS,Weight
+waste-type_concrete-disposal_method_landfill,Concrete waste disposal (landfill),Construction Waste,Waste,BEIS,Weight
+waste-type_concrete-disposal_method_landfilled,Concrete - Landfilled,Construction Waste,Waste,EPA,Weight
+waste-type_concrete-disposal_method_open_loop,Concrete waste disposal (to open-loop recycling),Construction Waste,Waste,BEIS,Weight
+waste-type_concrete-disposal_method_recycled,Concrete - Recycled,Construction Waste,Waste,EPA,Weight
+waste-type_construction-disposal_method_closed_loop,Construction waste disposal (to closed-loop recycling),Construction Waste,Waste,BEIS,Weight
+waste-type_construction-disposal_method_combustion,Construction waste disposal (combustion),Construction Waste,Waste,BEIS,Weight
+waste-type_construction-disposal_method_open_loop,Construction waste disposal (to open-loop recycling),Construction Waste,Waste,BEIS,Weight
+waste-type_construction_and_demolition_waste_aluminium-disposal_method_average_end_of_life,Construction and demolition waste: Aluminium - Average end of life,Construction Waste,Waste,ADEME,Weight
+waste-type_construction_and_demolition_waste_concrete_bricks_tiles_and_ceramics-disposal_method_average_end_of_life,Construction and demolition waste: Concrete / bricks / tiles and ceramics - Average end of life,Construction Waste,Waste,ADEME,Weight
+waste-type_construction_and_demolition_waste_concrete_bricks_tiles_and_ceramics-disposal_method_end_of_life_without_recycling,Construction and demolition waste: Concrete / bricks / tiles and ceramics - End of life without recycling,Construction Waste,Waste,ADEME,Weight
+waste-type_construction_and_demolition_waste_copper-disposal_method_average_end_of_life,Construction and demolition waste: Copper - Average end of life,Construction Waste,Waste,ADEME,Weight
+waste-type_construction_and_demolition_waste_ferrous_metals-disposal_method_average_end_of_life,Construction and demolition waste: Ferrous metals - Average end of life,Construction Waste,Waste,ADEME,Weight
+waste-type_construction_and_demolition_waste_metals-disposal_method_end_of_life_without_recycling,Construction and demolition waste: Metals - End of life without recycling,Construction Waste,Waste,ADEME,Weight
+waste-type_construction_and_demolition_waste_mixed_inert_waste-disposal_method_average_end_of_life,Construction and demolition waste: Mixed inert waste - Average end of life,Construction Waste,Waste,ADEME,Weight
+waste-type_construction_and_demolition_waste_mixed_inert_waste-disposal_method_end_of_life_without_recycling,Construction and demolition waste: Mixed inert waste - End of life without recycling,Construction Waste,Waste,ADEME,Weight
+waste-type_construction_and_demolition_waste_non_hazardous_waste_mixed-disposal_method_average_end_of_life,Construction and demolition waste: Non hazardous waste mixed - Average end of life,Construction Waste,Waste,ADEME,Weight
+waste-type_construction_and_demolition_waste_non_hazardous_waste_mixed-disposal_method_end_of_life_without_recycling,Construction and demolition waste: Non hazardous waste mixed - End of life without recycling,Construction Waste,Waste,ADEME,Weight
+waste-type_construction_and_demolition_waste_plaster_and_others_containing_gyspum-disposal_method_average_end_of_life,Construction and demolition waste: Plaster and others containing gyspum - Average end of life,Construction Waste,Waste,ADEME,Weight
+waste-type_construction_and_demolition_waste_plaster_and_others_containing_gyspum-disposal_method_end_of_life_without_recycling,Construction and demolition waste: Plaster and others containing gyspum - End of life without recycling,Construction Waste,Waste,ADEME,Weight
+waste-type_construction_and_demolition_waste_rigid_pe-disposal_method_recycling_flakes,Construction and demolition waste: Rigid PE - Recycling flakes,Construction Waste,Waste,ADEME,Weight
+waste-type_construction_and_demolition_waste_rigid_pe-disposal_method_recycling_granulates,Construction and demolition waste: Rigid PE - Recycling granulates,Construction Waste,Waste,ADEME,Weight
+waste-type_construction_and_demolition_waste_rigid_pvc-disposal_method_recycling,Construction and demolition waste: Rigid PVC - Recycling,Construction Waste,Waste,ADEME,Weight
+waste-type_construction_and_demolition_waste_wood_grade_b-disposal_method_average_end_of_life,Construction and demolition waste: Wood Grade B - Average end of life,Construction Waste,Waste,ADEME,Weight
+waste-type_construction_and_demolition_waste_wood_grade_b-disposal_method_end_of_life_without_recycling,Construction and demolition waste: Wood Grade B - End of life without recycling,Construction Waste,Waste,ADEME,Weight
+waste-type_copper_wire-disposal_method_combusted,Copper Wire - Combusted,Metal Waste,Waste,EPA,Weight
+waste-type_copper_wire-disposal_method_landfilled,Copper Wire - Landfilled,Metal Waste,Waste,EPA,Weight
+waste-type_copper_wire-disposal_method_recycled,Copper Wire - Recycled,Metal Waste,Waste,EPA,Weight
+waste-type_corrugated_containers-disposal_method_combusted,Corrugated Containers - Combusted,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_corrugated_containers-disposal_method_landfilled,Corrugated Containers - Landfilled,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_corrugated_containers-disposal_method_recycled,Corrugated Containers - Recycled,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_crt_displays-disposal_method_combusted,CRT Displays - Combusted,Electrical Waste,Waste,EPA,Weight
+waste-type_crt_displays-disposal_method_landfilled,CRT Displays - Landfilled,Electrical Waste,Waste,EPA,Weight
+waste-type_dairy_products-disposal_method_anaerobically_digested_dry_digestate_with_curing,Dairy Products - Anaerobically Digested (Dry Digestate with Curing),Food and Organic Waste,Waste,EPA,Weight
+waste-type_dairy_products-disposal_method_anaerobically_digested_wet_digestate_with_curing,Dairy Products - Anaerobically Digested (Wet Digestate with Curing),Food and Organic Waste,Waste,EPA,Weight
+waste-type_dairy_products-disposal_method_combusted,Dairy Products - Combusted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_dairy_products-disposal_method_composted,Dairy Products - Composted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_dairy_products-disposal_method_landfilled,Dairy Products - Landfilled,Food and Organic Waste,Waste,EPA,Weight
+waste-type_desktop_cpus-disposal_method_combusted,Desktop CPUs - Combusted,Electrical Waste,Waste,EPA,Weight
+waste-type_desktop_cpus-disposal_method_landfilled,Desktop CPUs - Landfilled,Electrical Waste,Waste,EPA,Weight
+waste-type_desktop_cpus-disposal_method_recycled,Desktop CPUs - Recycled,Electrical Waste,Waste,EPA,Weight
+waste-type_dimensional_lumber-disposal_method_combusted,Dimensional Lumber - Combusted,Construction Waste,Waste,EPA,Weight
+waste-type_dimensional_lumber-disposal_method_landfilled,Dimensional Lumber - Landfilled,Construction Waste,Waste,EPA,Weight
+waste-type_dimensional_lumber-disposal_method_recycled,Dimensional Lumber - Recycled,Construction Waste,Waste,EPA,Weight
+waste-type_drywall-disposal_method_landfilled,Drywall - Landfilled,Construction Waste,Waste,EPA,Weight
+waste-type_electronic_peripherals-disposal_method_combusted,Electronic Peripherals - Combusted,Electrical Waste,Waste,EPA,Weight
+waste-type_electronic_peripherals-disposal_method_landfilled,Electronic Peripherals - Landfilled,Electrical Waste,Waste,EPA,Weight
+waste-type_electronic_peripherals-disposal_method_recycled,Electronic Peripherals - Recycled,Electrical Waste,Waste,EPA,Weight
+waste-type_fiberglass_insulation-disposal_method_landfilled,Fiberglass Insulation - Landfilled,Construction Waste,Waste,EPA,Weight
+waste-type_fiberglass_insulation-disposal_method_recycled,Fiberglass Insulation - Recycled,Construction Waste,Waste,EPA,Weight
+waste-type_flat_panel_displays-disposal_method_combusted,Flat-panel Displays - Combusted,Electrical Waste,Waste,EPA,Weight
+waste-type_flat_panel_displays-disposal_method_landfilled,Flat-panel Displays - Landfilled,Electrical Waste,Waste,EPA,Weight
+waste-type_flat_panel_displays-disposal_method_recycled,Flat-panel Displays - Recycled,Electrical Waste,Waste,EPA,Weight
+waste-type_flexible_pe-disposal_method_packaging,Flexible pe - Packaging,Plastic Waste,Waste,ADEME,Weight
+waste-type_flexible_pe-disposal_method_recycling_granulates,Flexible pe - Recycling granulates,Plastic Waste,Waste,ADEME,Weight
+waste-type_flexible_pe_from_agriculture-disposal_method_recycling_granulates,Flexible pe / from agriculture - Recycling granulates,Plastic Waste,Waste,ADEME,Weight
+waste-type_fly_ash-disposal_method_landfilled,Fly Ash - Landfilled,Construction Waste,Waste,EPA,Weight
+waste-type_fly_ash-disposal_method_recycled,Fly Ash - Recycled,Construction Waste,Waste,EPA,Weight
+waste-type_food-disposal_method_landfill_with_gas_recovery,Food - waste to landfill with gas recovery,Food and Organic Waste,Waste,MfE,Weight
+waste-type_food-disposal_method_landfill_without_gas_recovery,Food - waste to landfill without gas recovery,Food and Organic Waste,Waste,MfE,Weight
+waste-type_food_waste-disposal_method_combusted,Food Waste - Combusted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_food_waste-disposal_method_composted,Food Waste - Composted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_food_waste-disposal_method_incineration,Food waste - incineration,Food and Organic Waste,Waste,SEFR,Weight
+waste-type_food_waste-disposal_method_landfilled,Food Waste - Landfilled,Food and Organic Waste,Waste,EPA,Weight
+waste-type_food_waste_meat_only-disposal_method_anaerobically_digested_dry_digestate_with_curing,Food Waste (meat only) - Anaerobically Digested (Dry Digestate with Curing),Food and Organic Waste,Waste,EPA,Weight
+waste-type_food_waste_meat_only-disposal_method_anaerobically_digested_wet_digestate_with_curing,Food Waste (meat only) - Anaerobically Digested (Wet Digestate with Curing),Food and Organic Waste,Waste,EPA,Weight
+waste-type_food_waste_meat_only-disposal_method_combusted,Food Waste (meat only) - Combusted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_food_waste_meat_only-disposal_method_composted,Food Waste (meat only) - Composted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_food_waste_meat_only-disposal_method_landfilled,Food Waste (meat only) - Landfilled,Food and Organic Waste,Waste,EPA,Weight
+waste-type_food_waste_non_meat-disposal_method_anaerobically_digested_dry_digestate_with_curing,Food Waste (non-meat) - Anaerobically Digested (Dry Digestate with Curing),Food and Organic Waste,Waste,EPA,Weight
+waste-type_food_waste_non_meat-disposal_method_anaerobically_digested_wet_digestate_with_curing,Food Waste (non-meat) - Anaerobically Digested (Wet Digestate with Curing),Food and Organic Waste,Waste,EPA,Weight
+waste-type_food_waste_non_meat-disposal_method_combusted,Food Waste (non-meat) - Combusted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_food_waste_non_meat-disposal_method_composted,Food Waste (non-meat) - Composted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_food_waste_non_meat-disposal_method_landfilled,Food Waste (non-meat) - Landfilled,Food and Organic Waste,Waste,EPA,Weight
+waste-type_fruits_and_vegetables-disposal_method_anaerobically_digested_dry_digestate_with_curing,Fruits and Vegetables - Anaerobically Digested (Dry Digestate with Curing),Food and Organic Waste,Waste,EPA,Weight
+waste-type_fruits_and_vegetables-disposal_method_anaerobically_digested_wet_digestate_with_curing,Fruits and Vegetables - Anaerobically Digested (Wet Digestate with Curing),Food and Organic Waste,Waste,EPA,Weight
+waste-type_fruits_and_vegetables-disposal_method_combusted,Fruits and Vegetables - Combusted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_fruits_and_vegetables-disposal_method_composted,Fruits and Vegetables - Composted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_fruits_and_vegetables-disposal_method_landfilled,Fruits and Vegetables - Landfilled,Food and Organic Waste,Waste,EPA,Weight
+waste-type_furniture_average-disposal_method_average_end_of_life,Furniture: average - Average end of life,General Waste,Waste,ADEME,Weight
+waste-type_furniture_bedding-disposal_method_average_end_of_life,Furniture: bedding - Average end of life,General Waste,Waste,ADEME,Weight
+waste-type_furniture_padded_seating-disposal_method_average_end_of_life,Furniture: padded seating - Average end of life,General Waste,Waste,ADEME,Weight
+waste-type_furniture_wooden-disposal_method_average_end_of_life,Furniture: wooden - Average end of life,General Waste,Waste,ADEME,Weight
+waste-type_garden-disposal_method_landfill_with_gas_recovery,Garden - waste to landfill with gas recovery,Food and Organic Waste,Waste,MfE,Weight
+waste-type_garden-disposal_method_landfill_without_gas_recovery,Garden - waste to landfill without gas recovery,Food and Organic Waste,Waste,MfE,Weight
+waste-type_garden_and_park_waste-disposal_method_incineration,Garden and park waste - incineration,General Waste,Waste,SEFR,Weight
+waste-type_general_waste-disposal_method_landfill_with_gas_recovery,General waste - waste to landfill with gas recovery,General Waste,Waste,MfE,Weight
+waste-type_general_waste-disposal_method_landfill_without_gas_recovery,General waste - waste to landfill without gas recovery,General Waste,Waste,MfE,Weight
+waste-type_glass-disposal_method_closed_loop,Glass waste disposal (to closed-loop recycling),Glass Waste,Waste,BEIS,Weight
+waste-type_glass-disposal_method_combusted,Glass - Combusted,Glass Waste,Waste,EPA,Weight
+waste-type_glass-disposal_method_combustion,Glass waste disposal (combustion),Glass Waste,Waste,BEIS,Weight
+waste-type_glass-disposal_method_landfill,Glass waste disposal (landfill),Glass Waste,Waste,BEIS,Weight
+waste-type_glass-disposal_method_landfilled,Glass - Landfilled,Glass Waste,Waste,EPA,Weight
+waste-type_glass-disposal_method_open_loop,Glass waste disposal (to open-loop recycling),Glass Waste,Waste,BEIS,Weight
+waste-type_glass-disposal_method_recycled,Glass - Recycled,Glass Waste,Waste,EPA,Weight
+waste-type_glass_waste-disposal_method_incineration,Glass waste - incineration,Glass Waste,Waste,SEFR,Weight
+waste-type_grains-disposal_method_anaerobically_digested_dry_digestate_with_curing,Grains - Anaerobically Digested (Dry Digestate with Curing),Food and Organic Waste,Waste,EPA,Weight
+waste-type_grains-disposal_method_anaerobically_digested_wet_digestate_with_curing,Grains - Anaerobically Digested (Wet Digestate with Curing),Food and Organic Waste,Waste,EPA,Weight
+waste-type_grains-disposal_method_combusted,Grains - Combusted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_grains-disposal_method_composted,Grains - Composted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_grains-disposal_method_landfilled,Grains - Landfilled,Food and Organic Waste,Waste,EPA,Weight
+waste-type_grass-disposal_method_anaerobically_digested_dry_digestate_with_curing,Grass - Anaerobically Digested (Dry Digestate with Curing),Food and Organic Waste,Waste,EPA,Weight
+waste-type_grass-disposal_method_combusted,Grass - Combusted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_grass-disposal_method_composted,Grass - Composted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_grass-disposal_method_landfilled,Grass - Landfilled,Food and Organic Waste,Waste,EPA,Weight
+waste-type_green_waste-disposal_method_home_composting_in_heap,Green waste - Home composting in heap,Food and Organic Waste,Waste,ADEME,Weight
+waste-type_hard_copy_devices-disposal_method_combusted,Hard-copy Devices - Combusted,Electrical Waste,Waste,EPA,Weight
+waste-type_hard_copy_devices-disposal_method_landfilled,Hard-copy Devices - Landfilled,Electrical Waste,Waste,EPA,Weight
+waste-type_hard_copy_devices-disposal_method_recycled,Hard-copy Devices - Recycled,Electrical Waste,Waste,EPA,Weight
+waste-type_hazardous_industrial_waste-disposal_method_incineration,Hazardous industrial waste - Incineration,General Waste,Waste,ADEME,Weight
+waste-type_hdpe-disposal_method_combusted,HDPE - Combusted,Plastic Waste,Waste,EPA,Weight
+waste-type_hdpe-disposal_method_landfilled,HDPE - Landfilled,Plastic Waste,Waste,EPA,Weight
+waste-type_hdpe-disposal_method_recycled,HDPE - Recycled,Plastic Waste,Waste,EPA,Weight
+waste-type_hdpe_including_forming-disposal_method_closed_loop,HDPE waste (incl. forming) disposal - closed-loop,Plastic Waste,Waste,BEIS,Weight
+waste-type_hdpe_including_forming-disposal_method_combustion,HDPE waste (incl. forming) disposal - combustion,Plastic Waste,Waste,BEIS,Weight
+waste-type_hdpe_including_forming-disposal_method_landfill,HDPE waste (incl. forming) disposal - landfill,Plastic Waste,Waste,BEIS,Weight
+waste-type_hdpe_including_forming-disposal_method_open_loop,HDPE waste (incl. forming) disposal - open-loop,Plastic Waste,Waste,BEIS,Weight
+waste-type_household_residual_waste-disposal_method_anaerobic_digestion,Household residual waste disposal (anaerobic digestion),General Waste,Waste,BEIS,Weight
+waste-type_household_residual_waste-disposal_method_closed_loop,Household residual waste disposal (to closed-loop recycling),General Waste,Waste,BEIS,Weight
+waste-type_household_residual_waste-disposal_method_combustion,Household residual waste disposal (combustion),General Waste,Waste,BEIS,Weight
+waste-type_household_residual_waste-disposal_method_composting,Household residual waste disposal (composting),General Waste,Waste,BEIS,Weight
+waste-type_household_residual_waste-disposal_method_landfill,Household residual waste disposal (landfill),General Waste,Waste,BEIS,Weight
+waste-type_household_residual_waste-disposal_method_open_loop,Household residual waste disposal (to open-loop recycling),General Waste,Waste,BEIS,Weight
+waste-type_insulation-disposal_method_closed_loop,Insulation waste disposal (to closed-loop recycling),Construction Waste,Waste,BEIS,Weight
+waste-type_insulation-disposal_method_landfill,Insulation waste disposal (landfill),Construction Waste,Waste,BEIS,Weight
+waste-type_kitchen_waste_and_green_waste-disposal_method_home_composting_in_closed_bin,Kitchen waste and green waste - Home composting in closed bin,Food and Organic Waste,Waste,ADEME,Weight
+waste-type_kitchen_waste_and_green_waste-disposal_method_home_composting_in_heap,Kitchen waste and green waste - Home composting in heap,Food and Organic Waste,Waste,ADEME,Weight
+waste-type_kitchen_waste_and_green_waste-disposal_method_industrial_composting,Kitchen waste and green waste - Industrial composting,Food and Organic Waste,Waste,ADEME,Weight
+waste-type_ldpe-disposal_method_combusted,LDPE - Combusted,Plastic Waste,Waste,EPA,Weight
+waste-type_ldpe-disposal_method_landfilled,LDPE - Landfilled,Plastic Waste,Waste,EPA,Weight
+waste-type_ldpe_and_lldpe_including_forming-disposal_method_closed_loop,LDPE and LLDPE waste (incl. forming) disposal - closed-loop,Plastic Waste,Waste,BEIS,Weight
+waste-type_ldpe_and_lldpe_including_forming-disposal_method_combustion,LDPE and LLDPE waste (incl. forming) disposal - combustion,Plastic Waste,Waste,BEIS,Weight
+waste-type_ldpe_and_lldpe_including_forming-disposal_method_landfill,LDPE and LLDPE waste (incl. forming) disposal - landfill,Plastic Waste,Waste,BEIS,Weight
+waste-type_ldpe_and_lldpe_including_forming-disposal_method_open_loop,LDPE and LLDPE waste (incl. forming) disposal - open-loop,Plastic Waste,Waste,BEIS,Weight
+waste-type_leaves-disposal_method_anaerobically_digested_dry_digestate_with_curing,Leaves - Anaerobically Digested (Dry Digestate with Curing),Food and Organic Waste,Waste,EPA,Weight
+waste-type_leaves-disposal_method_combusted,Leaves - Combusted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_leaves-disposal_method_composted,Leaves - Composted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_leaves-disposal_method_landfilled,Leaves - Landfilled,Food and Organic Waste,Waste,EPA,Weight
+waste-type_lldpe-disposal_method_combusted,LLDPE - Combusted,Plastic Waste,Waste,EPA,Weight
+waste-type_lldpe-disposal_method_landfilled,LLDPE - Landfilled,Plastic Waste,Waste,EPA,Weight
+waste-type_magazines_third-class_mail-disposal_method_landfilled,Magazines/Third-class mail - Landfilled,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_magazines_third-class_mail-disposal_method_recycled,Magazines/Third-class mail - Recycled,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_magazines_third_class_mail-disposal_method_combusted,Magazines/Third-class mail - Combusted,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_magazines_third_class_mail-disposal_method_landfilled,Magazines/Third-class mail - Landfilled,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_magazines_third_class_mail-disposal_method_recycled,Magazines/Third-class mail - Recycled,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_medium_density_fiberboard-disposal_method_combusted,Medium-density Fiberboard - Combusted,Construction Waste,Waste,EPA,Weight
+waste-type_medium_density_fiberboard-disposal_method_landfilled,Medium-density Fiberboard - Landfilled,Construction Waste,Waste,EPA,Weight
+waste-type_medium_density_fiberboard-disposal_method_recycled,Medium-density Fiberboard - Recycled,Construction Waste,Waste,EPA,Weight
+waste-type_metal_aluminium_cans_and_foil_excluding_forming-disposal_method_closed_loop,Metal: aluminium cans and foil waste disposal (excl. forming - closed-loop),Metal Waste,Waste,BEIS,Weight
+waste-type_metal_aluminium_cans_and_foil_excluding_forming-disposal_method_combustion,Metal: aluminium cans and foil waste disposal (excl. forming - combustion),Metal Waste,Waste,BEIS,Weight
+waste-type_metal_aluminium_cans_and_foil_excluding_forming-disposal_method_landfill,Metal: aluminium cans and foil waste disposal (excl. forming - landfill),Metal Waste,Waste,BEIS,Weight
+waste-type_metal_aluminium_cans_and_foil_excluding_forming-disposal_method_open_loop,Metal: aluminium cans and foil waste disposal (excl. forming - open-loop),Metal Waste,Waste,BEIS,Weight
+waste-type_metal_mixed_cans-disposal_method_closed_loop,Metal waste disposal (mixed cans - closed-loop),Metal Waste,Waste,BEIS,Weight
+waste-type_metal_mixed_cans-disposal_method_combustion,Metal waste disposal (mixed cans - combustion),Metal Waste,Waste,BEIS,Weight
+waste-type_metal_mixed_cans-disposal_method_landfill,Metal waste disposal (mixed cans - landfill),Metal Waste,Waste,BEIS,Weight
+waste-type_metal_mixed_cans-disposal_method_open_loop,Metal waste disposal (mixed cans - open-loop),Metal Waste,Waste,BEIS,Weight
+waste-type_metal_waste-disposal_method_incineration,Metal waste - incineration,Metal Waste,Waste,SEFR,Weight
+waste-type_metals-disposal_method_closed_loop,Metals waste disposal (to closed-loop recycling),Construction Waste,Waste,BEIS,Weight
+waste-type_metals-disposal_method_landfill,Metals waste disposal (landfill),Construction Waste,Waste,BEIS,Weight
+waste-type_mineral_oil-disposal_method_closed_loop,Mineral oil waste disposal (to closed-loop recycling),Construction Waste,Waste,BEIS,Weight
+waste-type_mineral_oil-disposal_method_combustion,Mineral oil waste disposal (combustion),Construction Waste,Waste,BEIS,Weight
+waste-type_mixed_electronics-disposal_method_combusted,Mixed Electronics - Combusted,Electrical Waste,Waste,EPA,Weight
+waste-type_mixed_electronics-disposal_method_landfilled,Mixed Electronics - Landfilled,Electrical Waste,Waste,EPA,Weight
+waste-type_mixed_electronics-disposal_method_recycled,Mixed Electronics - Recycled,Electrical Waste,Waste,EPA,Weight
+waste-type_mixed_food_and_organic_garden-disposal_method_anaerobic_digestion,Mixed food and garden waste disposal (organic - anaerobic digestion),Food and Organic Waste,Waste,BEIS,Weight
+waste-type_mixed_food_and_organic_garden-disposal_method_combustion,Mixed food and garden waste (organic - combustion),Food and Organic Waste,Waste,BEIS,Weight
+waste-type_mixed_food_and_organic_garden-disposal_method_composting,Mixed food and garden waste disposal (organic - composting),Food and Organic Waste,Waste,BEIS,Weight
+waste-type_mixed_food_and_organic_garden-disposal_method_landfill,Mixed food and garden waste disposal (organic - landfill),Food and Organic Waste,Waste,BEIS,Weight
+waste-type_mixed_metals-disposal_method_combusted,Mixed Metals - Combusted,Metal Waste,Waste,EPA,Weight
+waste-type_mixed_metals-disposal_method_landfilled,Mixed Metals - Landfilled,Metal Waste,Waste,EPA,Weight
+waste-type_mixed_metals-disposal_method_recycled,Mixed Metals - Recycled,Metal Waste,Waste,EPA,Weight
+waste-type_mixed_msw-disposal_method_combusted,Mixed MSW - Combusted,General Waste,Waste,EPA,Weight
+waste-type_mixed_msw-disposal_method_landfilled,Mixed MSW - Landfilled,General Waste,Waste,EPA,Weight
+waste-type_mixed_organics-disposal_method_combusted,Mixed Organics - Combusted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_mixed_organics-disposal_method_composted,Mixed Organics - Composted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_mixed_organics-disposal_method_landfilled,Mixed Organics - Landfilled,Food and Organic Waste,Waste,EPA,Weight
+waste-type_mixed_paper_general-disposal_method_combusted,Mixed Paper (general) - Combusted,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_mixed_paper_general-disposal_method_landfilled,Mixed Paper (general) - Landfilled,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_mixed_paper_general-disposal_method_recycled,Mixed Paper (general) - Recycled,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_mixed_paper_primarily_from_offices-disposal_method_combusted,Mixed Paper (primarily from offices) - Combusted,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_mixed_paper_primarily_from_offices-disposal_method_landfilled,Mixed Paper (primarily from offices) - Landfilled,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_mixed_paper_primarily_from_offices-disposal_method_recycled,Mixed Paper (primarily from offices) - Recycled,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_mixed_paper_primarily_residential-disposal_method_combusted,Mixed Paper (primarily residential) - Combusted,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_mixed_paper_primarily_residential-disposal_method_landfilled,Mixed Paper (primarily residential) - Landfilled,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_mixed_paper_primarily_residential-disposal_method_recycled,Mixed Paper (primarily residential) - Recycled,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_mixed_plastics-disposal_method_combusted,Mixed Plastics - Combusted,Plastic Waste,Waste,EPA,Weight
+waste-type_mixed_plastics-disposal_method_landfilled,Mixed Plastics - Landfilled,Plastic Waste,Waste,EPA,Weight
+waste-type_mixed_plastics-disposal_method_recycled,Mixed Plastics - Recycled,Plastic Waste,Waste,EPA,Weight
+waste-type_mixed_recyclables-disposal_method_combusted,Mixed Recyclables - Combusted,General Waste,Waste,EPA,Weight
+waste-type_mixed_recyclables-disposal_method_landfilled,Mixed Recyclables - Landfilled,General Waste,Waste,EPA,Weight
+waste-type_mixed_recyclables-disposal_method_recycled,Mixed Recyclables - Recycled,General Waste,Waste,EPA,Weight
+waste-type_na-disposal_method_waste_management_remediation,Waste management and remediation,Waste Management,Waste,EPA,Money
+waste-type_nappies-disposal_method_landfill_with_gas_recovery,Nappies - waste to landfill with gas recovery,General Waste,Waste,MfE,Weight
+waste-type_nappies-disposal_method_landfill_without_gas_recovery,Nappies - waste to landfill without gas recovery,General Waste,Waste,MfE,Weight
+waste-type_nappies_waste-disposal_method_incineration,Nappies waste - incineration,General Waste,Waste,SEFR,Weight
+waste-type_newspaper-disposal_method_combusted,Newspaper - Combusted,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_newspaper-disposal_method_landfilled,Newspaper - Landfilled,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_newspaper-disposal_method_recycled,Newspaper - Recycled,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_non_municipal_waste_biological_sludge-disposal_method_na,Non municipal waste - Biological (sludge),General Waste,Waste,MfE,Weight
+waste-type_non_municipal_waste_bulk_waste-disposal_method_na,Non municipal waste - Bulk Waste,General Waste,Waste,MfE,Weight
+waste-type_non_municipal_waste_construction_and_demolition-disposal_method_na,Non municipal waste - Construction & Demolition,Construction Waste,Waste,MfE,Weight
+waste-type_non_municipal_waste_food-disposal_method_na,Non municipal waste - Food,Food and Organic Waste,Waste,MfE,Weight
+waste-type_non_municipal_waste_garden-disposal_method_na,Non municipal waste - Garden,Food and Organic Waste,Waste,MfE,Weight
+waste-type_non_municipal_waste_industrial-disposal_method_na,Non municipal waste - Industrial,General Waste,Waste,MfE,Weight
+waste-type_non_municipal_waste_wood-disposal_method_na,Non municipal waste - Wood,Construction Waste,Waste,MfE,Weight
+waste-type_office_paper-disposal_method_combusted,Office Paper - Combusted,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_office_paper-disposal_method_landfilled,Office Paper - Landfilled,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_office_paper-disposal_method_recycled,Office Paper - Recycled,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_office_waste-disposal_method_landfill_with_gas_recovery,Office waste - waste to landfill with gas recovery,General Waste,Waste,MfE,Weight
+waste-type_office_waste-disposal_method_landfill_without_gas_recovery,Office waste - waste to landfill without gas recovery,General Waste,Waste,MfE,Weight
+waste-type_organic_food_and_drink-disposal_method_anaerobic_digestion,Food and drink waste disposal (organic - anaerobic digestion),Food and Organic Waste,Waste,BEIS,Weight
+waste-type_organic_food_and_drink-disposal_method_combustion,Food and drink waste disposal (organic - combustion),Food and Organic Waste,Waste,BEIS,Weight
+waste-type_organic_food_and_drink-disposal_method_composting,Food and drink waste disposal (organic - composting),Food and Organic Waste,Waste,BEIS,Weight
+waste-type_organic_food_and_drink-disposal_method_landfill,Food and drink waste disposal (organic - landfill),Food and Organic Waste,Waste,BEIS,Weight
+waste-type_organic_garden-disposal_method_anaerobic_digestion,Garden waste disposal (organic - anaerobic digestion),Food and Organic Waste,Waste,BEIS,Weight
+waste-type_organic_garden-disposal_method_combustion,Garden waste disposal (organic - combustion),Food and Organic Waste,Waste,BEIS,Weight
+waste-type_organic_garden-disposal_method_composting,Garden waste disposal (organic - composting),Food and Organic Waste,Waste,BEIS,Weight
+waste-type_organic_garden-disposal_method_landfill,Garden waste disposal (organic - landfill),Food and Organic Waste,Waste,BEIS,Weight
+waste-type_other_waste-disposal_method_incineration,Other waste - incineration,General Waste,Waste,SEFR,Weight
+waste-type_packaging_aluminium-disposal_method_average_end_of_life,Packaging: Aluminium - Average end of life,Metal Waste,Waste,ADEME,Weight
+waste-type_packaging_aluminium-disposal_method_incineration,Packaging: Aluminium - Incineration,Metal Waste,Waste,ADEME,Weight
+waste-type_packaging_aluminium-disposal_method_landfill,Packaging: Aluminium - Landfill,Metal Waste,Waste,ADEME,Weight
+waste-type_packaging_aluminium-disposal_method_recycling,Packaging: Aluminium - Recycling,Metal Waste,Waste,ADEME,Weight
+waste-type_packaging_cardboard-disposal_method_average_end_of_life,Packaging: Cardboard - Average end of life,Paper and Cardboard Waste,Waste,ADEME,Weight
+waste-type_packaging_cardboard-disposal_method_incineration,Packaging: Cardboard - Incineration,Paper and Cardboard Waste,Waste,ADEME,Weight
+waste-type_packaging_cardboard-disposal_method_landfill,Packaging: Cardboard - Landfill,Paper and Cardboard Waste,Waste,ADEME,Weight
+waste-type_packaging_cardboard-disposal_method_recycling,Packaging: Cardboard - Recycling,Paper and Cardboard Waste,Waste,ADEME,Weight
+waste-type_packaging_ceramic_and_other_inerts-disposal_method_average_end_of_life,Packaging: Ceramic and other inerts - Average end of life,General Waste,Waste,ADEME,Weight
+waste-type_packaging_ceramic_and_other_inerts-disposal_method_incineration,Packaging: Ceramic and other inerts - Incineration,General Waste,Waste,ADEME,Weight
+waste-type_packaging_ceramic_and_other_inerts-disposal_method_landfill,Packaging: Ceramic and other inerts - Landfill,General Waste,Waste,ADEME,Weight
+waste-type_packaging_flexible_pe-disposal_method_recycling,Packaging: Flexible PE - Recycling,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_flexible_pe-disposal_method_recycling_granulates,Packaging: Flexible PE - Recycling granulates,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_flexible_pe_bio_based-disposal_method_average_end_of_life,Packaging: Flexible PE / bio-based - Average end of life,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_flexible_pe_fossil_based-disposal_method_average_end_of_life,Packaging: Flexible PE / fossil-based - Average end of life,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_flexible_pet_bio_based-disposal_method_average_end_of_life,Packaging: Flexible PET / bio-based - Average end of life,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_flexible_pet_fossil_based-disposal_method_average_end_of_life,Packaging: Flexible PET / fossil-based - Average end of life,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_flexible_pp_bio_based-disposal_method_average_end_of_life,Packaging: Flexible PP / bio-based - Average end of life,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_flexible_pp_fossil_based-disposal_method_average_end_of_life,Packaging: Flexible PP / fossil-based - Average end of life,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_glass-disposal_method_average_end_of_life,Packaging: Glass - Average end of life,Glass Waste,Waste,ADEME,Weight
+waste-type_packaging_glass-disposal_method_incineration,Packaging: Glass - Incineration,Glass Waste,Waste,ADEME,Weight
+waste-type_packaging_glass-disposal_method_landfill,Packaging: Glass - Landfill,Glass Waste,Waste,ADEME,Weight
+waste-type_packaging_glass-disposal_method_recycling,Packaging: Glass - Recycling,Glass Waste,Waste,ADEME,Weight
+waste-type_packaging_other_plastics_and_complex_plastics-disposal_method_average_end_of_life,Packaging: Other plastics and complex plastics - Average end of life,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_other_plastics_and_complex_plastics-disposal_method_incineration,Packaging: Other plastics and complex plastics - Incineration,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_other_plastics_and_complex_plastics-disposal_method_landfill,Packaging: Other plastics and complex plastics - Landfill,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_pe_bio_based-disposal_method_incineration,Packaging: PE / bio-based - Incineration,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_pe_bio_based-disposal_method_landfill,Packaging: PE / bio-based - Landfill,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_pe_fossil_based-disposal_method_incineration,Packaging: PE / fossil-based - Incineration,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_pe_fossil_based-disposal_method_landfill,Packaging: PE / fossil-based - Landfill,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_pet_bio_based-disposal_method_incineration,Packaging: PET / bio-based - Incineration,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_pet_bio_based-disposal_method_landfill,Packaging: PET / bio-based - Landfill,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_pet_fossil_based-disposal_method_incineration,Packaging: PET / fossil-based - Incineration,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_pet_fossil_based-disposal_method_landfill,Packaging: PET / fossil-based - Landfill,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_pp_bio_based-disposal_method_incineration,Packaging: PP / bio-based - Incineration,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_pp_bio_based-disposal_method_landfill,Packaging: PP / bio-based - Landfill,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_pp_fossil_based-disposal_method_incineration,Packaging: PP / fossil-based - Incineration,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_pp_fossil_based-disposal_method_landfill,Packaging: PP / fossil-based - Landfill,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pe-disposal_method_recycling_flakes,Packaging: Rigid PE - Recycling flakes,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pe-disposal_method_recycling_granulates,Packaging: Rigid PE - Recycling granulates,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pe_bottles-disposal_method_recycling,Packaging: Rigid PE / bottles - Recycling,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pe_bottles_bio_based-disposal_method_average_end_of_life,Packaging: Rigid PE / bottles / bio-based - Average end of life,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pe_bottles_fossil_based-disposal_method_average_end_of_life,Packaging: Rigid PE / bottles / fossil-based - Average end of life,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pe_other_packaging-disposal_method_recycling,Packaging: Rigid PE / other packaging - Recycling,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pe_other_packaging_bio_based-disposal_method_average_end_of_life,Packaging: Rigid PE / other packaging / bio-based - Average end of life,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pe_other_packaging_fossil_based-disposal_method_average_end_of_life,Packaging: Rigid PE / other packaging / fossil-based - Average end of life,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pet-disposal_method_recycling_flakes,Packaging: Rigid PET - Recycling flakes,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pet-disposal_method_recycling_granulates,Packaging: Rigid PET - Recycling granulates,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pet_bottles-disposal_method_recycling,Packaging: Rigid PET / bottles - Recycling,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pet_bottles_bio_based-disposal_method_average_end_of_life,Packaging: Rigid PET / bottles / bio-based - Average end of life,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pet_bottles_fossil_based-disposal_method_average_end_of_life,Packaging: Rigid PET / bottles / fossil-based - Average end of life,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pet_other_packaging-disposal_method_recycling,Packaging: Rigid PET / other packaging - Recycling,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pet_other_packaging_bio_based-disposal_method_average_end_of_life,Packaging: Rigid PET / other packaging / bio-based - Average end of life,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pet_other_packaging_fossil_based-disposal_method_average_end_of_life,Packaging: Rigid PET / other packaging / fossil-based - Average end of life,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pp-disposal_method_recycling_granulates,Packaging: Rigid PP - Recycling granulates,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pp_bottles-disposal_method_recycling,Packaging: Rigid PP / bottles - Recycling,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pp_bottles_bio_based-disposal_method_average_end_of_life,Packaging: Rigid PP / bottles / bio-based - Average end of life,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pp_bottles_fossil_based-disposal_method_average_end_of_life,Packaging: Rigid PP / bottles / fossil-based - Average end of life,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pp_other_packaging-disposal_method_recycling,Packaging: Rigid PP / other packaging - Recycling,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pp_other_packaging_bio_based-disposal_method_average_end_of_life,Packaging: Rigid PP / other packaging / bio-based - Average end of life,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pp_other_packaging_fossil_based-disposal_method_average_end_of_life,Packaging: Rigid PP / other packaging / fossil-based - Average end of life,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_ps_eps-disposal_method_average_end_of_life,Packaging: Rigid PS-EPS - Average end of life,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_ps_eps-disposal_method_incineration,Packaging: Rigid PS-EPS - Incineration,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_ps_eps-disposal_method_landfill,Packaging: Rigid PS-EPS - Landfill,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pvc-disposal_method_average_end_of_life,Packaging: Rigid PVC - Average end of life,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pvc-disposal_method_incineration,Packaging: Rigid PVC - Incineration,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_rigid_pvc-disposal_method_landfill,Packaging: Rigid PVC - Landfill,Plastic Waste,Waste,ADEME,Weight
+waste-type_packaging_steel-disposal_method_incineration,Packaging: Steel - Incineration,Metal Waste,Waste,ADEME,Weight
+waste-type_packaging_steel-disposal_method_landfill,Packaging: Steel - Landfill,Metal Waste,Waste,ADEME,Weight
+waste-type_packaging_wood-disposal_method_average_end_of_life,Packaging: Wood - Average end of life,General Waste,Waste,ADEME,Weight
+waste-type_packaging_wood-disposal_method_incineration,Packaging: Wood - Incineration,General Waste,Waste,ADEME,Weight
+waste-type_packaging_wood-disposal_method_landfill,Packaging: Wood - Landfill,General Waste,Waste,ADEME,Weight
+waste-type_paper-disposal_method_closed_loop,Paper waste disposal (to closed-loop recycling),Paper and Cardboard Waste,Waste,BEIS,Weight
+waste-type_paper-disposal_method_combustion,Paper waste disposal (combustion),Paper and Cardboard Waste,Waste,BEIS,Weight
+waste-type_paper-disposal_method_composting,Paper waste disposal (composting),Paper and Cardboard Waste,Waste,BEIS,Weight
+waste-type_paper-disposal_method_landfill,Paper waste disposal (landfill),Paper and Cardboard Waste,Waste,BEIS,Weight
+waste-type_paper-disposal_method_landfill_with_gas_recovery,Paper - waste to landfill with gas recovery,Paper and Cardboard Waste,Waste,MfE,Weight
+waste-type_paper-disposal_method_landfill_without_gas_recovery,Paper - waste to landfill without gas recovery,Paper and Cardboard Waste,Waste,MfE,Weight
+waste-type_paper_and_cardboard-disposal_method_closed_loop,Paper and cardboard waste disposal (to closed-loop recycling),Paper and Cardboard Waste,Waste,BEIS,Weight
+waste-type_paper_and_cardboard-disposal_method_combustion,Paper and cardboard waste disposal (combustion),Paper and Cardboard Waste,Waste,BEIS,Weight
+waste-type_paper_and_cardboard-disposal_method_composting,Paper and cardboard waste disposal (composting),Paper and Cardboard Waste,Waste,BEIS,Weight
+waste-type_paper_and_cardboard-disposal_method_landfill,Paper and cardboard waste disposal (landfill),Paper and Cardboard Waste,Waste,BEIS,Weight
+waste-type_paper_cardboard_waste-disposal_method_incineration,Paper/cardboard waste - incineration,Paper and Cardboard Waste,Waste,SEFR,Weight
+waste-type_pet-disposal_method_combusted,PET - Combusted,Plastic Waste,Waste,EPA,Weight
+waste-type_pet-disposal_method_landfilled,PET - Landfilled,Plastic Waste,Waste,EPA,Weight
+waste-type_pet-disposal_method_recycled,PET - Recycled,Plastic Waste,Waste,EPA,Weight
+waste-type_pet_including_forming-disposal_method_closed_loop,PET waste (incl. forming) disposal - closed-loop,Plastic Waste,Waste,BEIS,Weight
+waste-type_pet_including_forming-disposal_method_combustion,PET waste (incl. forming) disposal - combustion,Plastic Waste,Waste,BEIS,Weight
+waste-type_pet_including_forming-disposal_method_landfill,PET waste (incl. forming) disposal - landfill,Plastic Waste,Waste,BEIS,Weight
+waste-type_pet_including_forming-disposal_method_open_loop,PET waste (incl. forming) disposal - open-loop,Plastic Waste,Waste,BEIS,Weight
+waste-type_phonebooks-disposal_method_combusted,Phonebooks - Combusted,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_phonebooks-disposal_method_landfilled,Phonebooks - Landfilled,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_phonebooks-disposal_method_recycled,Phonebooks - Recycled,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_pla-disposal_method_combusted,PLA - Combusted,Plastic Waste,Waste,EPA,Weight
+waste-type_pla-disposal_method_composted,PLA - Composted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_pla-disposal_method_landfilled,PLA - Landfilled,Plastic Waste,Waste,EPA,Weight
+waste-type_plasterboard-disposal_method_closed_loop,Plasterboard waste disposal (to closed-loop recycling),Construction Waste,Waste,BEIS,Weight
+waste-type_plasterboard-disposal_method_landfill,Plasterboard waste disposal (landfill),Construction Waste,Waste,BEIS,Weight
+waste-type_plastic_film-disposal_method_closed_loop,Plastics film waste disposal (to closed-loop recycling),Plastic Waste,Waste,BEIS,Weight
+waste-type_plastic_film-disposal_method_closed_loop,Plastics film waste disposal - closed-loop,Plastic Waste,Waste,BEIS,Weight
+waste-type_plastic_film-disposal_method_combustion,Plastics film waste disposal (combustion),Plastic Waste,Waste,BEIS,Weight
+waste-type_plastic_film-disposal_method_combustion,Plastics film waste disposal - combustion,Plastic Waste,Waste,BEIS,Weight
+waste-type_plastic_film-disposal_method_landfill,Plastics film waste disposal (landfill),Plastic Waste,Waste,BEIS,Weight
+waste-type_plastic_film-disposal_method_landfill,Plastics film waste disposal - landfill,Plastic Waste,Waste,BEIS,Weight
+waste-type_plastic_film-disposal_method_open_loop,Plastics film waste disposal (to open-loop recycling),Plastic Waste,Waste,BEIS,Weight
+waste-type_plastic_film-disposal_method_open_loop,Plastics film waste disposal - open-loop,Plastic Waste,Waste,BEIS,Weight
+waste-type_plastic_rigid-disposal_method_closed_loop,Plastics rigid waste disposal (to closed-loop recycling),Plastic Waste,Waste,BEIS,Weight
+waste-type_plastic_rigid-disposal_method_closed_loop,Plastics rigid waste disposal - closed-loop,Plastic Waste,Waste,BEIS,Weight
+waste-type_plastic_rigid-disposal_method_combustion,Plastics rigid waste disposal (combustion),Plastic Waste,Waste,BEIS,Weight
+waste-type_plastic_rigid-disposal_method_combustion,Plastics rigid waste disposal - combustion,Plastic Waste,Waste,BEIS,Weight
+waste-type_plastic_rigid-disposal_method_landfill,Plastics rigid waste disposal (landfill),Plastic Waste,Waste,BEIS,Weight
+waste-type_plastic_rigid-disposal_method_landfill,Plastics rigid waste disposal - landfill,Plastic Waste,Waste,BEIS,Weight
+waste-type_plastic_rigid-disposal_method_open_loop,Plastics rigid waste disposal (to open-loop recycling),Plastic Waste,Waste,BEIS,Weight
+waste-type_plastic_rigid-disposal_method_open_loop,Plastics rigid waste disposal - open-loop,Plastic Waste,Waste,BEIS,Weight
+waste-type_plastics-disposal_method_closed_loop,Plastics waste disposal (to closed-loop recycling),Plastic Waste,Waste,BEIS,Weight
+waste-type_plastics-disposal_method_closed_loop,Plastics waste disposal - closed-loop,Plastic Waste,Waste,BEIS,Weight
+waste-type_plastics-disposal_method_combustion,Plastics waste disposal (combustion),Plastic Waste,Waste,BEIS,Weight
+waste-type_plastics-disposal_method_combustion,Plastics waste disposal - combustion,Plastic Waste,Waste,BEIS,Weight
+waste-type_plastics-disposal_method_landfill,Plastics waste disposal (landfill),Plastic Waste,Waste,BEIS,Weight
+waste-type_plastics-disposal_method_landfill,Plastics waste disposal - landfill,Plastic Waste,Waste,BEIS,Weight
+waste-type_plastics-disposal_method_open_loop,Plastics waste disposal (to open-loop recycling),Plastic Waste,Waste,BEIS,Weight
+waste-type_plastics-disposal_method_open_loop,Plastics waste disposal - open-loop,Plastic Waste,Waste,BEIS,Weight
+waste-type_plastics_waste-disposal_method_incineration,Plastics waste - incineration,Plastic Waste,Waste,SEFR,Weight
+waste-type_portable_electronic_devices-disposal_method_combusted,Portable Electronic Devices - Combusted,Electrical Waste,Waste,EPA,Weight
+waste-type_portable_electronic_devices-disposal_method_landfilled,Portable Electronic Devices - Landfilled,Electrical Waste,Waste,EPA,Weight
+waste-type_portable_electronic_devices-disposal_method_recycled,Portable Electronic Devices - Recycled,Electrical Waste,Waste,EPA,Weight
+waste-type_poultry-disposal_method_anaerobically_digested_dry_digestate_with_curing,Poultry - Anaerobically Digested (Dry Digestate with Curing),Food and Organic Waste,Waste,EPA,Weight
+waste-type_poultry-disposal_method_anaerobically_digested_wet_digestate_with_curing,Poultry - Anaerobically Digested (Wet Digestate with Curing),Food and Organic Waste,Waste,EPA,Weight
+waste-type_poultry-disposal_method_combusted,Poultry - Combusted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_poultry-disposal_method_composted,Poultry - Composted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_poultry-disposal_method_landfilled,Poultry - Landfilled,Food and Organic Waste,Waste,EPA,Weight
+waste-type_pp-disposal_method_combusted,PP - Combusted,Plastic Waste,Waste,EPA,Weight
+waste-type_pp-disposal_method_landfilled,PP - Landfilled,Plastic Waste,Waste,EPA,Weight
+waste-type_pp-disposal_method_recycled,PP - Recycled,Plastic Waste,Waste,EPA,Weight
+waste-type_pp_including_forming-disposal_method_closed_loop,PP waste disposal (incl. forming) - closed-loop,Plastic Waste,Waste,BEIS,Weight
+waste-type_pp_including_forming-disposal_method_combustion,PP waste disposal (incl. forming) - combustion,Plastic Waste,Waste,BEIS,Weight
+waste-type_pp_including_forming-disposal_method_landfill,PP waste disposal (incl. forming) - landfill,Plastic Waste,Waste,BEIS,Weight
+waste-type_pp_including_forming-disposal_method_open_loop,PP waste disposal  (incl. forming) - open-loop,Plastic Waste,Waste,BEIS,Weight
+waste-type_pp_including_forming-disposal_method_open_loop,PP waste disposal (incl. forming) - open-loop,Plastic Waste,Waste,BEIS,Weight
+waste-type_ps-disposal_method_combusted,PS - Combusted,Plastic Waste,Waste,EPA,Weight
+waste-type_ps-disposal_method_landfilled,PS - Landfilled,Plastic Waste,Waste,EPA,Weight
+waste-type_ps_including_forming-disposal_method_closed_loop,PS waste disposal (incl. forming closed-loop),Plastic Waste,Waste,BEIS,Weight
+waste-type_ps_including_forming-disposal_method_closed_loop,PS waste disposal (incl. forming) - closed-loop,Plastic Waste,Waste,BEIS,Weight
+waste-type_ps_including_forming-disposal_method_combustion,PS waste disposal (incl. forming) - combustion,Plastic Waste,Waste,BEIS,Weight
+waste-type_ps_including_forming-disposal_method_landfill,PS waste disposal (incl. forming) - landfill,Plastic Waste,Waste,BEIS,Weight
+waste-type_ps_including_forming-disposal_method_open_loop,PS waste disposal (incl. forming) - open-loop,Plastic Waste,Waste,BEIS,Weight
+waste-type_putrescible_waste-disposal_method_incineration,Putrescible waste - Incineration,Food and Organic Waste,Waste,ADEME,Weight
+waste-type_putrescible_waste-disposal_method_landfill,Putrescible waste - Landfill,Food and Organic Waste,Waste,ADEME,Weight
+waste-type_pvc-disposal_method_combusted,PVC - Combusted,Plastic Waste,Waste,EPA,Weight
+waste-type_pvc-disposal_method_landfilled,PVC - Landfilled,Plastic Waste,Waste,EPA,Weight
+waste-type_pvc_including_forming-disposal_method_closed_loop,PVC waste disposal (incl. forming) - closed-loop,Plastic Waste,Waste,BEIS,Weight
+waste-type_pvc_including_forming-disposal_method_combustion,PVC waste disposal (incl. forming) - combustion,Plastic Waste,Waste,BEIS,Weight
+waste-type_pvc_including_forming-disposal_method_landfill,PVC waste disposal (incl. forming) - landfill,Plastic Waste,Waste,BEIS,Weight
+waste-type_pvc_including_forming-disposal_method_open_loop,PVC waste disposal (incl. forming) - open-loop,Plastic Waste,Waste,BEIS,Weight
+waste-type_residual_household_waste-disposal_method_average_end_of_life,Residual household waste - Average end of life,General Waste,Waste,ADEME,Weight
+waste-type_residual_household_waste-disposal_method_incineration,Residual household waste - Incineration,General Waste,Waste,ADEME,Weight
+waste-type_residual_household_waste-disposal_method_landfill,Residual household waste - Landfill,General Waste,Waste,ADEME,Weight
+waste-type_rigid_pe-disposal_method_recycling_flakes,Rigid pe - Recycling flakes,Plastic Waste,Waste,ADEME,Weight
+waste-type_rigid_pe-disposal_method_recycling_granulates,Rigid pe - Recycling granulates,Plastic Waste,Waste,ADEME,Weight
+waste-type_rigid_pet-disposal_method_recycling_flakes,Rigid pet - Recycling flakes,Plastic Waste,Waste,ADEME,Weight
+waste-type_rigid_pet-disposal_method_recycling_granulates,Rigid pet - Recycling granulates,Plastic Waste,Waste,ADEME,Weight
+waste-type_rigid_pp-disposal_method_recycling_granulates,Rigid pp - Recycling granulates,Plastic Waste,Waste,ADEME,Weight
+waste-type_rigid_ps-disposal_method_recycling,Rigid ps - Recycling,Plastic Waste,Waste,ADEME,Weight
+waste-type_rigid_pvc-disposal_method_recycling,Rigid pvc - Recycling,Plastic Waste,Waste,ADEME,Weight
+waste-type_rubber_and_leather_waste-disposal_method_incineration,Rubber and leather waste - incineration,General Waste,Waste,SEFR,Weight
+waste-type_scrap_metal-disposal_method_closed_loop,Scrap metal waste disposal (to closed-loop recycling),Metal Waste,Waste,BEIS,Weight
+waste-type_scrap_metal-disposal_method_combustion,Scrap metal waste disposal (combustion),Metal Waste,Waste,BEIS,Weight
+waste-type_scrap_metal-disposal_method_landfill,Scrap metal waste disposal (landfill),Metal Waste,Waste,BEIS,Weight
+waste-type_scrap_metal-disposal_method_open_loop,Scrap metal waste disposal (to open-loop recycling),Metal Waste,Waste,BEIS,Weight
+waste-type_scrap_metal_steel_cans-disposal_method_closed_loop,Metal waste disposal (steel cans - closed-loop),Metal Waste,Waste,BEIS,Weight
+waste-type_scrap_metal_steel_cans-disposal_method_combustion,Metal waste disposal (steel cans - combustion),Metal Waste,Waste,BEIS,Weight
+waste-type_scrap_metal_steel_cans-disposal_method_landfill,Metal waste disposal (steel cans - landfill),Metal Waste,Waste,BEIS,Weight
+waste-type_scrap_metal_steel_cans-disposal_method_open_loop,Metal waste disposal (steel cans - open-loop),Metal Waste,Waste,BEIS,Weight
+waste-type_sludge-disposal_method_landfill_with_gas_recovery,Sludge - waste to landfill with gas recovery,General Waste,Waste,MfE,Weight
+waste-type_sludge-disposal_method_landfill_without_gas_recovery,Sludge - waste to landfill without gas recovery,General Waste,Waste,MfE,Weight
+waste-type_soils-disposal_method_closed_loop,Soils waste disposal (to closed-loop recycling),Construction Waste,Waste,BEIS,Weight
+waste-type_soils-disposal_method_landfill,Soils waste disposal (landfill),Construction Waste,Waste,BEIS,Weight
+waste-type_steel_cans-disposal_method_combusted,Steel Cans - Combusted,Metal Waste,Waste,EPA,Weight
+waste-type_steel_cans-disposal_method_landfilled,Steel Cans - Landfilled,Metal Waste,Waste,EPA,Weight
+waste-type_steel_cans-disposal_method_recycled,Steel Cans - Recycled,Metal Waste,Waste,EPA,Weight
+waste-type_structural_steel-disposal_method_landfilled,Structural Steel - Landfilled,Metal Waste,Waste,EPA,Weight
+waste-type_structural_steel-disposal_method_recycled,Structural Steel - Recycled,Metal Waste,Waste,EPA,Weight
+waste-type_textbooks-disposal_method_combusted,Textbooks - Combusted,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_textbooks-disposal_method_landfilled,Textbooks - Landfilled,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_textbooks-disposal_method_recycled,Textbooks - Recycled,Paper and Cardboard Waste,Waste,EPA,Weight
+waste-type_textile-disposal_method_landfill_with_gas_recovery,Textile - waste to landfill with gas recovery,General Waste,Waste,MfE,Weight
+waste-type_textile-disposal_method_landfill_without_gas_recovery,Textile - waste to landfill without gas recovery,General Waste,Waste,MfE,Weight
+waste-type_textile_waste-disposal_method_incineration,Textile waste - incineration,General Waste,Waste,SEFR,Weight
+waste-type_tires-disposal_method_closed_loop,Tyres waste disposal (to closed-loop recycling),Plastic Waste,Waste,BEIS,Weight
+waste-type_tires-disposal_method_combusted,Tires - Combusted,Plastic Waste,Waste,EPA,Weight
+waste-type_tires-disposal_method_landfilled,Tires - Landfilled,Plastic Waste,Waste,EPA,Weight
+waste-type_tires-disposal_method_recycled,Tires - Recycled,Plastic Waste,Waste,EPA,Weight
+waste-type_vinyl_flooring-disposal_method_combusted,Vinyl Flooring - Combusted,Construction Waste,Waste,EPA,Weight
+waste-type_vinyl_flooring-disposal_method_landfilled,Vinyl Flooring - Landfilled,Construction Waste,Waste,EPA,Weight
+waste-type_waste_and_scrap_of_glass-disposal_method_na,Waste and scrap of glass,Glass Waste,Waste,OpenIO-Canada,Money
+waste-type_waste_and_scrap_of_iron_and_steel-disposal_method_na,Waste and scrap of iron and steel,Metal Waste,Waste,OpenIO-Canada,Money
+waste-type_waste_and_scrap_of_non_ferrous_metals-disposal_method_na,Waste and scrap of non-ferrous metals,Metal Waste,Waste,OpenIO-Canada,Money
+waste-type_waste_and_scrap_of_paper_and_paperboard-disposal_method_na,Waste and scrap of paper and paperboard,Paper and Cardboard Waste,Waste,OpenIO-Canada,Money
+waste-type_waste_and_scrap_of_plastic_and_rubber-disposal_method_na,Waste and scrap of plastic and rubber,Plastic Waste,Waste,OpenIO-Canada,Money
+waste-type_waste_and_scrap_of_wood_and_wood_by_products-disposal_method_na,Waste and scrap of wood and wood by-products,Wood Waste,Waste,OpenIO-Canada,Money
+waste-type_wastes_and_scraps-disposal_method_na,Wastes and scraps,General Waste,Waste,Market Economics Limited,Money
+waste-type_weee_crt_screens-disposal_method_average_end_of_life,Weee: CRT screens - Average end of life,Electrical Waste,Waste,ADEME,Weight
+waste-type_weee_flat_screens-disposal_method_average_end_of_life,Weee: Flat screens - Average end of life,Electrical Waste,Waste,ADEME,Weight
+waste-type_weee_fridges_and_freezers-disposal_method_landfill,WEEE waste disposal (fridges and freezers - landfill),Electrical Waste,Waste,BEIS,Weight
+waste-type_weee_fridges_and_freezers-disposal_method_open_loop,WEEE waste disposal (fridges and freezers - open-loop),Electrical Waste,Waste,BEIS,Weight
+waste-type_weee_large-disposal_method_combustion,WEEE waste disposal (large - combustion),Electrical Waste,Waste,BEIS,Weight
+waste-type_weee_large-disposal_method_landfill,WEEE waste disposal (large - landfill),Electrical Waste,Waste,BEIS,Weight
+waste-type_weee_large-disposal_method_open_loop,WEEE waste disposal (large - open-loop),Electrical Waste,Waste,BEIS,Weight
+waste-type_weee_lha_cold_at_end_of_life-disposal_method_average_end_of_life_with_upstream_losses,Weee: LHA cold / at end of life - Average end of life / with upstream losses,Electrical Waste,Waste,ADEME,Weight
+waste-type_weee_lha_cold_at_end_of_life-disposal_method_average_end_of_life_without_upstream_losses,Weee: LHA cold / at end of life - Average end of life / without upstream losses,Electrical Waste,Waste,ADEME,Weight
+waste-type_weee_lha_cold_put_on_the_market-disposal_method_average_end_of_life_with_upstream_losses,Weee: LHA cold / put on the market - Average end of life / with upstream losses,Electrical Waste,Waste,ADEME,Weight
+waste-type_weee_lha_non_cold-disposal_method_average_end_of_life,Weee: LHA non cold - Average end of life,Electrical Waste,Waste,ADEME,Weight
+waste-type_weee_mixed-disposal_method_combustion,WEEE waste disposal (mixed - combustion),Electrical Waste,Waste,BEIS,Weight
+waste-type_weee_mixed-disposal_method_landfill,WEEE waste disposal (mixed - landfill),Electrical Waste,Waste,BEIS,Weight
+waste-type_weee_mixed-disposal_method_open_loop,WEEE waste disposal (mixed - open-loop),Electrical Waste,Waste,BEIS,Weight
+waste-type_weee_sha-disposal_method_average_end_of_life,Weee: SHA - Average end of life,Electrical Waste,Waste,ADEME,Weight
+waste-type_weee_small-disposal_method_combustion,WEEE waste disposal (small - combustion),Electrical Waste,Waste,BEIS,Weight
+waste-type_weee_small-disposal_method_landfill,WEEE waste disposal (small - landfill),Electrical Waste,Waste,BEIS,Weight
+waste-type_weee_small-disposal_method_open_loop,WEEE waste disposal (small - open-loop),Electrical Waste,Waste,BEIS,Weight
+waste-type_weee_tubes_and_lamps-disposal_method_average_end_of_life,Weee: Tubes and lamps - Average end of life,Electrical Waste,Waste,ADEME,Weight
+waste-type_weee_weee_average_default-disposal_method_average_end_of_life,Weee: WEEE average (default) - Average end of life,Electrical Waste,Waste,ADEME,Weight
+waste-type_wood-disposal_method_closed_loop,Wood waste disposal (to closed-loop recycling),Construction Waste,Waste,BEIS,Weight
+waste-type_wood-disposal_method_combustion,Wood waste disposal (combustion),Construction Waste,Waste,BEIS,Weight
+waste-type_wood-disposal_method_composting,Wood waste disposal (composting),Construction Waste,Waste,BEIS,Weight
+waste-type_wood-disposal_method_landfill,Wood waste disposal (landfill),Construction Waste,Waste,BEIS,Weight
+waste-type_wood_combined-disposal_method_landfill_with_gas_recovery,Wood (combined) - waste to landfill with gas recovery,Construction Waste,Waste,MfE,Weight
+waste-type_wood_combined-disposal_method_landfill_without_gas_recovery,Wood (combined) - waste to landfill without gas recovery,Construction Waste,Waste,MfE,Weight
+waste-type_wood_flooring-disposal_method_combusted,Wood Flooring - Combusted,Construction Waste,Waste,EPA,Weight
+waste-type_wood_flooring-disposal_method_landfilled,Wood Flooring - Landfilled,Construction Waste,Waste,EPA,Weight
+waste-type_wood_products_waste-disposal_method_incineration,Wood products waste - incineration,General Waste,Waste,SEFR,Weight
+waste-type_wood_treated-disposal_method_landfill_with_gas_recovery,Wood (treated) - waste to landfill with gas recovery,Construction Waste,Waste,MfE,Weight
+waste-type_wood_treated-disposal_method_landfill_without_gas_recovery,Wood (treated) - waste to landfill without gas recovery,Construction Waste,Waste,MfE,Weight
+waste-type_wood_untreated-disposal_method_landfill_with_gas_recovery,Wood (untreated) - waste to landfill with gas recovery,Construction Waste,Waste,MfE,Weight
+waste-type_wood_untreated-disposal_method_landfill_without_gas_recovery,Wood (untreated) - waste to landfill without gas recovery,Construction Waste,Waste,MfE,Weight
+waste-type_yard_trimmings-disposal_method_anaerobically_digested_dry_digestate_with_curing,Yard Trimmings - Anaerobically Digested (Dry Digestate with Curing),Food and Organic Waste,Waste,EPA,Weight
+waste-type_yard_trimmings-disposal_method_combusted,Yard Trimmings - Combusted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_yard_trimmings-disposal_method_composted,Yard Trimmings - Composted,Food and Organic Waste,Waste,EPA,Weight
+waste-type_yard_trimmings-disposal_method_landfilled,Yard Trimmings - Landfilled,Food and Organic Waste,Waste,EPA,Weight
+waste_management-type_all_other_miscellaneous_waste_management_services,All other miscellaneous waste management services,Waste Management,Waste,EPA,Money
+waste_management-type_anaerobic_digestion,Anaerobic digestion,Waste Management,Waste,MfE,Weight
+waste_management-type_composting,Composting,Waste Management,Waste,MfE,Weight
+waste_management-type_food_waste_for_treatment_biogasification_land_application,Food waste for treatment: biogasification and land application,Waste Management,Waste,EXIOBASE,Money
+waste_management-type_food_waste_for_treatment_composting_land_application,Food waste for treatment: composting and land application,Waste Management,Waste,EXIOBASE,Money
+waste_management-type_food_waste_for_treatment_incineration,Food waste for treatment: incineration,Waste Management,Waste,EXIOBASE,Money
+waste_management-type_food_waste_for_treatment_landfill,Food waste for treatment: landfill,Waste Management,Waste,EXIOBASE,Money
+waste_management-type_food_waste_for_treatment_waste_water_treatment,Food waste for treatment: waste water treatment,Waste Management,Waste,EXIOBASE,Money
+waste_management-type_hazardous_waste_collection,Hazardous waste collection,Waste Management,Waste,EPA,Money
+waste_management-type_hazardous_waste_treatment_and_disposal,Hazardous waste treatment and disposal,Waste Management,Waste,EPA,Money
+waste_management-type_inert_metal_hazardous_waste_for_treatment_landfill,Inert/metal/hazardous waste for treatment: landfill,Waste Management,Waste,EXIOBASE,Money
+waste_management-type_inert_metal_waste_for_treatment_incineration,Inert/metal waste for treatment: incineration,Waste Management,Waste,EXIOBASE,Money
+waste_management-type_materials_recovery_facilities,Materials recovery facilities,Waste Management,Waste,EPA,Money
+waste_management-type_natural_water_water_treatment_and_supply_services,Natural water / water treatment and supply services,Waste Management,Waste,BEIS,Money
+waste_management-type_oil_hazardous_waste_for_treatment_incineration,Oil / hazardous waste for treatment: incineration,Waste Management,Waste,EXIOBASE,Money
+waste_management-type_other_nonhazardous_waste_treatment_and_disposal,Other nonhazardous waste treatment and disposal,Waste Management,Waste,EPA,Money
+waste_management-type_other_waste_collection,Other waste collection,Waste Management,Waste,EPA,Money
+waste_management-type_other_waste_for_treatment_waste_water_treatment,Other waste for treatment: waste water treatment,Waste Management,Waste,EXIOBASE,Money
+waste_management-type_paper_for_treatment_landfill,Paper for treatment: landfill,Waste Management,Waste,EXIOBASE,Money
+waste_management-type_paper_waste_for_treatment_biogasification_land_application,Paper waste for treatment: biogasification and land application,Waste Management,Waste,EXIOBASE,Money
+waste_management-type_paper_waste_for_treatment_incineration,Paper waste for treatment: incineration,Waste Management,Waste,EXIOBASE,Money
+waste_management-type_paper_wood_waste_for_treatment_composting_land_application,Paper and wood waste for treatment: composting and land application,Waste Management,Waste,EXIOBASE,Money
+waste_management-type_plastic_waste_for_treatment_incineration,Plastic waste for treatment: incineration,Waste Management,Waste,EXIOBASE,Money
+waste_management-type_plastic_waste_for_treatment_landfill,Plastic waste for treatment: landfill,Waste Management,Waste,EXIOBASE,Money
+waste_management-type_refuse_disposal_and_recycling,Refuse disposal and recycling,Waste Management,Waste,Market Economics Limited,Money
+waste_management-type_remediation_services,Remediation services,Waste Management,Waste,EPA,Money
+waste_management-type_remediation_services_and_other_waste_management_services,Remediation services and other waste management services,Waste Management,Waste,BEIS,Money
+waste_management-type_septic_tank_and_related_services,Septic tank and related services,Waste Management,Waste,EPA,Money
+waste_management-type_sewage_sludge_for_treatment_biogasification_land_application,Sewage sludge for treatment: biogasification and land application,Waste Management,Waste,EXIOBASE,Money
+waste_management-type_sewerage_services_sewage_sludge,Sewerage services/sewage sludge,Waste Management,Waste,BEIS,Money
+waste_management-type_solid_waste_collection,Solid waste collection,Waste Management,Waste,EPA,Money
+waste_management-type_solid_waste_combustors_and_incinerators,Solid waste combustors and incinerators,Waste Management,Waste,EPA,Money
+waste_management-type_solid_waste_landfill,Solid waste landfill,Waste Management,Waste,EPA,Money
+waste_management-type_textiles_waste_for_treatment_incineration,Textiles waste for treatment: incineration,Waste Management,Waste,EXIOBASE,Money
+waste_management-type_textiles_waste_for_treatment_landfill,Textiles waste for treatment: landfill,Waste Management,Waste,EXIOBASE,Money
+waste_management-type_waste_collection_treatment_and_disposal_services_materials_recovery_services,Waste collection / treatment and disposal services / materials recovery services,Waste Management,Waste,BEIS,Money
+waste_management-type_waste_disposal_recycling_and_environmental_protection_services,Waste disposal / recycling and environmental protection services,Waste Management,Waste,Market Economics Limited,Money
+waste_management-type_waste_management_and_remediation_services,Waste management and remediation services,Waste Management,Waste,OpenIO-Canada,Money
+waste_management-type_wood_waste_for_treatment_incineration,Wood waste for treatment: incineration,Waste Management,Waste,EXIOBASE,Money
+waste_management-type_wood_waste_for_treatment_landfill,Wood waste for treatment: landfill,Waste Management,Waste,EXIOBASE,Money
