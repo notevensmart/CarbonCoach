@@ -1,6 +1,6 @@
 import requests
 
-API_KEY = "SCCDV0RCQD1AV7RN7SA3P8RDAR"  # Replace with your actual key
+API_KEY = "SCCDV0RCQD1AV7RN7SA3P8RDAR"  
 url = "https://api.climatiq.io/estimate"
 
 headers = {
@@ -13,7 +13,7 @@ payload = {
         "data_version": "^21",
     },
     "parameters": {
-        "distance": 10,
+        "distance": 17,
         "distance_unit": "km"
     }
 }
