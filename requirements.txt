@@ -3,3 +3,10 @@ transformers
 torch
 sentencepiece
 scikit-learn 
+requests
+numpy
+pandas
+langchain
+os
+dotenv
+re

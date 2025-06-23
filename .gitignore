@@ -20,4 +20,4 @@ Thumbs.db
 # Pytest cache
 .pytest_cache/
 .gradio
-
+.txt
