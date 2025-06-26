@@ -19,31 +19,37 @@ llm = ChatOpenAI(
 prompt = PromptTemplate(
     input_variables=["journal_entry"],
     template="""
-You are an assistant that extracts high-level daily activity categories from text.
+You are a carbon activity classifier.
 
-Given this journal entry:
+Given a personal journal entry, extract a list of activity labels along with their category. Each item must be a tuple of the form (label, category).
+
+Categories must be one of:
+- "transport"
+- "waste"
+- "energy"
+- "goods_services"
+
+Journal entry:
 "{journal_entry}"
 
-Extract and return a list of activity labels that map to carbon-relevant categories like transport, food, waste, goods, or energy use. Example outputs: 'Travel by car', 'Beef meal', 'Plastic waste disposal'.
+Respond with ONLY a valid Python list of (label, category) tuples.
+No explanations. No markdown. No code blocks. No extra text.
 
-Only return a Python list of string labels.
+Example:
+[("bus ride", "transport"), ("recycle plastic", "waste")]
 """
 )
+
 
 # Step 3: LangChain LLMChain basically piping the prompt into the llm
 classify_chain = prompt | llm
 
 # Step 4: Wrapper function
-def classify_activities(journal_entry: str):
-    response = classify_chain.invoke({"journal_entry":journal_entry})
+def classify_activities(journal_entry: str) -> list[tuple[str, str]]:
+    response = classify_chain.invoke({"journal_entry": journal_entry})
+    ##print("LLM response:", repr(response.content))
     try:
-        # Evaluate the string into a real Python list
-        list_str =eval(response.content)
-        bool = True
-        return list_str
-        
-    except:
-        return ["[Unparseable output]"]
-
-result = classify_activities("Today I drove to work by car for 5km, had a salad for lunch, and recycled some plastic bottles.")
-print("Extracted activity labels:", result)
+        activity_pairs = eval(response.content.strip())
+        return activity_pairs
+    except Exception:
+        return [("[Unparseable output]", "unknown")]

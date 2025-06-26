@@ -10,3 +10,4 @@ langchain
 os
 dotenv
 re
+rapidfuzz

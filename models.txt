@@ -1,2 +1,3 @@
 "deepseek/deepseek-chat-v3-0324:free"
 "anthropic/claude-3-haiku"
+"mistralai/mistral-7b-instruct:free"

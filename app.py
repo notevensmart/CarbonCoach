@@ -15,7 +15,7 @@ climatiq_api_key = "SCCDV0RCQD1AV7RN7SA3P8RDAR"
 def fetch_supported_countries():
     url = "https://api.climatiq.io"
     headers = {
-        "Authorization": f"Bearer {climatiq_api_key}"  # Replace with your actual API key
+        "Authorization": f"Bearer {climatiq_api_key}"  
     }
     try:
         response = requests.get(url, headers=headers)

@@ -20,17 +20,44 @@ llm = ChatOpenAI(
 # Prompt template
 match_prompt = PromptTemplate(
     input_variables=["user_activity", "choices"],
-    template="""You are a carbon activity matcher. Given a user's activity and a list of valid choices,
-return ONLY the exact string from the list that best matches the user's activity.
+    template="""
+You are a carbon emissions activity matcher.
 
-User activity:
+Your job is to take a **general activity label** and return the **best matching activity name** from a fixed list of formal activity definitions.
+
+---
+
+The label is a short phrase like:
+- "bus ride"
+- "plastic recycling"
+- "beef meal"
+- "electricity use"
+- "laptop purchase"
+
+---
+
+The formal activity names come from 4 carbon-relevant domains:
+- Transport (e.g. "Bus - average")
+- Waste (e.g. "Plastic - Recycled - EU")
+- Energy (e.g. "Electricity supplied from grid - residual mix")
+- Goods/Services (e.g. "Tomatoes canned in juice")
+
+Choose the **closest match** from the list below.  
+ Respond with only one exact string from the list.  
+ Do not make up your own answers or add extra words.
+
+---
+
+Activity label:
 {user_activity}
 
-Available choices:
+Available activity names:
 {choices}
-Respond ONLY with one exact string from the list above. No extra text, no explanations.
+
+Return just one best-matching string from the list above.
 """
 )
+
 
 # Build the LangChain Runnable
 matcher_chain = match_prompt | llm
