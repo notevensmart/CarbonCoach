@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import os
 import re
 from app.services.climatiq_api import activity_lookup
-from rapidfuzz import process 
+import ast
 
 load_dotenv(dotenv_path="key.env")  # Load OpenRouter key
 
@@ -19,11 +19,20 @@ llm = ChatOpenAI(
 
 # Prompt template
 match_prompt = PromptTemplate(
-    input_variables=["user_activity", "choices"],
+    input_variables=["labels","choices"],
     template="""
-You are a carbon emissions activity matcher.
+You are a carbon activity matcher.
 
-Your job is to take a **general activity label** and return the **best matching activity name** from a fixed list of formal activity definitions.
+You will receive a list of activity labels and a list of formal activity names.
+
+For each label, return the single best-matching formal activity name from the list.
+
+Respond ONLY with a Python dictionary mapping each label to its best match.
+
+- Do NOT include explanations, comments, or any extra text.
+- Do NOT wrap your response in markdown or code formatting.
+- Do NOT output ```python or ```.
+
 
 ---
 
@@ -48,13 +57,14 @@ Choose the **closest match** from the list below.
 
 ---
 
-Activity label:
-{user_activity}
+Activity labels:
+{labels}
 
 Available activity names:
 {choices}
 
-Return just one best-matching string from the list above.
+
+Respond ONLY with the dictionary.
 """
 )
 
@@ -62,33 +72,22 @@ Return just one best-matching string from the list above.
 # Build the LangChain Runnable
 matcher_chain = match_prompt | llm
 
-def match_activity(user_activity: str):
+def batch_match_activities(labels: list[str]):
     candidate_names = list(activity_lookup.keys())
     choices_block = "\n".join(candidate_names)
-    
+    labels_block = "\n".join(labels)
+
     response = matcher_chain.invoke({
-        "user_activity": user_activity,
+        "labels": labels_block,
         "choices": choices_block
     })
 
     raw = response.content.strip()
-    matched_name = re.sub(r"^['\"]|['\"]$", '', raw.lower())
-    print(f"🤖 LLM raw response: {raw!r}")
-    print(f"🔍 Cleaned match string: {matched_name}")
-    # Step 1: Exact match
-    if matched_name in activity_lookup:
-        activity_id = activity_lookup[matched_name]
-        print(f"✅ Exact match: {matched_name} → {activity_id}")
-        return activity_id
-    
-    # Step 2: Fuzzy match
-    best_match, score, _ = process.extractOne(matched_name, candidate_names)
-    print(f"🧠 Fuzzy matched to: {best_match} (score: {score})")
+    print("🤖 Raw LLM response:", repr(raw))
 
-    if score > 70:
-        activity_id = activity_lookup[best_match]
-        print(f"✅ Fuzzy fallback match: {best_match} → {activity_id}")
-        return activity_id
-
-    print("❌ No confident match found.")
-    return None
+    try:
+        mapping = ast.literal_eval(raw)
+        return mapping
+    except Exception as e:
+        print("⚠️ Failed to parse matcher output:", e)
+        return {}
