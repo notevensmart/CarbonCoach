@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import os
 bool = False
 load_dotenv(dotenv_path="key.env")
-print("✅ Loaded key:", os.getenv("OPENROUTER_API_KEY")[:8] + "...")
+print("Loaded key:", os.getenv("OPENROUTER_API_KEY")[:8] + "...")
 # Step 1: Setup LLM
 
 llm = ChatOpenAI(
