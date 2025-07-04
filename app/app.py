@@ -24,14 +24,14 @@ def run_pipeline(journal_entry):
                 params = get_default_params(category)
                 co2, unit = get_emissions(activity_id, params)
                 if co2:
-                    results.append(f"✅ {label} ({category}) → {round(co2,3)} {unit} CO2e")
+                    results.append(f" {label} ({category}) → {round(co2,3)} {unit} CO2e")
                     total_emissions += co2
                 else:
-                    results.append(f"⚠️ {label} ({category}) → Emission lookup failed")
+                    results.append(f" {label} ({category}) → Emission lookup failed")
             else:
-                results.append(f"⚠️ No activity ID found for '{matched_name}'")
+                results.append(f" No activity ID found for '{matched_name}'")
         else:
-            results.append(f"❌ No match found for '{label}'")
+            results.append(f" No match found for '{label}'")
 
     summary = f"\n🧾 Total Emissions: {round(total_emissions,3)} kg CO2e"
     return "\n".join(results + [summary])
