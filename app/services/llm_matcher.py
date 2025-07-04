@@ -3,7 +3,6 @@ from langchain_core.runnables import RunnableSequence
 from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 import os
-import re
 from app.services.climatiq_api import activity_lookup
 import ast
 

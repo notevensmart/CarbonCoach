@@ -8,7 +8,6 @@ numpy
 pandas
 langchain
 dotenv
-re
 rapidfuzz
 uvicorn
 requests
