@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import requests
 from dotenv import load_dotenv
-def load_activity_lookup(data_dir="data"):
+def load_activity_lookup(data_dir="/tmp/data"):
     """
     Scans all activity_ids_*.csv files in the given directory,
     and builds a dict mapping `name` → `activity_id`.
