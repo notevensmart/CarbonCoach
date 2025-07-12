@@ -11,3 +11,4 @@ dotenv
 rapidfuzz
 uvicorn
 requests
+fastapi

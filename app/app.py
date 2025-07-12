@@ -1,11 +1,10 @@
-import gradio as gr
 import uvicorn
 from app.chains.classify_chain import classify_activities
 from app.services.llm_matcher import batch_match_activities
 from app.services.climatiq_api import get_emissions , activity_lookup
 from app.services.param_utils import get_default_params
 
-def run_pipeline(journal_entry):
+def pipeline(journal_entry):
     activities = classify_activities(journal_entry)
     results = []
     total_emissions = 0.0
@@ -37,6 +36,5 @@ def run_pipeline(journal_entry):
     return "\n".join(results + [summary])
 
 
-if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+
 
