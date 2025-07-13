@@ -10,3 +10,4 @@ requests
 fastapi
 google-cloud-storage
 pandas
+contextlib
