@@ -2,12 +2,13 @@ import os
 import pandas as pd
 import requests
 from dotenv import load_dotenv
-def load_activity_lookup(data_dir="/tmp/data"):
+def load_activity_lookup():
     """
     Scans all activity_ids_*.csv files in the given directory,
     and builds a dict mapping `name` → `activity_id`.
     """
     activity_lookup = {}
+    data_dir = "/tmp/data"
 
     for filename in os.listdir(data_dir):
         if filename.startswith("Climatiq") and filename.endswith(".csv"):
@@ -22,7 +23,7 @@ def load_activity_lookup(data_dir="/tmp/data"):
     return activity_lookup
 
 # Load once globally when the module is imported
-activity_lookup = load_activity_lookup()
+activity_lookup = None
 
 
 
