@@ -1,9 +1,12 @@
 sentencepiece
 requests
 langchain
+langchain_openai
+langchain_core
 dotenv
 rapidfuzz
 uvicorn
 requests
 fastapi
 google-cloud-storage
+pandas
