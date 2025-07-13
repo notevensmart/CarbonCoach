@@ -25,6 +25,7 @@ async def lifespan(app: FastAPI):
     # Load activity lookup synchronously
     from app.services import climatiq_api
     climatiq_api.activity_lookup = climatiq_api.load_activity_lookup()
+    yield
 app = FastAPI(lifespan=lifespan)
 
 @app.post("/process")
