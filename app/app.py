@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.main import pipeline
+from app.pipeline import pipeline
 from utils.gcs_utils import download_files
 from contextlib import asynccontextmanager
 import os
