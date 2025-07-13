@@ -1,7 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,Form,Request
 from app.pipeline import pipeline
 from app.utils.gcs_utils import download_files
 from contextlib import asynccontextmanager
+from fastapi.responses import HTMLResponse
 import os
 app = FastAPI()
 
@@ -28,7 +29,37 @@ async def lifespan(app: FastAPI):
     yield
 app = FastAPI(lifespan=lifespan)
 
-@app.post("/process")
-def process_entry(journal_entry: str):
-    result = pipeline(journal_entry)
-    return {"result": result}
+
+@app.get("/", response_class=HTMLResponse)
+def read_form():
+    return """
+    <html>
+        <head>
+            <title>CarbonCoach Journal</title>
+        </head>
+        <body>
+            <h2>Enter Your Daily Journal</h2>
+            <p>Describe your activities (e.g., commuting, shopping, meals). We will calculate your estimated CO2 emissions.</p>
+            <form action="/process" method="post">
+                <textarea name="journal_entry" rows="8" cols="80" placeholder="Today I drove 10 miles and ate beef..."></textarea><br>
+                <input type="submit" value="Calculate Emissions">
+            </form>
+        </body>
+    </html>
+    """
+
+@app.post("/process", response_class=HTMLResponse)
+def process_entry(journal_entry: str = Form(...)):
+    result = pipeline(journal_entry).replace("\n", "<br>")
+    return f"""
+    <html>
+        <head>
+            <title>CarbonCoach Results</title>
+        </head>
+        <body>
+            <h2>Estimated Emissions</h2>
+            <p>{result}</p>
+            <a href="/">Back</a>
+        </body>
+    </html>
+    """
