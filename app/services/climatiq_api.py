@@ -33,7 +33,7 @@ def get_activity_id(description: str):
     """
     return activity_lookup.get(description.strip().lower())
 
-load_dotenv("climatiq.env")
+
 
 CLIMATIQ_BASE_URL = "https://api.climatiq.io"
 CLIMATIQ_API_KEY = os.getenv("CLIMATIQ_API_KEY")
