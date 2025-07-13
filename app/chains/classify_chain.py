@@ -9,7 +9,7 @@ bool = False
 llm = ChatOpenAI(
     model="anthropic/claude-3-haiku",
     base_url="https://openrouter.ai/api/v1",
-    api_key=os.getenv("OPENROUTER_API_KEY"),
+    api_key=os.getenv("OPENAI_API_KEY"),
     temperature=0
 )  # or gpt-3.5-turbo
 
