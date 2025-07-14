@@ -23,14 +23,25 @@ def load_activity_lookup():
     return activity_lookup
 
 # Load once globally when the module is imported
-activity_lookup = None
+
 
 def set_activity_lookup(lookup):
     global _activity_lookup
     _activity_lookup = lookup
 
 def get_activity_lookup():
-    return _activity_lookup
+    """
+    Always loads or returns the lookup dict.
+    In production you can cache it.
+    """
+    data_dir = "/tmp/data"
+    lookup = {}
+    for filename in os.listdir(data_dir):
+        if filename.startswith("Climatiq") and filename.endswith(".csv"):
+            df = pd.read_csv(os.path.join(data_dir, filename))
+            for _, row in df.iterrows():
+                lookup[str(row["name"]).strip().lower()] = str(row["activity_id"]).strip()
+    return lookup
 
 
 def get_activity_id(description: str):
