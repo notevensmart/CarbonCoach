@@ -72,7 +72,8 @@ Respond ONLY with the dictionary.
 matcher_chain = match_prompt | llm
 
 def batch_match_activities(labels: list[str]):
-    candidate_names = list(get_activity_lookup.keys())
+    lookup = get_activity_lookup()
+    candidate_names = list(lookup.keys())
     choices_block = "\n".join(candidate_names)
     labels_block = "\n".join(labels)
 
