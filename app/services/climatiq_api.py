@@ -25,13 +25,19 @@ def load_activity_lookup():
 # Load once globally when the module is imported
 activity_lookup = None
 
+def set_activity_lookup(lookup):
+    global _activity_lookup
+    _activity_lookup = lookup
+
+def get_activity_lookup():
+    return _activity_lookup
 
 
 def get_activity_id(description: str):
-    """
-    Direct string match from classifier output to the lookup table.
-    """
-    return activity_lookup.get(description.strip().lower())
+    lookup = get_activity_lookup()
+    if not lookup:
+        raise RuntimeError("activity_lookup is not loaded yet.")
+    return lookup.get(description.strip().lower())
 
 
 
