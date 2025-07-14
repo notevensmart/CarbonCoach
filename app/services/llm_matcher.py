@@ -3,7 +3,7 @@ from langchain_core.runnables import RunnableSequence
 from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 import os
-from app.services.climatiq_api import activity_lookup
+from app.services.climatiq_api import get_activity_lookup
 import ast
 
 load_dotenv(dotenv_path="key.env")  # Load OpenRouter key
@@ -72,7 +72,7 @@ Respond ONLY with the dictionary.
 matcher_chain = match_prompt | llm
 
 def batch_match_activities(labels: list[str]):
-    candidate_names = list(activity_lookup.keys())
+    candidate_names = list(get_activity_lookup.keys())
     choices_block = "\n".join(candidate_names)
     labels_block = "\n".join(labels)
 
