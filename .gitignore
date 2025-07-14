@@ -10,7 +10,7 @@ venv/
 # Environment variables
 .env
 *.env
-.ps1
+*.ps1
 # OS-specific files
 .DS_Store
 Thumbs.db
