@@ -1,29 +1,17 @@
-import requests
+from app.services.climatiq_api import extract_unit_info , search_activity_ids
+import asyncio
+activity_id = "education-type_other_educational_services_provided_by_governments"
+async def main():
+    unit_type,unit = await extract_unit_info(activity_id)
+    print(f"✅ Unit type: {unit_type}")
+async def test():
+    results = await search_activity_ids("treadmill machine")
+    for r in results:
+        print(f"{r['name']} → {r['activity_id']} | {r['unit_type']}")
 
-API_KEY = "SCCDV0RCQD1AV7RN7SA3P8RDAR"  
-url = "https://api.climatiq.io/estimate"
+asyncio.run(test())
 
-headers = {
-    "Authorization": f"Bearer {API_KEY}",
-    "Content-Type": "application/json"
-}
-payload = {
-    "emission_factor": {
-        "activity_id": "passenger_vehicle-vehicle_type_bus-fuel_source_na-engine_size_na-vehicle_age_na-vehicle_weight_na",
-        "data_version": "^21",
-    },
-    "parameters": {
-        "distance": 17,
-        "distance_unit": "km"
-    }
-}
+#asyncio.run(main())
 
-response = requests.post(url, headers=headers, json=payload)
-
-if response.status_code == 200:
-    data = response.json()
-    print("✅ Success!")
-    print("CO₂ emissions:", data["co2e"], data["co2e_unit"])
-else:
-    print("❌ Failed:", response.status_code)
-    print(response.text)
+#u,v =extract_unit_info2("electricity-supply_grid-source_residual_mix")
+#x,y = extract_unit_info2("education-type_other_educational_services_provided_by_governments")

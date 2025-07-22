@@ -11,3 +11,8 @@ fastapi
 google-cloud-storage
 pandas
 python-multipart
+langchain_community
+chromadb
+bs4
+json
+httpx

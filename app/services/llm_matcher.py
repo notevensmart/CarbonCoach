@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import os
 from app.services.climatiq_api import get_activity_lookup
 import ast
+from app.utils import async_profile_step
 
 load_dotenv(dotenv_path="key.env")  # Load OpenRouter key
 
@@ -70,10 +71,9 @@ Respond ONLY with the dictionary.
 
 # Build the LangChain Runnable
 matcher_chain = match_prompt | llm
-
-def batch_match_activities(labels: list[str]):
-    lookup = get_activity_lookup()
-    candidate_names = list(lookup.keys())
+@async_profile_step("Match labels to acivity_id's")
+async def batch_match_activities(labels: list[str]):
+    candidate_names = list(activity_lookup.keys())
     choices_block = "\n".join(candidate_names)
     labels_block = "\n".join(labels)
 
