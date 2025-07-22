@@ -11,3 +11,9 @@ dotenv
 rapidfuzz
 uvicorn
 requests
+langchain_community
+chromadb
+bs4
+json
+httpx
+playwright

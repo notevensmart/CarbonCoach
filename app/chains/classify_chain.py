@@ -1,6 +1,7 @@
 from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain_core.runnables import RunnableSequence
+from app.utils import async_profile_step
 from dotenv import load_dotenv
 import os
 bool = False
@@ -45,7 +46,8 @@ Example:
 classify_chain = prompt | llm
 
 # Step 4: Wrapper function
-def classify_activities(journal_entry: str) -> list[tuple[str, str]]:
+@async_profile_step("Classifying acivities to high level labels")
+async def classify_activities(journal_entry: str) -> list[tuple[str, str]]:
     response = classify_chain.invoke({"journal_entry": journal_entry})
     ##print("LLM response:", repr(response.content))
     try:

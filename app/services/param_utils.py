@@ -1,3 +1,4 @@
+from typing import List
 category_param_templates = {
     "transport": {
         "required": ["distance", "distance_unit"],
@@ -17,6 +18,24 @@ category_param_templates = {
         "default": {"number" : 1}
     }
 }
+def generate_params(unit_type: str) -> dict | None:
+        match unit_type.lower():
+            case "distance":
+                return {"distance": 10, "distance_unit": "km"}
+            case "energy":
+                return {"energy": 5, "energy_unit": "kWh"}
+            case "weight":
+                return {"weight": 0.3, "weight_unit": "kg"}
+            case "money":
+                return {"money": 15, "money_unit": "usd"}
+            case "area":
+                return {"area": 2, "area_unit": "m2"}
+            case "number":
+                return {"number": 1}
+            case "volume":
+                return {"volume": 2, "volume_unit": "l"}
+        return None  # no match
+
 def get_default_params(category: str) -> dict:
     template = category_param_templates.get(category)
     if template:

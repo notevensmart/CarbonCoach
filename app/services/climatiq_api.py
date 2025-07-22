@@ -1,7 +1,14 @@
 import os
+import httpx
 import pandas as pd
 import requests
+import traceback
+import json
+from playwright.async_api import async_playwright
 from dotenv import load_dotenv
+from app.utils import async_profile_step
+from bs4 import BeautifulSoup
+import aiohttp
 def load_activity_lookup(data_dir="data"):
     """
     Scans all activity_ids_*.csv files in the given directory,
@@ -26,6 +33,7 @@ activity_lookup = load_activity_lookup()
 
 
 
+
 def get_activity_id(description: str):
     """
     Direct string match from classifier output to the lookup table.
@@ -36,7 +44,9 @@ load_dotenv("climatiq.env")
 
 CLIMATIQ_BASE_URL = "https://api.climatiq.io"
 CLIMATIQ_API_KEY = os.getenv("CLIMATIQ_API_KEY")
-def get_emissions(activity_id: str, parameters: dict):
+
+@async_profile_step("API request")
+async def get_emissions(activity_id: str, parameters: dict):
     headers = {
         "Authorization": f"Bearer {CLIMATIQ_API_KEY}",
         "Content-Type": "application/json"
@@ -61,3 +71,67 @@ def get_emissions(activity_id: str, parameters: dict):
     else:
         print("❌ Climatiq API error:", response.status_code, response.text)
         return None, None
+@async_profile_step("API request for units")
+async def extract_unit_info(activity_id: str) -> tuple[str, str]:
+    url = f"https://www.climatiq.io/data/activity/{activity_id}"
+    headers = {"User-Agent": "Mozilla/5.0"}
+
+    try:
+        res = requests.get(url, headers=headers, timeout=10)
+        res.raise_for_status()
+        soup = BeautifulSoup(res.text, "html.parser")
+
+        script_tag = soup.find("script", id="__NEXT_DATA__")
+        if not script_tag:
+            print("[ERROR] <script id='__NEXT_DATA__'> not found.")
+            return "unknown", "unknown"
+
+        data = json.loads(script_tag.string)
+        page_props = data.get("props", {}).get("pageProps", {})
+
+        # Try 'factor' first
+        factor_data = page_props.get("factor") or (
+            page_props.get("factors", [{}])[0] if page_props.get("factors") else {}
+        )
+
+        unit_type = factor_data.get("unit_type", "unknown").lower()
+        unit = factor_data.get("unit", "unknown").lower()
+
+        print(f"[DEBUG] unit_type: {unit_type}, unit: {unit}")
+        return unit_type, unit
+
+    except Exception as e:
+        print(f"[Scrape Error] {e}")
+        return "unknown", "unknown"
+@async_profile_step("API request for acivty id's")
+async def search_activity_ids(query: str, limit: int = 3):
+    payload = {
+        "query": query,
+        "results_per_page": limit,
+        "data_version": "^21"
+    }
+    HEADERS = {
+    "Authorization": f"Bearer {CLIMATIQ_API_KEY}",
+    "Content-Type": "application/json"
+    }
+    url = CLIMATIQ_BASE_URL + "/data/v1/search"
+    try:
+        response = requests.get(url,headers=HEADERS, params=payload, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+
+        results = []
+        for hit in data.get("results", []):
+            results.append({
+                "activity_id": hit.get("activity_id"),
+                "name": hit.get("name"),
+                "category": hit.get("category"),
+                "unit_type": hit.get("unit_type"),
+                "unit": hit.get("unit")
+            })
+
+        return results
+
+    except Exception as e:
+        print(f"[ERROR] Climatiq Search failed for query='{query}': {e}")
+        return []
