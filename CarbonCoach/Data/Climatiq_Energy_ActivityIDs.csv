@@ -1,0 +1,1130 @@
+activity_id,name,category,sector,source,unit_type
+cooling-type_district_chilled_water-tech_absorption_chiller-fuel_natural_gas,District chilled water - absorption chiller using natural gas,Cooling,Energy,EPA,Energy
+cooling-type_district_chilled_water-tech_electric_driven_chiller-fuel_electricity,District chilled water - electric driven chiller,Cooling,Energy,EPA,Energy
+cooling-type_district_chilled_water-tech_engine_driven_chiller-fuel_natural_gas,District chilled water - engine-driven chiller natural gas,Cooling,Energy,EPA,Energy
+electricity-supply_direct_line-source_solar_pv_monocrystalline,Electricity supplied from solar PV monocrystalline,Electricity,Energy,GEMIS,Energy
+electricity-supply_direct_line-source_solar_pv_polycrystalline,Electricity supplied from solar PV polycrystalline,Electricity,Energy,GEMIS,Energy
+electricity-supply_grid-source_biogas_corn_chp,Electricity supplied from biogas (corn) CHP,Electricity,Energy,GEMIS,Energy
+electricity-supply_grid-source_biogas_slurry_chp,Electricity supplied from biogas (slurry) CHP,Electricity,Energy,GEMIS,Energy
+electricity-supply_grid-source_biomass,Electricity generated from biomass,Electricity,Energy,CO2 Emissiefactoren,Energy
+electricity-supply_grid-source_biomass_waste,Electricity generated from biomass and waste,Electricity,Energy,EXIOBASE,Money
+electricity-supply_grid-source_coal,Electricity generated from coal,Electricity,Energy,EXIOBASE,Money
+electricity-supply_grid-source_coal,Electricity supplied from coal fired plant,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_gas,Electricity generated from gas,Electricity,Energy,EXIOBASE,Money
+electricity-supply_grid-source_gas,Electricity supplied from gas fired plant,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_geothermal,Electricity generated from geothermal,Electricity,Energy,EXIOBASE,Money
+electricity-supply_grid-source_geothermal,Electricity supplied from geothermal,Electricity,Energy,GEMIS,Energy
+electricity-supply_grid-source_geothermal_energy,Electricity supplied from geothermal energy,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_hydro,Electricity generated from hydro,Electricity,Energy,"EXIOBASE,CO2 Emissiefactoren","Money,Energy"
+electricity-supply_grid-source_hydro_10_mw,Electricity supplied from hydro power plant 10 MW,Electricity,Energy,GEMIS,Energy
+electricity-supply_grid-source_imported_coal,Electricity supplied from grid coal-fired power plant (imported coal),Electricity,Energy,GEMIS,Energy
+electricity-supply_grid-source_landfill_gas,Electricity supplied from landfill gas,Electricity,Energy,GEMIS,Energy
+electricity-supply_grid-source_lignite,Electricity supplied from lignite-fired power plant,Electricity,Energy,GEMIS,Energy
+electricity-supply_grid-source_na,Electricity,Electricity,Energy,"OpenIO-Canada,Market Economics Limited","Money,Money"
+electricity-supply_grid-source_natural_gas_ccgt,Electricity supplied from natural gas CCGT power plant,Electricity,Energy,GEMIS,Energy
+electricity-supply_grid-source_natural_gas_chp_500_kw,Electricity supplied from natural gas CHP 500 kW,Electricity,Energy,GEMIS,Energy
+electricity-supply_grid-source_natural_gas_chp_50_kw,Electricity supplied from natural gas CHP 50 kW,Electricity,Energy,GEMIS,Energy
+electricity-supply_grid-source_natural_gas_combined_cycle_100_mw,Electricity supplied from natural gas combined cycle power plant 100 MW,Electricity,Energy,GEMIS,Energy
+electricity-supply_grid-source_nuclear,Electricity generated from nuclear,Electricity,Energy,EXIOBASE,Money
+electricity-supply_grid-source_nuclear,Electricity supplied from nuclear plant,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_nuclear,Electricity supplied from nuclear power plant,Electricity,Energy,GEMIS,Energy
+electricity-supply_grid-source_nuclear_power_plant-use_na,Electricity supplied from nuclear power plant,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_offshore_wind_turbine,Electricity supplied from offshore wind turbine,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_oil_steam,Electricity supplied from oil steam plant,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_onshore_wind_turbine,Electricity supplied from onshore wind turbine,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_petroleum_other_oil_derivatives,Electricity generated from petroleum and other oil derivatives,Electricity,Energy,EXIOBASE,Money
+electricity-supply_grid-source_photovoltaic,Electricity generated from solar photovoltaic,Electricity,Energy,"EXIOBASE,CO2 Emissiefactoren","Money,Energy"
+electricity-supply_grid-source_photovoltaic_china-use_na,Electricity supplied from photovoltaic,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_photovoltaic_europe-use_na,Electricity supplied from photovoltaic,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_photovoltaic_france-use_na,Electricity supplied from photovoltaic,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_photovoltaic_made_in_china,Electricity supplied from photovoltaic (made in China),Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_photovoltaic_made_in_europe,Electricity supplied from photovoltaic (made in Europe),Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_photovoltaic_made_in_france,Electricity supplied from photovoltaic (made in France),Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_production_mix,Electricity supplied from grid - production mix,Electricity,Energy,"AIB,NVE","Energy,Energy"
+electricity-supply_grid-source_rapeseed_oil_chp,Electricity supplied from rapeseed oil-fired CHP,Electricity,Energy,GEMIS,Energy
+electricity-supply_grid-source_residual_mix,Electricity supplied from grid - residual mix,Electricity,Energy,"AIB,GHG Protocol,DISER,Electricity Info,Green-e","Energy,Energy,Energy,Energy,Energy"
+electricity-supply_grid-source_residual_mix-supplier_algonquin_power_and_utilities_corp_liberty_utilities,Electricity supplied from grid - residual mix - supplier Algonquin Power & Utilities Corp. Liberty Utilities,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_allete_minnesota_power,Electricity supplied from grid - residual mix - supplier ALLETE Minnesota Power,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_alliant_energy_corp_interstate_power_and_light_ipl,Electricity supplied from grid - residual mix - supplier Alliant Energy Corp. - Interstate Power & Light (IPL),Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_alliant_energy_corp_wisconsin_power_and_light_wpl,Electricity supplied from grid - residual mix - supplier Alliant Energy Corp. - Wisconsin Power & Light (WPL),Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_alliant_energy_corporation_interstate_power_and_light_company,Electricity supplied from grid - residual mix - supplier Alliant Energy Corporation Interstate Power & Light Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_alliant_energy_corporation_wisconsin_power_and_light_company,Electricity supplied from grid - residual mix - supplier Alliant Energy Corporation Wisconsin Power & Light Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_american_electric_power_aep_ohio,Electricity supplied from grid - residual mix - supplier American Electric Power AEP Ohio,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_american_electric_power_appalachian_power_company,Electricity supplied from grid - residual mix - supplier American Electric Power Appalachian Power Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_american_electric_power_appalachian_power_company_kingsport_power,Electricity supplied from grid - residual mix - supplier American Electric Power Appalachian Power Company - Kingsport Power,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_american_electric_power_appalachian_power_company_wheeling_power,Electricity supplied from grid - residual mix - supplier American Electric Power Appalachian Power Company - Wheeling Power,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_american_electric_power_indiana_michigan_power_company,Electricity supplied from grid - residual mix - supplier American Electric Power Indiana Michigan Power Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_american_electric_power_kentucky_power_company,Electricity supplied from grid - residual mix - supplier American Electric Power Kentucky Power Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_american_electric_power_public_service_company_of_oklahoma,Electricity supplied from grid - residual mix - supplier American Electric Power Public Service Company of Oklahoma,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_american_electric_power_southwestern_electric_power_company,Electricity supplied from grid - residual mix - supplier American Electric Power Southwestern Electric power Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_avista_corporation_avista_utilities,Electricity supplied from grid - residual mix - supplier Avista Corporation Avista Utilities,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_black_hills_energy,Electricity supplied from grid - residual mix - supplier Black Hills Energy,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_cms_energy_consumers_energy,Electricity supplied from grid - residual mix - supplier CMS Energy Consumers Energy,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_dominion_energy,Electricity supplied from grid - residual mix - supplier Dominion Energy,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_dominion_energy_south_carolina_electric_and_gas,Electricity supplied from grid - residual mix - supplier Dominion Energy South Carolina Electric & Gas,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_dominion_energy_virginia,Electricity supplied from grid - residual mix - supplier Dominion Energy Virginia,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_dte_energy,Electricity supplied from grid - residual mix - supplier DTE Energy,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_duke_energy_carolinas,Electricity supplied from grid - residual mix - supplier Duke Energy Carolinas,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_duke_energy_corporation,Electricity supplied from grid - residual mix - supplier Duke Energy Corporation,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_duke_energy_florida,Electricity supplied from grid - residual mix - supplier Duke Energy Florida,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_duke_energy_indiana,Electricity supplied from grid - residual mix - supplier Duke Energy Indiana,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_duke_energy_kentucky,Electricity supplied from grid - residual mix - supplier Duke Energy Kentucky,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_duke_energy_ohio,Electricity supplied from grid - residual mix - supplier Duke Energy Ohio,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_duke_energy_progress,Electricity supplied from grid - residual mix - supplier Duke Energy Progress,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_edison_international_southern_california_edison,Electricity supplied from grid - residual mix - supplier Edison International Southern California Edison,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_el_paso_electric_company,Electricity supplied from grid - residual mix - supplier El Paso Electric Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_emera_tampa_electric,Electricity supplied from grid - residual mix - supplier Emera Tampa Electric,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_entergy_corporation_entergy_arkansas,Electricity supplied from grid - residual mix - supplier Entergy Corporation Entergy Arkansas,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_entergy_corporation_entergy_louisiana,Electricity supplied from grid - residual mix - supplier Entergy Corporation Entergy Louisiana,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_entergy_corporation_entergy_mississippi,Electricity supplied from grid - residual mix - supplier Entergy Corporation Entergy Mississippi,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_entergy_corporation_entergy_new_orleans,Electricity supplied from grid - residual mix - supplier Entergy Corporation Entergy New Orleans,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_entergy_corporation_entergy_texas,Electricity supplied from grid - residual mix - supplier Entergy Corporation Entergy Texas,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_exelon_atlantic_city_electric,Electricity supplied from grid - residual mix - supplier Exelon Atlantic City Electric,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_exelon_baltimore_gas_and_electric,Electricity supplied from grid - residual mix - supplier Exelon Baltimore Gas & Electric,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_exelon_comed,Electricity supplied from grid - residual mix - supplier Exelon ComEd,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_exelon_delmarva_power,Electricity supplied from grid - residual mix - supplier Exelon Delmarva Power,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_exelon_peco,Electricity supplied from grid - residual mix - supplier Exelon PECO,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_exelon_pepco,Electricity supplied from grid - residual mix - supplier Exelon PEPCO,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_first_energy_corp_jersey_central_power_and_light,Electricity supplied from grid - residual mix - supplier First Energy Corp. Jersey Central Power & Light,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_first_energy_corp_meted,Electricity supplied from grid - residual mix - supplier First Energy Corp. Met-Ed,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_first_energy_corp_mon_power,Electricity supplied from grid - residual mix - supplier First Energy Corp. Mon Power,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_first_energy_corp_ohio_edison,Electricity supplied from grid - residual mix - supplier First Energy Corp. Ohio Edison,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_first_energy_corp_penelec,Electricity supplied from grid - residual mix - supplier First Energy Corp. Penelec,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_first_energy_corp_penn_power,Electricity supplied from grid - residual mix - supplier First Energy Corp. Penn Power,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_first_energy_corp_potomac_edison,Electricity supplied from grid - residual mix - supplier First Energy Corp. Potomac Edison,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_first_energy_corp_the_illuminating_company,Electricity supplied from grid - residual mix - supplier First Energy Corp. The Illuminating Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_first_energy_corp_toledo_edison,Electricity supplied from grid - residual mix - supplier First Energy Corp. Toledo Edison,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_first_energy_corp_west_penn_power,Electricity supplied from grid - residual mix - supplier First Energy Corp. West Penn Power,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_hawaiian_electric_industries_hawaiian_electric_company,Electricity supplied from grid - residual mix - supplier Hawaiian Electric Industries Hawaiian Electric Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_mge_energy_madison_gas_and_electric_company,Electricity supplied from grid - residual mix - supplier MGE Energy Madison Gas and Electric Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_next_era_energy_florida_power_and_light,Electricity supplied from grid - residual mix - supplier Next Era Energy Florida Power & Light,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_next_era_energy_gulf_power_company,Electricity supplied from grid - residual mix - supplier Next Era Energy Gulf Power Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_nisource_nipsco,Electricity supplied from grid - residual mix - supplier NiSource NIPSCO,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_northwestern_energy,Electricity supplied from grid - residual mix - supplier NorthWestern Energy,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_otter_tail_corporation_otter_tail_power_company,Electricity supplied from grid - residual mix - supplier Otter Tail Corporation Otter Tail Power Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_pgande_corporation_pacific_gas_and_electric_company,Electricity supplied from grid - residual mix - supplier PG&E Corporation Pacific Gas & Electric Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_pinnacle_west_capital_corporation_arizona_public_service_company,Electricity supplied from grid - residual mix - supplier Pinnacle West Capital Corporation Arizona Public Service Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_pnm_resources_pnm,Electricity supplied from grid - residual mix - supplier PNM Resources PNM,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_ppl_corporation_lgande_and_ku_energy,Electricity supplied from grid - residual mix - supplier PPL Corporation LG&E & KU Energy,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_ppl_corporation_ppl_electric_utilities,Electricity supplied from grid - residual mix - supplier PPL Corporation PPL Electric Utilities,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_ppl_corporation_rhode_island_energy,Electricity supplied from grid - residual mix - supplier PPL Corporation Rhode Island Energy,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_pseg_long_island,Electricity supplied from grid - residual mix - supplier PSEG Long Island,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_puget_sound_energy,Electricity supplied from grid - residual mix - supplier Puget Sound Energy,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_southern_company_alabama_power,Electricity supplied from grid - residual mix - supplier Southern Company Alabama Power,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_southern_company_georgia_power,Electricity supplied from grid - residual mix - supplier Southern Company Georgia Power,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_southern_company_mississippi_power,Electricity supplied from grid - residual mix - supplier Southern Company Mississippi Power,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_tennessee_valley_authority,Electricity supplied from grid - residual mix - supplier Tennessee Valley Authority,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_xcel_energy_northern_states_power_company,Electricity supplied from grid - residual mix - supplier Xcel Energy Northern States Power Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_xcel_energy_public_service_company_of_colorado,Electricity supplied from grid - residual mix - supplier Xcel Energy Public Service Company of Colorado,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_residual_mix-supplier_xcel_energy_southwestern_public_service_company,Electricity supplied from grid - residual mix - supplier Xcel Energy Southwestern Public Service Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_sewage_gas_chp,Electricity supplied from sewage gas-fired CHP,Electricity,Energy,GEMIS,Energy
+electricity-supply_grid-source_solar_thermal,Electricity generated from solar thermal,Electricity,Energy,EXIOBASE,Money
+electricity-supply_grid-source_supplier_mix,Electricity supplied from grid,Electricity,Energy,"DEWA,BEIS,Covenant of Mayors,CT,EEA,DISER,GHG Protocol,ADEME,Government of Canada,GEMIS,UBA,CO2 Emissiefactoren,MfE,SEFR,EPPO,EPA","Energy,Energy,Energy,Energy,Energy,Energy,Energy,Energy,Energy,Energy,Energy,Energy,Energy,Energy,Energy,Energy"
+electricity-supply_grid-source_supplier_mix,Electricity supplied from grid - UK average,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix,Electricity supplied from grid plus T&D losses,Electricity,Energy,"GEMIS,HKEI,NVE","Energy,Energy,Energy"
+electricity-supply_grid-source_supplier_mix,Electricity supplied from power plant mix,Electricity,Energy,GEMIS,Energy
+electricity-supply_grid-source_supplier_mix-method_seasonal-use_air_conditioning,Electricity - Use: air conditioning - seasonal method,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_supplier_mix-method_seasonal-use_construction_research_army,Electricity - Use: others (construction / research / army) - seasonal method,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_supplier_mix-method_seasonal-use_heating,Electricity - Use: heating - seasonal method,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_supplier_mix-method_seasonal-use_industrial_and_public,Electricity - Use: industrial and public lighting - seasonal method,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_supplier_mix-method_seasonal-use_industry,Electricity - Use: industry - seasonal method,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_supplier_mix-method_seasonal-use_refrigeration,Electricity - Use: cold - seasonal method,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_supplier_mix-method_seasonal-use_residential_cooking,Electricity - Use: residential cooking - seasonal method,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_supplier_mix-method_seasonal-use_residential_lighting,Electricity - Use: residential lighting - seasonal method,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_supplier_mix-method_seasonal-use_sanitary_hot_water,Electricity - Use: sanitary hot water - seasonal method,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_supplier_mix-method_seasonal-use_transport,Electricity - Use: transports - seasonal method,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_supplier_mix-supplier_algonquin_power_and_utilities_corp_liberty_utilities,Electricity supplied from grid - supplier Algonquin Power & Utilities Corp. Liberty Utilities,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_allete_minnesota_power,Electricity supplied from grid - supplier ALLETE Minnesota Power,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_ameren_corporation_ameren_illinois,Electricity supplied from grid - supplier Ameren Corporation Ameren Illinois,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_ameren_corporation_ameren_missouri,Electricity supplied from grid - supplier Ameren Corporation Ameren Missouri,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_american_electric_power_aep_ohio,Electricity supplied from grid - supplier American Electric Power AEP Ohio,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_american_electric_power_appalachian_power_company,Electricity supplied from grid - supplier American Electric Power Appalachian Power Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_american_electric_power_appalachian_power_company_kingsport_power,Electricity supplied from grid - supplier American Electric Power Appalachian Power Company - Kingsport Power,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_american_electric_power_appalachian_power_company_wheeling_power,Electricity supplied from grid - supplier American Electric Power Appalachian Power Company - Wheeling Power,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_american_electric_power_indiana_michigan_power_company,Electricity supplied from grid - supplier American Electric Power Indiana Michigan Power Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_american_electric_power_kentucky_power_company,Electricity supplied from grid - supplier American Electric Power Kentucky Power Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_american_electric_power_public_service_company_of_oklahoma,Electricity supplied from grid - supplier American Electric Power Public Service Company of Oklahoma,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_american_electric_power_southwestern_electric_power_company,Electricity supplied from grid - supplier American Electric Power Southwestern Electric power Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_avista_corporation_avista_utilities,Electricity supplied from grid - supplier Avista Corporation Avista Utilities,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_black_hills_energy,Electricity supplied from grid - supplier Black Hills Energy,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_boost,Electricity supplied from grid - supplier Boost,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_british_gas,Electricity supplied from grid - supplier British Gas,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_bulb,Electricity supplied from grid - supplier Bulb,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_clp_power_hong_kong_limited,Electricity supplied from grid - supplier CLP Power Hong Kong Limited,Electricity,Energy,CLP Group,Energy
+electricity-supply_grid-source_supplier_mix-supplier_cms_energy_consumers_energy,Electricity supplied from grid - supplier CMS Energy Consumers Energy,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_dominion_energy,Electricity supplied from grid - supplier Dominion Energy,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_dominion_energy_south_carolina_electric_and_gas,Electricity supplied from grid - supplier Dominion Energy South Carolina Electric & Gas,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_dominion_energy_virginia,Electricity supplied from grid - supplier Dominion Energy Virginia,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_dte_energy,Electricity supplied from grid - supplier DTE Energy,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_duke_energy_carolinas,Electricity supplied from grid - supplier Duke Energy Carolinas,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_duke_energy_corporation,Electricity supplied from grid - supplier Duke Energy Corporation,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_duke_energy_florida,Electricity supplied from grid - supplier Duke Energy Florida,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_duke_energy_indiana,Electricity supplied from grid - supplier Duke Energy Indiana,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_duke_energy_kentucky,Electricity supplied from grid - supplier Duke Energy Kentucky,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_duke_energy_ohio,Electricity supplied from grid - supplier Duke Energy Ohio,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_duke_energy_progress,Electricity supplied from grid - supplier Duke Energy Progress,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_duquesne_light_company,Electricity supplied from grid - supplier Duquesne Light Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_e,Electricity supplied from grid - supplier E,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_e.on,Electricity supplied from grid - supplier e.on,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_e.on_next,Electricity supplied from grid - supplier e.on next,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_ecotricity,Electricity supplied from grid - supplier Ecotricity,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_edf_energy,Electricity supplied from grid - supplier EDF Energy,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_edison_international_southern_california_edison,Electricity supplied from grid - supplier Edison International Southern California Edison,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_el_paso_electric_company,Electricity supplied from grid - supplier El Paso Electric Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_emera_tampa_electric,Electricity supplied from grid - supplier Emera Tampa Electric,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_entergy_corporation_entergy_arkansas,Electricity supplied from grid - supplier Entergy Corporation Entergy Arkansas,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_entergy_corporation_entergy_louisiana,Electricity supplied from grid - supplier Entergy Corporation Entergy Louisiana,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_entergy_corporation_entergy_mississippi,Electricity supplied from grid - supplier Entergy Corporation Entergy Mississippi,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_entergy_corporation_entergy_new_orleans,Electricity supplied from grid - supplier Entergy Corporation Entergy New Orleans,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_entergy_corporation_entergy_texas,Electricity supplied from grid - supplier Entergy Corporation Entergy Texas,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_exelon_atlantic_city_electric,Electricity supplied from grid - supplier Exelon Atlantic City Electric,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_exelon_baltimore_gas_and_electric,Electricity supplied from grid - supplier Exelon Baltimore Gas & Electric,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_exelon_comed,Electricity supplied from grid - supplier Exelon ComEd,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_exelon_delmarva_power,Electricity supplied from grid - supplier Exelon Delmarva Power,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_exelon_peco,Electricity supplied from grid - supplier Exelon PECO,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_exelon_pepco,Electricity supplied from grid - supplier Exelon PEPCO,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_first_energy_corp_jersey_central_power_and_light,Electricity supplied from grid - supplier First Energy Corp. Jersey Central Power & Light,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_first_energy_corp_meted,Electricity supplied from grid - supplier First Energy Corp. Met-Ed,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_first_energy_corp_mon_power,Electricity supplied from grid - supplier First Energy Corp. Mon Power,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_first_energy_corp_ohio_edison,Electricity supplied from grid - supplier First Energy Corp. Ohio Edison,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_first_energy_corp_penelec,Electricity supplied from grid - supplier First Energy Corp. Penelec,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_first_energy_corp_penn_power,Electricity supplied from grid - supplier First Energy Corp. Penn Power,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_first_energy_corp_potomac_edison,Electricity supplied from grid - supplier First Energy Corp. Potomac Edison,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_first_energy_corp_the_illuminating_company,Electricity supplied from grid - supplier First Energy Corp. The Illuminating Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_first_energy_corp_toledo_edison,Electricity supplied from grid - supplier First Energy Corp. Toledo Edison,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_first_energy_corp_west_penn_power,Electricity supplied from grid - supplier First Energy Corp. West Penn Power,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_fuse_energy,Electricity supplied from grid - supplier Fuse Energy,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_glide,Electricity supplied from grid - supplier Glide,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_good_energy,Electricity supplied from grid - supplier Good Energy,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_goto_energy,Electricity supplied from grid - supplier Goto Energy,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_green_energy_uk,Electricity supplied from grid - supplier Green Energy UK,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_hawaiian_electric_industries_hawaiian_electric_company,Electricity supplied from grid - supplier Hawaiian Electric Industries Hawaiian Electric Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_home_energy,Electricity supplied from grid - supplier Home Energy,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_london_energy,Electricity supplied from grid - supplier London Energy,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_london_power,Electricity supplied from grid - supplier London Power,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_m_and_s_energy,Electricity supplied from grid - supplier M&S Energy,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_mge_energy_madison_gas_and_electric_company,Electricity supplied from grid - supplier MGE Energy Madison Gas and Electric Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_neo_energy,Electricity supplied from grid - supplier Neo Energy,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_next_era_energy_florida_power_and_light,Electricity supplied from grid - supplier Next Era Energy Florida Power & Light,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_next_era_energy_gulf_power_company,Electricity supplied from grid - supplier Next Era Energy Gulf Power Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_nisource_nipsco,Electricity supplied from grid - supplier NiSource NIPSCO,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_northwestern_energy,Electricity supplied from grid - supplier NorthWestern Energy,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_octopus_energy,Electricity supplied from grid - supplier Octopus Energy,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_orbit_energy,Electricity supplied from grid - supplier Orbit Energy,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_otter_tail_corporation_otter_tail_power_company,Electricity supplied from grid - supplier Otter Tail Corporation Otter Tail Power Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_outfox_the_market,Electricity supplied from grid - supplier Outfox the Market,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_ovo_energy,Electricity supplied from grid - supplier OVO Energy,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_pgande_corporation_pacific_gas_and_electric_company,Electricity supplied from grid - supplier PG&E Corporation Pacific Gas & Electric Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_pinnacle_west_capital_corporation_arizona_public_service_company,Electricity supplied from grid - supplier Pinnacle West Capital Corporation Arizona Public Service Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_pnm_resources_pnm,Electricity supplied from grid - supplier PNM Resources PNM,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_portland_general_electric,Electricity supplied from grid - supplier Portland General Electric,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_portland_general_electric_portland_general_electric,Electricity supplied from grid - supplier Portland General Electric Portland General Electric,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_ppl_corporation_lgande_and_ku_energy,Electricity supplied from grid - supplier PPL Corporation LG&E & KU Energy,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_ppl_corporation_ppl_electric_utilities,Electricity supplied from grid - supplier PPL Corporation PPL Electric Utilities,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_ppl_corporation_rhode_island_energy,Electricity supplied from grid - supplier PPL Corporation Rhode Island Energy,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_pseg_long_island,Electricity supplied from grid - supplier PSEG Long Island,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_puget_sound_energy,Electricity supplied from grid - supplier Puget Sound Energy,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_pure_planet,Electricity supplied from grid - supplier Pure Planet,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_rebel_energy,Electricity supplied from grid - supplier Rebel Energy,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_sainsbury_energy,Electricity supplied from grid - supplier Sainsbury Energy,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_scottishpower,Electricity supplied from grid - supplier ScottishPower,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_shell_energy,Electricity supplied from grid - supplier Shell Energy,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_so_energy,Electricity supplied from grid - supplier So Energy,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_sse,Electricity supplied from grid - supplier SSE,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_tennessee_valley_authority,Electricity supplied from grid - supplier Tennessee Valley Authority,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_together_energy,Electricity supplied from grid - supplier Together Energy,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_tomato_energy,Electricity supplied from grid - supplier Tomato Energy,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_tulo_energy,Electricity supplied from grid - supplier Tulo Energy,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_utilita,Electricity supplied from grid - supplier Utilita,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_utility_warehouse,Electricity supplied from grid - supplier Utility Warehouse,Electricity,Energy,Electricity Info,Energy
+electricity-supply_grid-source_supplier_mix-supplier_xcel_energy_northern_states_power_company,Electricity supplied from grid - supplier Xcel Energy Northern States Power Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_xcel_energy_public_service_company_of_colorado,Electricity supplied from grid - supplier Xcel Energy Public Service Company of Colorado,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-supplier_xcel_energy_southwestern_public_service_company,Electricity supplied from grid - supplier Xcel Energy Southwestern Public Service Company,Electricity,Energy,EEI,Energy
+electricity-supply_grid-source_supplier_mix-use_air_conditioning,Electricity - Use: air conditioning,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_supplier_mix-use_construction_research_army,Electricity - Use: others (construction / research / army),Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_supplier_mix-use_heating,Electricity - Use: heating,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_supplier_mix-use_industrial_and_public,Electricity - Use: industrial and public lighting,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_supplier_mix-use_industry,Electricity - Use: industry,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_supplier_mix-use_na,Electricity supplied from grid,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_supplier_mix-use_refrigeration,Electricity - Use: cold,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_supplier_mix-use_residential_cooking,Electricity - Use: residential cooking,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_supplier_mix-use_residential_lighting,Electricity - Use: residential lighting,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_supplier_mix-use_sanitary_hot_water,Electricity - Use: sanitary hot water,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_supplier_mix-use_transport,Electricity - Use: transports,Electricity,Energy,ADEME,Energy
+electricity-supply_grid-source_supplier_mix_build_margin,Electricity supplied from grid - build margin,Electricity,Energy,EMA,Energy
+electricity-supply_grid-source_supplier_mix_losses,Electricity supplied from grid - transmission and distribution,Electricity,Energy,BEIS,Money
+electricity-supply_grid-source_supplier_mix_losses,Electricity supplied from grid: T&D losses,Electricity,Energy,"BEIS,DISER,Government of Canada,UBA,MfE","Energy,Energy,Energy,Energy,Energy"
+electricity-supply_grid-source_supplier_mix_managed_assets,Electricity supplied from grid (managed assets- electricity),Electricity,Energy,BEIS,Energy
+electricity-supply_grid-source_supplier_mix_non_baseload,Electricity supplied from grid (non-baseload),Electricity,Energy,EPA,Energy
+electricity-supply_grid-source_supplier_mix_non_renewable,Electricity supplied from grid (non-renewable sources),Electricity,Energy,CO2 Emissiefactoren,Energy
+electricity-supply_grid-source_supplier_mix_operating_margin,Electricity supplied from grid - average operating margin,Electricity,Energy,EMA,Energy
+electricity-supply_grid-source_supplier_mix_unknown,Electricity supplied from grid (unknown source),Electricity,Energy,CO2 Emissiefactoren,Energy
+electricity-supply_grid-source_tide_wave_ocean,Electricity generated from tide/wave/ocean,Electricity,Energy,EXIOBASE,Money
+electricity-supply_grid-source_total_supplier_mix,Electricity supplied from grid - total supplier mix,Electricity,Energy,AIB,Energy
+electricity-supply_grid-source_unknown,Electricity (not elsewhere specified),Electricity,Energy,EXIOBASE,Money
+electricity-supply_grid-source_waste_wood,Electricity supplied from waste wood power plant,Electricity,Energy,GEMIS,Energy
+electricity-supply_grid-source_wind,Electricity generated from wind,Electricity,Energy,"EXIOBASE,CO2 Emissiefactoren","Money,Energy"
+electricity-supply_grid-source_wind_farm_onshore,Electricity supplied from wind farm onshore,Electricity,Energy,GEMIS,Energy
+electricity-supply_na-source_na,Electricity,Electricity,Energy,EPA,Money
+energy_services-type_distribution_of_gaseous_fuels_through_mains_services,Distribution of gaseous fuels through mains (services),Energy Services,Energy,EXIOBASE,Money
+energy_services-type_distribution_trade_of_electricity_services,Distribution and trade of electricity (services),Energy Services,Energy,EXIOBASE,Money
+energy_services-type_domestic_fuel_nec,Domestic fuel nec,Energy Services,Energy,Market Economics Limited,Money
+energy_services-type_flat_solar_collector,Flat solar collector,Energy Services,Energy,OEKOBAUDAT,Area
+energy_services-type_gas_distribution_of_gaseous_fuels_through_mains_steam_and_air_conditioning_supply,Gas / distribution of gaseous fuels through mains/steam and air conditioning supply,Energy Services,Energy,BEIS,Money
+energy_services-type_natural_gas_distribution,Natural gas distribution,Energy Services,Energy,OpenIO-Canada,Money
+energy_services-type_transmission_of_electricity_services,Transmission of electricity (services),Energy Services,Energy,EXIOBASE,Money
+energy_services-type_vacuum_solar_tube,Vacuum solar tube,Energy Services,Energy,OEKOBAUDAT,Area
+fuel-type_agricultural_byproducts_bio_100-fuel_use_stationary,Agricultural byproducts,Fuel,Energy,"EPA,EPA,GHG Protocol","Weight,Energy,Energy"
+fuel-type_all_other_petroleum_and_coal_products_manufacturing-fuel_use_na,All other petroleum and coal products manufacturing,Fuel,Energy,EPA,Money
+fuel-type_anthracite-fuel_use_na,Anthracite,Fuel,Energy,SEFR,Weight
+fuel-type_asphalt-fuel_use_na,Asphalt,Fuel,Energy,CAEP,Weight
+fuel-type_asphalt_and_road_oil-fuel_use_stationary,Asphalt and road oil,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_aviation_fuel-fuel_use_na,Aviation fuel,Fuel,Energy,OpenIO-Canada,Money
+fuel-type_aviation_gasoline-fuel_use_aviation,Aviation gasoline,Fuel,Energy,EXIOBASE,Money
+fuel-type_aviation_gasoline-fuel_use_mobile_aviation,Aviation fuel - avgas,Fuel,Energy,MfE,Volume
+fuel-type_aviation_gasoline-fuel_use_mobile_aviation,Aviation gas - transport,Fuel,Energy,"MfE,MfE","Volume,Energy"
+fuel-type_aviation_gasoline-fuel_use_mobile_aviation,Aviation gasoline,Fuel,Energy,EPA,Volume
+fuel-type_aviation_gasoline-fuel_use_mobile_aviation,Aviation gasoline - aircraft,Fuel,Energy,GHG Protocol,Volume
+fuel-type_aviation_gasoline-fuel_use_mobile_aviation,Aviation spirit,Fuel,Energy,"BEIS,BEIS","Weight,Volume"
+fuel-type_aviation_gasoline-fuel_use_mobile_aviation,Aviation spirit (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_aviation_gasoline-fuel_use_mobile_aviation,Gasoline - for use as fuel in an aircraft - transport,Fuel,Energy,"DISER,DISER","Volume,Energy"
+fuel-type_aviation_gasoline-fuel_use_na,Aviation gasoline,Fuel,Energy,"CAEP,SEFR","Weight,Weight"
+fuel-type_aviation_gasoline-fuel_use_na,Aviation gasoline (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_aviation_gasoline-fuel_use_stationary,Aviation gasoline,Fuel,Energy,"DISER,DISER,EPA,EPA,GHG Protocol","Energy,Volume,Volume,Energy,Energy"
+fuel-type_aviation_gasoline_net-fuel_use_mobile_aviation,Aviation spirit (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_aviation_gasoline_net-fuel_use_na,Aviation gasoline (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_aviation_kerosene-fuel_use_na,Aviation kerosene,Fuel,Energy,CAEP,Weight
+fuel-type_aviation_kerosene_renewable_bio_average-fuel_use_mobile_aviation,Renewable aviation kerosene - for transport,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_aviation_kerosene_renewable_bio_average-fuel_use_stationary,Renewable aviation kerosene,Fuel,Energy,"DISER,DISER","Volume,Energy"
+fuel-type_aviation_turbine_fuel-fuel_use_mobile_aviation,Aviation fuel,Fuel,Energy,"GLEC,GLEC","Weight,Volume"
+fuel-type_aviation_turbine_fuel-fuel_use_mobile_aviation,Aviation fuel - kerosene - transport,Fuel,Energy,"MfE,MfE","Energy,Volume"
+fuel-type_aviation_turbine_fuel-fuel_use_mobile_aviation,Aviation turbine fuel,Fuel,Energy,"BEIS,BEIS,MfE","Weight,Volume,Volume"
+fuel-type_aviation_turbine_fuel-fuel_use_mobile_aviation,Aviation turbine fuel (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_aviation_turbine_fuel-fuel_use_mobile_aviation,Kerosene-type jet fuel,Fuel,Energy,"CO2 Emissiefactoren,EPA","Volume,Volume"
+fuel-type_aviation_turbine_fuel-fuel_use_stationary,Aviation turbine fuel,Fuel,Energy,"DISER,DISER","Volume,Energy"
+fuel-type_aviation_turbine_fuel-fuel_use_stationary,Jet fuel,Fuel,Energy,GHG Protocol,Volume
+fuel-type_aviation_turbine_fuel-fuel_use_stationary,Kerosene-type jet fuel,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_aviation_turbine_fuel_net-fuel_use_mobile_aviation,Aviation turbine fuel (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_aviation_turbine_fuel_renewable_bio_average-fuel_use_mobile_aviation,Aviation turbine fuel - renewable,Fuel,Energy,"BEIS,BEIS","Weight,Volume"
+fuel-type_aviation_turbine_fuel_renewable_bio_average_net-fuel_use_mobile_aviation,Aviation turbine fuel - renewable (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_bagasse_bio_100-fuel_use_na,Bagasse,Fuel,Energy,"DISER,DISER","Weight,Energy"
+fuel-type_bagasse_bio_100-fuel_use_stationary,Bagasse,Fuel,Energy,"EPA,GHG Protocol","Energy,Energy"
+fuel-type_bamboo_bio_100-fuel_use_stationary,Bamboo,Fuel,Energy,"EPA,GHG Protocol","Energy,Energy"
+fuel-type_bio_cng_bio_100-fuel_use_mobile_hdv_hdpi,Bio-CNG HPDI - heavy duty road,Fuel,Energy,GLEC,Weight
+fuel-type_bio_cng_bio_100-fuel_use_mobile_hdv_hdpi_methane_slip_0.54pc,Bio-CNG HPDI - heavy duty road - Methane slip 0.54%,Fuel,Energy,GLEC,Weight
+fuel-type_bio_cng_bio_100-fuel_use_mobile_si,Bio-CNG SI road,Fuel,Energy,GLEC,Weight
+fuel-type_bio_cng_bio_100-fuel_use_mobile_si_methane_slip_0.32pc,Bio-CNG SI road - Methane slip 0.32%,Fuel,Energy,GLEC,Weight
+fuel-type_bio_cng_bio_100-fuel_use_na,Bio-CNG,Fuel,Energy,CO2 Emissiefactoren,Weight
+fuel-type_bio_ftj-fuel_use_electric_power,Bio-FTJ (electric power),Fuel,Energy,CAEP,Weight
+fuel-type_bio_ftj-fuel_use_heating,Bio-FTJ (heating),Fuel,Energy,CAEP,Weight
+fuel-type_bio_ftj_bio_100-fuel_use_electricity_generation,Bio-FTJ - electric power,Fuel,Energy,CAEP,Weight
+fuel-type_bio_ftj_bio_100-fuel_use_na,Bio-FTJ - heating,Fuel,Energy,CAEP,Weight
+fuel-type_bio_lng_bio_100-fuel_use_mobile_hdv_hdpi,Bio-LNG HPDI - heavy duty road,Fuel,Energy,GLEC,Weight
+fuel-type_bio_lng_bio_100-fuel_use_mobile_hdv_hdpi_methane_slip_0.54pc,Bio-LNG HPDI - heavy duty road - Methane slip 0.54%,Fuel,Energy,GLEC,Weight
+fuel-type_bio_lng_bio_100-fuel_use_mobile_hdv_si,Bio-LNG SI - heavy duty road,Fuel,Energy,GLEC,Weight
+fuel-type_bio_lng_bio_100-fuel_use_mobile_hdv_si_methane_slip_0.32pc,Bio-LNG SI - heavy duty road - Methane slip 0.32%,Fuel,Energy,GLEC,Weight
+fuel-type_bio_lng_bio_100-fuel_use_mobile_ship,Bio-LNG diesel ship,Fuel,Energy,GLEC,Weight
+fuel-type_bio_lng_bio_100-fuel_use_mobile_ship_medium_speed,Bio-LNG Otto dual fuel - medium speed ship,Fuel,Energy,GLEC,Weight
+fuel-type_bio_lng_bio_100-fuel_use_mobile_ship_medium_speed_methane_slip_3.10pc,Bio-LNG Otto dual fuel - medium speed ship - Methane slip 3.10%,Fuel,Energy,GLEC,Weight
+fuel-type_bio_lng_bio_100-fuel_use_mobile_ship_methane_slip_0.20pc,Bio-LNG diesel ship - Methane slip 0.20%,Fuel,Energy,GLEC,Weight
+fuel-type_bio_lng_bio_100-fuel_use_mobile_ship_slow_speed,Bio-LNG Otto dual fuel - slow speed ship,Fuel,Energy,GLEC,Weight
+fuel-type_bio_lng_bio_100-fuel_use_mobile_ship_slow_speed_methane_slip_1.70pc,Bio-LNG Otto dual fuel - slow speed ship - Methane slip 1.70%,Fuel,Energy,GLEC,Weight
+fuel-type_bio_lng_bio_100-fuel_use_na,Bio-LNG,Fuel,Energy,CO2 Emissiefactoren,Weight
+fuel-type_bio_pyj-fuel_use_na,Bio-PYJ,Fuel,Energy,CAEP,Weight
+fuel-type_bio_pyj_bio_100-fuel_use_na,Bio-PYJ,Fuel,Energy,CAEP,Weight
+fuel-type_biodiesel-fuel_use_na,Biodiesel,Fuel,Energy,EXIOBASE,Money
+fuel-type_biodiesel_bio_100-fuel_use_mobile,Biodiesel,Fuel,Energy,ADEME,Volume
+fuel-type_biodiesel_bio_100-fuel_use_mobile,Biodiesel - 100%,Fuel,Energy,EPA,Volume
+fuel-type_biodiesel_bio_100-fuel_use_mobile,Biodiesel - for transport,Fuel,Energy,"DISER,DISER","Volume,Energy"
+fuel-type_biodiesel_bio_100-fuel_use_mobile_ldv,Biodiesel - 100% - biodiesel light-duty vehicles,Fuel,Energy,GHG Protocol,Volume
+fuel-type_biodiesel_bio_100-fuel_use_mobile_mhdv_efficiency_5.9,Biodiesel - 100% - biodiesel medium and heavy-duty vehicles,Fuel,Energy,GHG Protocol,Volume
+fuel-type_biodiesel_bio_100-fuel_use_mobile_mhdv_efficiency_8.8,Biodiesel - 100% - biodiesel medium and heavy-duty vehicles,Fuel,Energy,GHG Protocol,Volume
+fuel-type_biodiesel_bio_100-fuel_use_mobile_passenger_cars,Biodiesel - 100% - biodiesel passenger cars,Fuel,Energy,GHG Protocol,Volume
+fuel-type_biodiesel_bio_100-fuel_use_na,100% biodiesel - B100,Fuel,Energy,"GLEC,GLEC","Weight,Volume"
+fuel-type_biodiesel_bio_100-fuel_use_na,Biodiesel,Fuel,Energy,"CBAM,MfE,MfE,SEFR","Weight,Volume,Energy,Weight"
+fuel-type_biodiesel_bio_100-fuel_use_na,Biodiesel (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_biodiesel_bio_100-fuel_use_na,Off road biodiesel,Fuel,Energy,"BEIS,BEIS","Volume,Weight"
+fuel-type_biodiesel_bio_100-fuel_use_stationary,Biodiesel,Fuel,Energy,"DISER,DISER","Volume,Energy"
+fuel-type_biodiesel_bio_100-fuel_use_stationary,Biodiesel - 100%,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_biodiesel_bio_100_net-fuel_use_mobile,Biodiesel (net CV),Fuel,Energy,ADEME,Energy
+fuel-type_biodiesel_bio_100_net-fuel_use_na,Biodiesel (net CV),Fuel,Energy,"CBAM,Netherlands Enterprise Agency","Energy,Energy"
+fuel-type_biodiesel_bio_100_net-fuel_use_na,Off road biodiesel (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_biodiesel_hvo_bio_100-fuel_use_na,Biodiesel HVO,Fuel,Energy,"ADEME,ADEME,BEIS,BEIS,CO2 Emissiefactoren","Volume,Weight,Volume,Weight,Volume"
+fuel-type_biodiesel_hvo_bio_100_net-fuel_use_na,Biodiesel HVO (net CV),Fuel,Energy,"ADEME,BEIS","Energy,Energy"
+fuel-type_biodiesel_hvo_bio_30-fuel_use_na,Biodiesel HVO 30%,Fuel,Energy,CO2 Emissiefactoren,Volume
+fuel-type_biodiesel_jatropha_curcas-fuel_use_na,Biodiesel - jatropha curcas,Fuel,Energy,CAEP,Weight
+fuel-type_biodiesel_me_bio_100-fuel_use_na,Biodiesel ME,Fuel,Energy,"BEIS,BEIS,CO2 Emissiefactoren","Weight,Volume,Volume"
+fuel-type_biodiesel_me_bio_100-fuel_use_na,Biodisel ME,Fuel,Energy,ADEME,Volume
+fuel-type_biodiesel_me_bio_100_net-fuel_use_na,Biodiesel ME (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_biodiesel_me_bio_100_net-fuel_use_na,Biodisel ME (net CV),Fuel,Energy,ADEME,Energy
+fuel-type_biodiesel_me_sunflower_bio_100-fuel_use_na,Biodiesel ME - sunflower,Fuel,Energy,ADEME,Volume
+fuel-type_biodiesel_me_sunflower_bio_100_net-fuel_use_na,Biodiesel ME - sunflower (net CV),Fuel,Energy,ADEME,Energy
+fuel-type_biodiesel_me_tallow_bio_100-fuel_use_na,Biodiesel ME from tallow,Fuel,Energy,"ADEME,BEIS,BEIS","Volume,Volume,Weight"
+fuel-type_biodiesel_me_tallow_bio_100_net-fuel_use_na,Biodiesel ME from tallow (net CV),Fuel,Energy,"ADEME,BEIS","Energy,Energy"
+fuel-type_biodiesel_me_uco_bio_100-fuel_use_na,Biodiesel EMHAU,Fuel,Energy,ADEME,Volume
+fuel-type_biodiesel_me_uco_bio_100-fuel_use_na,Biodiesel ME from used cooking oil,Fuel,Energy,"BEIS,BEIS","Volume,Weight"
+fuel-type_biodiesel_me_uco_bio_100_net-fuel_use_na,Biodiesel EMHAU (net CV),Fuel,Energy,ADEME,Energy
+fuel-type_biodiesel_me_uco_bio_100_net-fuel_use_na,Biodiesel ME from used cooking oil (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_biodiesel_palm_bio_100-fuel_use_na,Biodiesel - palm,Fuel,Energy,ADEME,Volume
+fuel-type_biodiesel_palm_bio_100_net-fuel_use_na,Biodiesel - palm (net CV),Fuel,Energy,ADEME,Energy
+fuel-type_biodiesel_rapeseed-fuel_use_na,Biodiesel - rapeseed,Fuel,Energy,CAEP,Weight
+fuel-type_biodiesel_rapeseed_bio_100-fuel_use_na,Biodiesel - rapeseed,Fuel,Energy,ADEME,Volume
+fuel-type_biodiesel_rapeseed_bio_100_net-fuel_use_na,Biodiesel - rapeseed (net CV),Fuel,Energy,ADEME,Energy
+fuel-type_biodiesel_soy-fuel_use_na,Biodiesel - soy,Fuel,Energy,CAEP,Weight
+fuel-type_biodiesel_soy_bio_100-fuel_use_na,Biodiesel ME - soybean,Fuel,Energy,ADEME,Volume
+fuel-type_biodiesel_soy_bio_100_net-fuel_use_na,Biodiesel ME - soybean (net CV),Fuel,Energy,ADEME,Energy
+fuel-type_bioethanol_bio_100-fuel_use_na,Bioethanol,Fuel,Energy,"CO2 Emissiefactoren,MfE,MfE","Volume,Volume,Energy"
+fuel-type_biofuels_other_bio_100-fuel_use_stationary,Biofuels - other,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_biogas-fuel_use_na,Biogas,Fuel,Energy,EXIOBASE,Money
+fuel-type_biogas_bio_100-fuel_use_na,Biogas,Fuel,Energy,BEIS,Weight
+fuel-type_biogas_bio_100-fuel_use_na,Biogas (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_biogas_bio_100-fuel_use_na,Green gas (average),Fuel,Energy,CO2 Emissiefactoren,Volume
+fuel-type_biogas_bio_100_net-fuel_use_na,Biogas (net CV),Fuel,Energy,"BEIS,Netherlands Enterprise Agency","Energy,Energy"
+fuel-type_biogas_co_fermentation_bio_100-fuel_use_na,Green gas (co-fermentation),Fuel,Energy,CO2 Emissiefactoren,Volume
+fuel-type_biogas_municipal_waste_bio_100-fuel_use_na,Green gas (municipal waste digestion),Fuel,Energy,CO2 Emissiefactoren,Volume
+fuel-type_biogasoline-fuel_use_na,Biogasoline,Fuel,Energy,EXIOBASE,Money
+fuel-type_biogasoline_bio_100-fuel_use_na,Biogasoline,Fuel,Energy,"CBAM,SEFR","Weight,Weight"
+fuel-type_biogasoline_bio_100-fuel_use_na,Biogasoline (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_biogasoline_bio_100_net-fuel_use_na,Biogasoline (net CV),Fuel,Energy,"CBAM,Netherlands Enterprise Agency","Energy,Energy"
+fuel-type_biokerosene_bio_100-fuel_use_na,Biokerosene,Fuel,Energy,CO2 Emissiefactoren,Volume
+fuel-type_biomass_gasification_hydrogen-fuel_use_na,Biomass gasification hydrogen,Fuel,Energy,CAEP,Weight
+fuel-type_biomass_municipal_and_industrial_materials_bio_100-fuel_use_na,Biomass - municipal and industrial materials,Fuel,Energy,"DISER,DISER","Weight,Energy"
+fuel-type_biomass_solid_other_bio_100-fuel_use_na,Primary solid biomass fuels - other,Fuel,Energy,"DISER,DISER","Weight,Energy"
+fuel-type_biomethane_bio_100-fuel_use_na,Biomethane,Fuel,Energy,"DISER,DISER,BEIS","Volume,Energy,Weight"
+fuel-type_biomethane_bio_100_net-fuel_use_na,Biomethane (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_biomethane_compressed_bio_100-fuel_use_na,Biomethane - compressed,Fuel,Energy,BEIS,Weight
+fuel-type_biomethane_compressed_bio_100_net-fuel_use_na,Biomethane - compressed (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_biomethane_liquified_bio_100-fuel_use_na,Biomethane - liquified,Fuel,Energy,BEIS,Weight
+fuel-type_biomethane_liquified_bio_100_net-fuel_use_na,Biomethane - liquified (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_biopetrol_bio_100-fuel_use_na,Bio Petrol,Fuel,Energy,"BEIS,BEIS","Volume,Weight"
+fuel-type_biopetrol_bio_100_net-fuel_use_na,Bio Petrol (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_biopropane_bio_100-fuel_use_na,Biopropane,Fuel,Energy,"BEIS,BEIS,CO2 Emissiefactoren","Volume,Weight,Volume"
+fuel-type_biopropane_bio_100_net-fuel_use_na,Biopropane (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_bitumen-fuel_use_na,Bitumen,Fuel,Energy,"CBAM,CBAM,CO2 Emissiefactoren,SEFR","Weight,Energy,Weight,Weight"
+fuel-type_bitumen-fuel_use_na,Bitumen (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_bitumen_net-fuel_use_na,Bitumen (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_bituminous_coal_and_lignite_surface_mining-fuel_use_na,Bituminous coal and lignite surface mining,Fuel,Energy,EPA,Money
+fuel-type_bituminous_coal_underground_mining-fuel_use_na,Bituminous coal underground mining,Fuel,Energy,EPA,Money
+fuel-type_blast_furnace_gas-fuel_use_na,Blast furnace gas,Fuel,Energy,"EXIOBASE,DISER,DISER,CAEP,CBAM,CBAM,CO2 Emissiefactoren,SEFR","Money,Volume,Energy,Volume,Energy,Weight,Weight,Weight"
+fuel-type_blast_furnace_gas-fuel_use_na,Blast furnace gas (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_blast_furnace_gas-fuel_use_stationary,Blast furnace gas,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_blast_furnace_gas_net-fuel_use_na,Blast furnace gas (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_bottled_gas-fuel_use_na,Bottled gas,Fuel,Energy,Market Economics Limited,Money
+fuel-type_brown_coal_briquettes-fuel_use_na,Brown coal briquettes,Fuel,Energy,SEFR,Weight
+fuel-type_bunker_oil-fuel_use_na,Bunker oil,Fuel,Energy,CAEP,Weight
+fuel-type_burning_oil-fuel_use_na,Burning oil,Fuel,Energy,"BEIS,BEIS","Weight,Volume"
+fuel-type_burning_oil-fuel_use_na,Burning oil (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_burning_oil_net-fuel_use_na,Burning oil (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_butane-fuel_use_na,Butane,Fuel,Energy,"BEIS,BEIS","Weight,Volume"
+fuel-type_butane-fuel_use_na,Butane (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_butane-fuel_use_stationary,Butane,Fuel,Energy,"EPA,EPA,GHG Protocol","Volume,Energy,Energy"
+fuel-type_butane_net-fuel_use_na,Butane (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_butylene-fuel_use_stationary,Butylene,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_california_gasoline_e10_bio_10-fuel_use_na,California gasoline,Fuel,Energy,"GLEC,GLEC","Weight,Volume"
+fuel-type_carbon_monoxide-fuel_use_na,Carbon monoxide,Fuel,Energy,"CBAM,CBAM","Weight,Energy"
+fuel-type_carbon_monoxide-fuel_use_na,Carbon monoxide (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_carbon_monoxide_net-fuel_use_na,Carbon monoxide (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_cassava_fuel_ethanol-fuel_use_na,Cassava fuel ethanol,Fuel,Energy,CAEP,Volume
+fuel-type_charcoal_bio_100-fuel_use_na,Charcoal,Fuel,Energy,"DISER,DISER,CAEP,CBAM,SEFR","Energy,Weight,Weight,Weight,Weight"
+fuel-type_charcoal_bio_100-fuel_use_na,Charcoal (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_charcoal_bio_100_net-fuel_use_na,Charcoal (net CV),Fuel,Energy,"CBAM,Netherlands Enterprise Agency","Energy,Energy"
+fuel-type_chemical_waste_gas-fuel_use_na,Chemical waste gas,Fuel,Energy,CO2 Emissiefactoren,Weight
+fuel-type_cng-fuel_use_mobile,Compressed natural gas CNG,Fuel,Energy,EPA,Volume
+fuel-type_cng-fuel_use_mobile_hdv,Compressed natural gas CNG - heavy duty vehicles - transport,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_cng-fuel_use_mobile_hdv_hdpi,Compressed natural gas CNG - HPDI - heavy duty road,Fuel,Energy,GLEC,Weight
+fuel-type_cng-fuel_use_mobile_hdv_hdpi_methane_slip_0.54pc,Compressed natural gas CNG - HPDI - heavy duty road - Methane slip 0.54%,Fuel,Energy,GLEC,Weight
+fuel-type_cng-fuel_use_mobile_hdv_hdpi_methane_slip_1.2pc,Compressed natural gas CNG - HPDI road - slip 1.20%,Fuel,Energy,GLEC,Weight
+fuel-type_cng-fuel_use_mobile_hdv_si,Compressed natural gas CNG - SI - heavy duty road,Fuel,Energy,GLEC,Weight
+fuel-type_cng-fuel_use_mobile_hdv_si_methane_slip_0.2pc,Compressed natural gas CNG - SI road - slip 0.20%,Fuel,Energy,GLEC,Weight
+fuel-type_cng-fuel_use_mobile_hdv_si_methane_slip_0.32pc,Compressed natural gas CNG - SI - heavy duty road - Methane slip 0.32%,Fuel,Energy,GLEC,Weight
+fuel-type_cng-fuel_use_mobile_ldv,Compressed natural gas CNG - light duty vehicles - transport,Fuel,Energy,"DISER,DISER","Volume,Energy"
+fuel-type_cng-fuel_use_na,CNG,Fuel,Energy,DISER,Volume
+fuel-type_cng-fuel_use_na,Compressed natural gas CNG,Fuel,Energy,"DISER,BEIS,BEIS,CO2 Emissiefactoren","Energy,Volume,Weight,Weight"
+fuel-type_cng-fuel_use_na,Compressed natural gas CNG (gross CV),Fuel,Energy,"BEIS,Netherlands Enterprise Agency","Energy,Energy"
+fuel-type_cng_net-fuel_use_na,Compressed natural gas CNG (net CV),Fuel,Energy,"BEIS,Netherlands Enterprise Agency","Energy,Energy"
+fuel-type_coal-fuel_use_commercial,Coal - default - commercial,Fuel,Energy,MfE,Weight
+fuel-type_coal-fuel_use_domestic,Coal - default - residential,Fuel,Energy,MfE,Weight
+fuel-type_coal-fuel_use_domestic,Coal - domestic,Fuel,Energy,BEIS,Weight
+fuel-type_coal-fuel_use_domestic,Coal - domestic (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_coal-fuel_use_electricity_generation,Coal - electricity generation,Fuel,Energy,BEIS,Weight
+fuel-type_coal-fuel_use_electricity_generation,Coal - electricity generation (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_coal-fuel_use_industrial,Coal - default - industrial,Fuel,Energy,MfE,Weight
+fuel-type_coal-fuel_use_industrial,Coal - industrial,Fuel,Energy,BEIS,Weight
+fuel-type_coal-fuel_use_industrial,Coal - industrial (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_coal-fuel_use_na,Coal,Fuel,Energy,"OpenIO-Canada,EPA","Money,Money"
+fuel-type_coal-fuel_use_na,Coal-fired cogeneration,Fuel,Energy,CAEP,Weight
+fuel-type_coal_and_coke_mixed-fuel_use_commercial,Coal and coke - mixed - commercial sector,Fuel,Energy,GHG Protocol,Energy
+fuel-type_coal_and_coke_mixed-fuel_use_commercial,Coal and coke mixed - commercial sector,Fuel,Energy,"EPA,EPA","Weight,Energy"
+fuel-type_coal_and_coke_mixed-fuel_use_electricity_generation,Coal and coke - mixed - electric power sector,Fuel,Energy,GHG Protocol,Energy
+fuel-type_coal_and_coke_mixed-fuel_use_electricity_generation,Coal and coke mixed - electric power sector,Fuel,Energy,"EPA,EPA","Weight,Energy"
+fuel-type_coal_and_coke_mixed-fuel_use_industrial,Coal and coke - mixed - Industrial sector,Fuel,Energy,GHG Protocol,Energy
+fuel-type_coal_and_coke_mixed-fuel_use_industrial,Coal and coke mixed - industrial sector,Fuel,Energy,"EPA,EPA","Energy,Weight"
+fuel-type_coal_and_coke_mixed-fuel_use_industrial_coking,Coal and coke - mixed - industrial coking,Fuel,Energy,GHG Protocol,Energy
+fuel-type_coal_and_coke_mixed-fuel_use_industrial_coking,Coal and coke mixed - industrial coking,Fuel,Energy,"EPA,EPA","Energy,Weight"
+fuel-type_coal_and_lignite-fuel_use_na,Coal and lignite,Fuel,Energy,BEIS,Money
+fuel-type_coal_anthracite-fuel_use_na,Anthracite coal,Fuel,Energy,"DISER,DISER,GHG Protocol","Weight,Energy,Energy"
+fuel-type_coal_anthracite-fuel_use_na,Coal - anthracite,Fuel,Energy,"CAEP,CBAM,CBAM,CO2 Emissiefactoren","Weight,Energy,Weight,Weight"
+fuel-type_coal_anthracite-fuel_use_na,Coal - anthracite (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_coal_anthracite-fuel_use_stationary,Anthracite coal,Fuel,Energy,"EPA,EPA","Energy,Weight"
+fuel-type_coal_anthracite-fuel_use_stationary,Coal - anthracite,Fuel,Energy,"EPA,EPA","Energy,Weight"
+fuel-type_coal_anthracite_net-fuel_use_na,Coal - anthracite (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_coal_bituminous-fuel_use_commercial,Bituminous coal - commercial,Fuel,Energy,MfE,Weight
+fuel-type_coal_bituminous-fuel_use_domestic,Bituminous coal - residential,Fuel,Energy,MfE,Weight
+fuel-type_coal_bituminous-fuel_use_industrial,Bituminous coal - industrial,Fuel,Energy,MfE,Weight
+fuel-type_coal_bituminous-fuel_use_na,Bituminous coal,Fuel,Energy,"DISER,DISER,CAEP,CO2 Emissiefactoren,GHG Protocol","Energy,Weight,Weight,Weight,Energy"
+fuel-type_coal_bituminous-fuel_use_stationary,Bituminous coal,Fuel,Energy,"EPA,EPA","Energy,Weight"
+fuel-type_coal_bituminous_net-fuel_use_heat_supply,Bituminous coal (net CV),Fuel,Energy,UBA,Energy
+fuel-type_coal_bituminous_other-fuel_use_na,Other bituminous coal,Fuel,Energy,"CBAM,CBAM","Energy,Weight"
+fuel-type_coal_bituminous_other-fuel_use_na,Other bituminous coal (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_coal_bituminous_other_net-fuel_use_na,Other bituminous coal (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_coal_briquettes-fuel_use_na,Briquettes,Fuel,Energy,CAEP,Weight
+fuel-type_coal_briquettes-fuel_use_na,Coal briquettes,Fuel,Energy,"DISER,DISER","Weight,Energy"
+fuel-type_coal_cleaned-fuel_use_na,Cleaned coal,Fuel,Energy,CAEP,Weight
+fuel-type_coal_coke-fuel_use_na,Coal coke,Fuel,Energy,"DISER,DISER","Weight,Energy"
+fuel-type_coal_coke-fuel_use_stationary,Coal coke,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Weight,Energy"
+fuel-type_coal_coke_and_tar_products-fuel_use_na,Coal/coke and tar products,Fuel,Energy,Market Economics Limited,Money
+fuel-type_coal_coking-fuel_use_blast_furnace,Coking coal (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_coal_coking-fuel_use_coke_oven,Coking coal (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_coal_coking-fuel_use_na,Coking coal,Fuel,Energy,"DISER,DISER,BEIS,CBAM,CBAM,CO2 Emissiefactoren","Weight,Energy,Weight,Weight,Energy,Weight"
+fuel-type_coal_coking-fuel_use_na,Coking coal (gross CV),Fuel,Energy,"BEIS,Netherlands Enterprise Agency","Energy,Energy"
+fuel-type_coal_coking_net-fuel_use_blast_furnace,Coking coal (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_coal_coking_net-fuel_use_coke_oven,Coking coal (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_coal_coking_net-fuel_use_na,Coking coal (net CV),Fuel,Energy,"BEIS,Netherlands Enterprise Agency","Energy,Energy"
+fuel-type_coal_derived_dme-fuel_use_na,Coal derived DME,Fuel,Energy,CAEP,Weight
+fuel-type_coal_gasification_based_hydrogen-fuel_use_na,Coal gasification-based hydrogen,Fuel,Energy,CAEP,Weight
+fuel-type_coal_gasification_based_hydrogen_with_carbon_capture_use_storage-fuel_use_na,Coal gasification-based hydrogen with carbon capture/use and storage,Fuel,Energy,CAEP,Weight
+fuel-type_coal_gasification_gas_hydrogen-fuel_use_na,Coal gasification and gas hydrogen,Fuel,Energy,CAEP,Weight
+fuel-type_coal_gasification_liquid_hydrogen-fuel_use_na,Coal gasification and liquid hydrogen,Fuel,Energy,CAEP,Weight
+fuel-type_coal_home_produced-fuel_use_electricity_generation,Coal - electricity generation - home produced coal only,Fuel,Energy,BEIS,Weight
+fuel-type_coal_home_produced-fuel_use_electricity_generation,Coal - electricity generation - home produced coal only (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_coal_home_produced_net-fuel_use_electricity_generation,Coal - electricity generation - home produced coal only (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_coal_lignite-fuel_use_commercial,Lignite coal - commercial,Fuel,Energy,MfE,Weight
+fuel-type_coal_lignite-fuel_use_domestic,Lignite coal - residential,Fuel,Energy,MfE,Weight
+fuel-type_coal_lignite-fuel_use_industrial,Lignite coal - industrial,Fuel,Energy,MfE,Weight
+fuel-type_coal_lignite-fuel_use_na,Coal and lignite,Fuel,Energy,"DISER,DISER","Weight,Energy"
+fuel-type_coal_lignite-fuel_use_na,Lignite,Fuel,Energy,"CAEP,CBAM,CBAM,CO2 Emissiefactoren","Weight,Weight,Energy,Weight"
+fuel-type_coal_lignite-fuel_use_na,Lignite (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_coal_lignite-fuel_use_stationary,Lignite,Fuel,Energy,"EPA,EPA","Weight,Energy"
+fuel-type_coal_lignite-fuel_use_stationary,Lignite coal,Fuel,Energy,"EPA,EPA,GHG Protocol","Weight,Energy,Energy"
+fuel-type_coal_lignite_briquettes-fuel_use_na,Lignite briquettes,Fuel,Energy,CO2 Emissiefactoren,Weight
+fuel-type_coal_lignite_briquettes_net-fuel_use_heat_supply,Lignite briquettes (net CV),Fuel,Energy,UBA,Energy
+fuel-type_coal_lignite_net-fuel_use_na,Lignite (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_coal_mine_waste_gas-fuel_use_na,Coal mine waste gas,Fuel,Energy,"DISER,DISER","Volume,Energy"
+fuel-type_coal_net-fuel_use_domestic,Coal - domestic (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_coal_net-fuel_use_electricity_generation,Coal - electricity generation (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_coal_net-fuel_use_industrial,Coal - industrial (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_coal_other_washed-fuel_use_na,Other washed coal,Fuel,Energy,CAEP,Weight
+fuel-type_coal_seam_methane-fuel_use_na,Coal seam methane,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_coal_slime-fuel_use_na,Coal slime,Fuel,Energy,CAEP,Weight
+fuel-type_coal_sub_bituminous-fuel_use_commercial,Sub-bituminous coal - commercial,Fuel,Energy,MfE,Weight
+fuel-type_coal_sub_bituminous-fuel_use_domestic,Sub-bituminous coal - residential,Fuel,Energy,MfE,Weight
+fuel-type_coal_sub_bituminous-fuel_use_industrial,Sub-bituminous coal - industrial,Fuel,Energy,MfE,Weight
+fuel-type_coal_sub_bituminous-fuel_use_na,Sub-bituminous coal,Fuel,Energy,"DISER,DISER,CBAM,CBAM,CO2 Emissiefactoren","Weight,Energy,Weight,Energy,Weight"
+fuel-type_coal_sub_bituminous-fuel_use_na,Sub-bituminous coal (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_coal_sub_bituminous-fuel_use_stationary,Sub-bituminous coal,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Weight,Energy"
+fuel-type_coal_sub_bituminous_net-fuel_use_na,Sub-bituminous coal (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_coal_tar-fuel_use_na,Coal tar,Fuel,Energy,"EXIOBASE,DISER,DISER,CBAM,CBAM,SEFR","Money,Weight,Energy,Energy,Weight,Weight"
+fuel-type_coal_tar-fuel_use_na,Coal tar (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_coal_tar_net-fuel_use_na,Coal tar (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_coal_tar_pitch-fuel_use_na,Coal tar pitch,Fuel,Energy,CAEP,Weight
+fuel-type_coal_tar_refined-fuel_use_na,Refined coal tar,Fuel,Energy,CAEP,Weight
+fuel-type_coal_washed-fuel_use_na,Other washed coal-average,Fuel,Energy,CAEP,Weight
+fuel-type_coke-fuel_use_na,Coke,Fuel,Energy,CAEP,Weight
+fuel-type_coke_and_other_coke_oven_products-fuel_use_na,Coke and other coke oven products,Fuel,Energy,OpenIO-Canada,Money
+fuel-type_coke_and_refined_petroleum_products-fuel_use_na,Coke and refined petroleum products,Fuel,Energy,BEIS,Money
+fuel-type_coke_oven_coke-fuel_use_na,Coke oven coke,Fuel,Energy,EXIOBASE,Money
+fuel-type_coke_oven_coke_and_lignite_coke-fuel_use_na,Coke oven coke and lignite coke,Fuel,Energy,"CBAM,CBAM,SEFR","Weight,Energy,Weight"
+fuel-type_coke_oven_gas-fuel_use_na,Coke oven gas,Fuel,Energy,"EXIOBASE,DISER,DISER,CAEP,CBAM,CBAM,CO2 Emissiefactoren,SEFR","Money,Energy,Volume,Weight,Energy,Weight,Weight,Weight"
+fuel-type_coke_oven_gas-fuel_use_na,Coke oven gas (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_coke_oven_gas-fuel_use_stationary,Coke oven gas,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_coke_oven_gas_coke-fuel_use_na,Coke oven / Gas coke (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_coke_oven_gas_coke_net-fuel_use_na,Coke oven / Gas coke (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_coke_oven_gas_net-fuel_use_na,Coke oven gas (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_coking_coal-fuel_use_na,Coking coal,Fuel,Energy,SEFR,Weight
+fuel-type_conventional_crude_oil-fuel_use_na,Conventional crude oil,Fuel,Energy,OpenIO-Canada,Money
+fuel-type_corn_fuel_ethanol-fuel_use_na,Corn fuel ethanol,Fuel,Energy,CAEP,Volume
+fuel-type_crude_and_diluted_bitumen-fuel_use_na,Crude and diluted bitumen,Fuel,Energy,OpenIO-Canada,Money
+fuel-type_crude_benzene-fuel_use_na,Crude benzene - from coal tar,Fuel,Energy,CAEP,Weight
+fuel-type_crude_oil-fuel_use_na,Crude oil,Fuel,Energy,"CAEP,CBAM,CBAM,CO2 Emissiefactoren,SEFR","Weight,Energy,Weight,Weight,Weight"
+fuel-type_crude_oil-fuel_use_na,Crude oil (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_crude_oil-fuel_use_stationary,Crude oil,Fuel,Energy,"DISER,DISER,EPA,EPA,GHG Protocol","Weight,Energy,Energy,Volume,Energy"
+fuel-type_crude_oil_net-fuel_use_na,Crude oil (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_crude_petroleum-fuel_use_na,Crude petroleum,Fuel,Energy,Market Economics Limited,Money
+fuel-type_crude_petroleum_and_natural_gas-fuel_use_na,Crude petroleum and natural gas,Fuel,Energy,BEIS,Money
+fuel-type_crude_petroleum_extraction-fuel_use_na,Crude petroleum extraction,Fuel,Energy,EPA,Money
+fuel-type_diesel-fuel_use_commercial,Diesel - commercial,Fuel,Energy,MfE,Volume
+fuel-type_diesel-fuel_use_industrial,Diesel - industrial,Fuel,Energy,MfE,Volume
+fuel-type_diesel-fuel_use_mobile,Diesel - fuel,Fuel,Energy,EPA,Volume
+fuel-type_diesel-fuel_use_mobile,Diesel - transport,Fuel,Energy,MfE,Volume
+fuel-type_diesel-fuel_use_mobile,Diesel - without biofuel content - used in vehicle,Fuel,Energy,GEMIS,Volume
+fuel-type_diesel-fuel_use_mobile,Diesel oil - transport,Fuel,Energy,"DISER,DISER","Volume,Energy"
+fuel-type_diesel-fuel_use_mobile_agricultural_equipment,Diesel fuel - diesel agricultural equipment,Fuel,Energy,GHG Protocol,Volume
+fuel-type_diesel-fuel_use_mobile_airport_equipment,Diesel - Airport Equipment,Fuel,Energy,EPA,Volume
+fuel-type_diesel-fuel_use_mobile_hdv_euro_i,Diesel oil - Euro i - heavy duty vehicles - transport,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_diesel-fuel_use_mobile_hdv_euro_ii,Diesel oil - Euro iii - heavy duty vehicles - transport,Fuel,Energy,"DISER,DISER","Volume,Energy"
+fuel-type_diesel-fuel_use_mobile_hdv_euro_iv_higher,Diesel oil - Euro iv or higher - heavy duty vehicles - transport,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_diesel-fuel_use_mobile_industrial_commercial_equipment,Diesel - Industrial/Commercial Equipment,Fuel,Energy,EPA,Volume
+fuel-type_diesel-fuel_use_mobile_lawn_and_garden_equipment,Diesel - Lawn and Garden Equipment,Fuel,Energy,EPA,Volume
+fuel-type_diesel-fuel_use_mobile_ldv,Diesel fuel - diesel light-duty trucks,Fuel,Energy,GHG Protocol,Volume
+fuel-type_diesel-fuel_use_mobile_locomotives,Diesel - locomotives,Fuel,Energy,EPA,Volume
+fuel-type_diesel-fuel_use_mobile_logging_equipment,Diesel - Logging Equipment,Fuel,Energy,EPA,Volume
+fuel-type_diesel-fuel_use_mobile_mhdv,Diesel fuel - diesel medium and heavy-duty vehicles,Fuel,Energy,GHG Protocol,Volume
+fuel-type_diesel-fuel_use_mobile_other_non_road,Diesel fuel - other diesel non-road vehicles,Fuel,Energy,GHG Protocol,Volume
+fuel-type_diesel-fuel_use_mobile_passenger_cars,Diesel fuel - Diesel passenger cars,Fuel,Energy,GHG Protocol,Volume
+fuel-type_diesel-fuel_use_mobile_post_2004,Diesel oil - post-2004 vehicles - transport,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_diesel-fuel_use_mobile_railroad_equipment,Diesel - Railroad Equipment,Fuel,Energy,EPA,Volume
+fuel-type_diesel-fuel_use_mobile_recreational_equipment,Diesel - Recreational Equipment,Fuel,Energy,EPA,Volume
+fuel-type_diesel-fuel_use_mobile_ships_and_boats,Diesel - ships and boats,Fuel,Energy,EPA,Volume
+fuel-type_diesel-fuel_use_mobile_ships_boats,Diesel fuel - diesel ships and boats,Fuel,Energy,GHG Protocol,Volume
+fuel-type_diesel-fuel_use_na,Diesel,Fuel,Energy,"GLEC,GLEC,CO2 Emissiefactoren,Market Economics Limited","Weight,Volume,Volume,Money"
+fuel-type_diesel-fuel_use_na,Diesel - 100% mineral diesel,Fuel,Energy,"BEIS,BEIS","Volume,Weight"
+fuel-type_diesel-fuel_use_na,Diesel - 100% mineral diesel (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_diesel-fuel_use_na,Diesel oil,Fuel,Energy,CAEP,Weight
+fuel-type_diesel-fuel_use_stationary,Diesel - stationary industrial use,Fuel,Energy,MfE,Volume
+fuel-type_diesel-fuel_use_stationary,Diesel oil,Fuel,Energy,"DISER,DISER","Volume,Energy"
+fuel-type_diesel_and_biodiesel_fuels-fuel_use_na,Diesel and biodiesel fuels,Fuel,Energy,OpenIO-Canada,Money
+fuel-type_diesel_b10_bio_10-fuel_use_mobile,Road diesel - 10% biodiesel blend,Fuel,Energy,ADEME,Volume
+fuel-type_diesel_b10_bio_10_net-fuel_use_mobile,Road diesel - 10% biodiesel blend (net CV),Fuel,Energy,ADEME,Energy
+fuel-type_diesel_b20_bio_20-fuel_use_na,Diesel - 20% biodiesel blend,Fuel,Energy,MfE,Volume
+fuel-type_diesel_b5_bio_5-fuel_use_na,Diesel - 5% bio- diesel blend - B5,Fuel,Energy,"GLEC,GLEC","Volume,Weight"
+fuel-type_diesel_b5_bio_5-fuel_use_na,Diesel - 5% biodiesel blend,Fuel,Energy,MfE,Volume
+fuel-type_diesel_b7_bio_7-fuel_use_mobile,Road diesel - 7% biodiesel blend,Fuel,Energy,CO2 Emissiefactoren,Volume
+fuel-type_diesel_bio_average-fuel_use_mobile,Diesel - with biofuel share - used in vehicle,Fuel,Energy,GEMIS,Volume
+fuel-type_diesel_bio_average-fuel_use_na,Diesel - average biofuel blend,Fuel,Energy,"BEIS,BEIS","Volume,Weight"
+fuel-type_diesel_bio_average-fuel_use_na,Diesel - average biofuel blend (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_diesel_bio_average_net-fuel_use_na,Diesel - average biofuel blend (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_diesel_development_bio_average-fuel_use_na,Development Diesel,Fuel,Energy,"BEIS,BEIS,BEIS","Volume,Weight,Energy"
+fuel-type_diesel_equipment-fuel_use_agricultural_equipment,Diesel Equipment - Agricultural Equipment,Fuel,Energy,EPA,Volume
+fuel-type_diesel_equipment-fuel_use_construction_mining_equipment,Diesel Equipment - Construction/Mining Equipment,Fuel,Energy,EPA,Volume
+fuel-type_diesel_gtl-fuel_use_na,Diesel GTL,Fuel,Energy,CO2 Emissiefactoren,Volume
+fuel-type_diesel_net-fuel_use_na,Diesel - 100% mineral diesel (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_diesel_off_road_trucks-fuel_use_agricultural_equipment,Diesel Off-Road Trucks - Agricultural Equipment,Fuel,Energy,EPA,Volume
+fuel-type_diesel_off_road_trucks-fuel_use_construction_mining_equipment,Diesel Off-Road Trucks - Construction/Mining Equipment,Fuel,Energy,EPA,Volume
+fuel-type_diesel_renewable_bio_average-fuel_use_mobile,Renewable diesel - transport,Fuel,Energy,"DISER,DISER","Volume,Energy"
+fuel-type_diesel_renewable_bio_average-fuel_use_mobile_hdv_euro_i,Renewable diesel - Euro i - Heavy duty vehicles - transport,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_diesel_renewable_bio_average-fuel_use_mobile_hdv_euro_ii,Renewable diesel - Euro iii - Heavy duty vehicles - transport,Fuel,Energy,"DISER,DISER","Volume,Energy"
+fuel-type_diesel_renewable_bio_average-fuel_use_mobile_hdv_euro_iv_higher,Renewable diesel - Euro iv or higher - Heavy duty vehicles - transport,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_diesel_renewable_bio_average-fuel_use_mobile_post_2004,Renewable diesel - transport - post-2004 vehicles,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_diesel_renewable_bio_average-fuel_use_stationary,Renewable diesel,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_distillate_fuel_oil-fuel_use_na,Processed fuel oils - distillate oil,Fuel,Energy,"BEIS,BEIS","Weight,Volume"
+fuel-type_distillate_fuel_oil-fuel_use_na,Processed fuel oils - distillate oil (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_distillate_fuel_oil_net-fuel_use_na,Processed fuel oils - distillate oil (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_distillate_fuel_oil_no.1-fuel_use_stationary,Distillate fuel oil no. 1,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_distillate_fuel_oil_no.2-fuel_use_stationary,Distillate fuel oil no. 2,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_distillate_fuel_oil_no.4-fuel_use_stationary,Distillate fuel oil no. 4,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_electricity-fuel_use_mobile,Electricity - electric vehicle,Fuel,Energy,GHG Protocol,Energy
+fuel-type_ethane-fuel_use_na,Ethane,Fuel,Energy,"DISER,DISER,EXIOBASE,CAEP,CBAM,CBAM,CO2 Emissiefactoren,SEFR","Volume,Energy,Money,Weight,Weight,Energy,Weight,Weight"
+fuel-type_ethane-fuel_use_na,Ethane (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_ethane-fuel_use_stationary,Ethane,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_ethane_net-fuel_use_na,Ethane (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_ethanol_bio_100-fuel_use_mobile,Bioethanol,Fuel,Energy,MfE,Volume
+fuel-type_ethanol_bio_100-fuel_use_mobile,Ethanol - 100%,Fuel,Energy,EPA,Volume
+fuel-type_ethanol_bio_100-fuel_use_mobile,Ethanol - for transport,Fuel,Energy,"DISER,DISER","Volume,Energy"
+fuel-type_ethanol_bio_100-fuel_use_mobile_ldv,Ethanol - 100% - ethanol light-duty vehicles,Fuel,Energy,GHG Protocol,Volume
+fuel-type_ethanol_bio_100-fuel_use_mobile_mhdv,Ethanol - 100% - ethanol medium and heavy-duty vehicles,Fuel,Energy,GHG Protocol,Volume
+fuel-type_ethanol_bio_100-fuel_use_mobile_post_2004,Ethanol - for transport - post-2004 vehicles,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_ethanol_bio_100-fuel_use_na,Bioethanol,Fuel,Energy,"GLEC,GLEC,BEIS,BEIS,MfE,MfE","Weight,Volume,Weight,Volume,Volume,Energy"
+fuel-type_ethanol_bio_100-fuel_use_stationary,Bioethanol,Fuel,Energy,"DISER,DISER","Volume,Energy"
+fuel-type_ethanol_bio_100-fuel_use_stationary,Ethanol - 100%,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_ethanol_bio_100_net-fuel_use_na,Bioethanol (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_ethylene-fuel_use_stationary,Ethylene,Fuel,Energy,"EPA,EPA,GHG Protocol","Volume,Energy,Energy"
+fuel-type_fossil_fuel_additives-fuel_use_na,Fossil fuel additives (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_fossil_fuel_additives_net-fuel_use_na,Fossil fuel additives (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_fuel_gas-fuel_use_stationary,Fuel gas,Fuel,Energy,"EPA,EPA,GHG Protocol","Volume,Energy,Energy"
+fuel-type_fuel_oil-fuel_use_industrial,Industrial fuel oil,Fuel,Energy,CAEP,Weight
+fuel-type_fuel_oil-fuel_use_mobile,Fuel oil - transport,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_fuel_oil-fuel_use_na,Fuel oil,Fuel,Energy,"BEIS,BEIS","Volume,Weight"
+fuel-type_fuel_oil-fuel_use_na,Fuel oil (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_fuel_oil-fuel_use_stationary,Fuel oil,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_fuel_oil_net-fuel_use_na,Fuel oil (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_gangue-fuel_use_na,Gangue,Fuel,Energy,CAEP,Weight
+fuel-type_gas-fuel_use_boiler,Gas boiler,Fuel,Energy,CAEP,Volume
+fuel-type_gas-fuel_use_na,Gas,Fuel,Energy,Market Economics Limited,Money
+fuel-type_gas-fuel_use_na,Gas (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_gas-fuel_use_na,Gas works gas,Fuel,Energy,EXIOBASE,Money
+fuel-type_gas_biomass_bio_100-fuel_use_na,Gas biomass (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_gas_biomass_bio_100_net-fuel_use_na,Gas biomass (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_gas_coke-fuel_use_na,Gas coke,Fuel,Energy,"EXIOBASE,CBAM,CBAM,SEFR","Money,Weight,Energy,Weight"
+fuel-type_gas_diesel_oil-fuel_use_na,Gas / diesel oil,Fuel,Energy,SEFR,Weight
+fuel-type_gas_diesel_oil-fuel_use_na,Gas/diesel oil,Fuel,Energy,"EXIOBASE,CBAM,CBAM","Money,Weight,Energy"
+fuel-type_gas_diesel_oil-fuel_use_na,Gas/diesel oil (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_gas_diesel_oil_high_sulphur-fuel_use_na,Gas / diesel oil (high sulphur),Fuel,Energy,SEFR,Weight
+fuel-type_gas_diesel_oil_net-fuel_use_na,Gas/diesel oil (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_gas_net-fuel_use_na,Gas (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_gas_of_the_full_enclosed_calcium_carbide_furnace-fuel_use_na,Gas of the full-enclosed calcium carbide furnace,Fuel,Energy,CAEP,Volume
+fuel-type_gas_oil-fuel_use_na,Gas oil,Fuel,Energy,"BEIS,BEIS","Weight,Volume"
+fuel-type_gas_oil-fuel_use_na,Gas oil (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_gas_oil_net-fuel_use_na,Gas oil (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_gas_works_gas-fuel_use_na,Gas works gas,Fuel,Energy,"CBAM,CBAM","Energy,Weight"
+fuel-type_gaseous_other-fuel_use_na,Gaseous fossil fuels - other,Fuel,Energy,"DISER,DISER","Volume,Energy"
+fuel-type_gasoline-fuel_use_mobile_airport_equipment,Gasoline - Airport Equipment,Fuel,Energy,EPA,Volume
+fuel-type_gasoline-fuel_use_mobile_railroad_equipment,Gasoline - Railroad Equipment,Fuel,Energy,EPA,Volume
+fuel-type_gasoline-fuel_use_na,Gasoline,Fuel,Energy,CO2 Emissiefactoren,Volume
+fuel-type_gasoline-fuel_use_na,Gasoline (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_gasoline_2_stroke-fuel_use_agricultural_equipment,Gasoline - 2 stroke - Agricultural Equipment,Fuel,Energy,EPA,Volume
+fuel-type_gasoline_2_stroke-fuel_use_construction_mining_equipment,Gasoline - 2 stroke - Construction/Mining Equipment,Fuel,Energy,EPA,Volume
+fuel-type_gasoline_2_stroke-fuel_use_mobile_industrial_commercial_equipment,Gasoline - 2 stroke - Industrial/Commercial Equipment,Fuel,Energy,EPA,Volume
+fuel-type_gasoline_2_stroke-fuel_use_mobile_lawn_and_garden_equipment,Gasoline - 2 stroke - Lawn and Garden Equipment,Fuel,Energy,EPA,Volume
+fuel-type_gasoline_2_stroke-fuel_use_mobile_logging_equipment,Gasoline - 2 stroke - Logging Equipment,Fuel,Energy,EPA,Volume
+fuel-type_gasoline_2_stroke-fuel_use_mobile_recreational_equipment,Gasoline - 2 stroke - Recreational Equipment,Fuel,Energy,EPA,Volume
+fuel-type_gasoline_2_stroke-fuel_use_mobile_ships_and_boats,Gasoline - 2 stroke - Ships and Boats,Fuel,Energy,EPA,Volume
+fuel-type_gasoline_4_stroke-fuel_use_agricultural_equipment,Gasoline - 4 stroke - Agricultural Equipment,Fuel,Energy,EPA,Volume
+fuel-type_gasoline_4_stroke-fuel_use_construction_mining_equipment,Gasoline - 4 stroke - Construction/Mining Equipment,Fuel,Energy,EPA,Volume
+fuel-type_gasoline_4_stroke-fuel_use_mobile_industrial_commercial,Gasoline - 4 stroke - Industrial/Commercial Equipment,Fuel,Energy,EPA,Volume
+fuel-type_gasoline_4_stroke-fuel_use_mobile_lawn_and_garden_equipment,Gasoline - 4 stroke - Lawn and Garden Equipment,Fuel,Energy,EPA,Volume
+fuel-type_gasoline_4_stroke-fuel_use_mobile_logging_equipment,Gasoline - 4 stroke - Logging Equipment,Fuel,Energy,EPA,Volume
+fuel-type_gasoline_4_stroke-fuel_use_mobile_recreational_equipment,Gasoline - 4 stroke - Recreational Equipment,Fuel,Energy,EPA,Volume
+fuel-type_gasoline_4_stroke-fuel_use_mobile_ships_and_boats,Gasoline - 4 stroke - Ships and Boats,Fuel,Energy,EPA,Volume
+fuel-type_gasoline_e10_bio_10-fuel_use_na,Gasoline - 10% bioethanol blend,Fuel,Energy,MfE,Volume
+fuel-type_gasoline_e10_bio_10-fuel_use_na,Gasoline 10% bioethanol blend,Fuel,Energy,"CO2 Emissiefactoren,GLEC,GLEC","Volume,Volume,Weight"
+fuel-type_gasoline_e3_bio_3-fuel_use_na,Gasoline - 3% bioethanol blend,Fuel,Energy,MfE,Volume
+fuel-type_gasoline_e5_bio_5-fuel_use_na,Gasoline - 5% bioethanol blend,Fuel,Energy,"GLEC,GLEC","Volume,Weight"
+fuel-type_gasoline_e85_bio_85-fuel_use_na,Bioethanol 85%,Fuel,Energy,"CO2 Emissiefactoren,GLEC,GLEC","Volume,Weight,Volume"
+fuel-type_gasoline_fuels_by_products_of_petroleum_refining-fuel_use_na,Gasoline/fuels and by-products of petroleum refining,Fuel,Energy,EPA,Money
+fuel-type_gasoline_jet-fuel_use_aviation,Gasoline-type jet fuel,Fuel,Energy,EXIOBASE,Money
+fuel-type_gasoline_net-fuel_use_na,Gasoline (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_gasoline_off_road_trucks-fuel_use_agricultural_equipment,Gasoline Off-Road Trucks - Agricultural Equipment,Fuel,Energy,EPA,Volume
+fuel-type_gasoline_off_road_trucks-fuel_use_construction_mining_equipment,Gasoline Off-Road Trucks - Construction/Mining Equipment,Fuel,Energy,EPA,Volume
+fuel-type_grass_straw_bio_100-fuel_use_na,Grass / straw,Fuel,Energy,BEIS,Weight
+fuel-type_grass_straw_bio_100_net-fuel_use_na,Grass / straw (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_hardwood_north_american_bio_100-fuel_use_stationary,North American hardwood,Fuel,Energy,"EPA,GHG Protocol","Energy,Energy"
+fuel-type_heating_oil-fuel_use_stationary,Heating oil,Fuel,Energy,"DISER,DISER,GEMIS","Volume,Energy,Volume"
+fuel-type_heating_oil_net-fuel_use_heat_supply,Heating oil (net CV),Fuel,Energy,UBA,Energy
+fuel-type_heavy_fuel_oil-fuel_use_commercial,Heavy fuel oil - commercial,Fuel,Energy,MfE,Volume
+fuel-type_heavy_fuel_oil-fuel_use_industrial,Heavy fuel oil - industrial,Fuel,Energy,MfE,Volume
+fuel-type_heavy_fuel_oil-fuel_use_mobile,Heavy fuel oil - transport,Fuel,Energy,MfE,Volume
+fuel-type_heavy_fuel_oil-fuel_use_na,Heavy fuel oil,Fuel,Energy,"EXIOBASE,GLEC,GLEC,CO2 Emissiefactoren","Money,Volume,Weight,Volume"
+fuel-type_heavy_fuel_oils-fuel_use_na,Heavy fuel oils,Fuel,Energy,OpenIO-Canada,Money
+fuel-type_heavy_gas_oils-fuel_use_stationary,Heavy gas oils,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_heavy_oil_catalytic_cracking_gas-fuel_use_na,Gas byproduct of heavy oil catalytic cracking,Fuel,Energy,CAEP,Weight
+fuel-type_hydrogen_alkaline_electrolysis_cells-fuel_use_na,Hydrogen fuel -alkaline electrolysis cells,Fuel,Energy,CAEP,Weight
+fuel-type_hydrogen_green-fuel_use_na,Hydrogen green,Fuel,Energy,CO2 Emissiefactoren,Weight
+fuel-type_hydrogen_grey-fuel_use_na,Hydrogen grey,Fuel,Energy,CO2 Emissiefactoren,Weight
+fuel-type_hydrogen_proton_exchange_membraneelectrolysis_cells-fuel_use_na,Hydrogen fuel - proton exchange membraneelectrolysis cells,Fuel,Energy,CAEP,Weight
+fuel-type_industrial_materials_from_fossil_fuels-fuel_use_na,Industrial materials derived from fossil fuels,Fuel,Energy,"DISER,DISER","Energy,Weight"
+fuel-type_industrial_organic_waste_gas_bio_100-fuel_use_na,Industrial organic waste gas (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_industrial_organic_waste_gas_bio_100_net-fuel_use_na,Industrial organic waste gas (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_industrial_waste-fuel_use_na,Industrial waste,Fuel,Energy,"CBAM,SEFR","Energy,Weight"
+fuel-type_isobutane-fuel_use_stationary,Isobutane,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_isobutylene-fuel_use_stationary,Isobutylene,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_jet_gasoline-fuel_use_na,Jet gasoline,Fuel,Energy,SEFR,Weight
+fuel-type_jet_kerosene-fuel_use_na,Jet kerosene,Fuel,Energy,SEFR,Weight
+fuel-type_kerosene-fuel_use_lamp,Lamp kerosene,Fuel,Energy,CAEP,Weight
+fuel-type_kerosene-fuel_use_mobile_aviation,Kerosene - for use as fuel in an aircraft - transport,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_kerosene-fuel_use_na,Kerosene,Fuel,Energy,EXIOBASE,Money
+fuel-type_kerosene-fuel_use_na,Kerosene (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_kerosene-fuel_use_na,Kerosene - other than jet kerosene,Fuel,Energy,"CBAM,CBAM","Weight,Energy"
+fuel-type_kerosene-fuel_use_stationary,Kerosene,Fuel,Energy,"DISER,DISER,EPA,EPA,GHG Protocol","Energy,Volume,Energy,Volume,Energy"
+fuel-type_kerosene_net-fuel_use_na,Kerosene (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_kerosene_type_jet_fuel-fuel_use_aviation,Kerosene-type jet fuel,Fuel,Energy,EXIOBASE,Money
+fuel-type_landfill_gas_bio_100-fuel_use_na,Landfill gas,Fuel,Energy,"DISER,DISER,BEIS,CBAM,SEFR","Energy,Volume,Weight,Weight,Weight"
+fuel-type_landfill_gas_bio_100-fuel_use_na,Landfill gas (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_landfill_gas_bio_100-fuel_use_stationary,Landfill gas,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_landfill_gas_bio_100_net-fuel_use_na,Landfill gas (net CV),Fuel,Energy,"BEIS,CBAM,Netherlands Enterprise Agency","Energy,Energy,Energy"
+fuel-type_leftover_plant_material-fuel_use_na,Leftover plant material,Fuel,Energy,CAEP,Weight
+fuel-type_light_fuel_oil-fuel_use_commercial,Light fuel oil - commercial,Fuel,Energy,MfE,Volume
+fuel-type_light_fuel_oil-fuel_use_industrial,Light fuel oil - industrial,Fuel,Energy,MfE,Volume
+fuel-type_light_fuel_oil-fuel_use_mobile,Light fuel oil - transport,Fuel,Energy,MfE,Volume
+fuel-type_light_fuel_oils-fuel_use_na,Light fuel oils,Fuel,Energy,OpenIO-Canada,Money
+fuel-type_lignite-fuel_use_na,Lignite,Fuel,Energy,SEFR,Weight
+fuel-type_lindz_donawitz_converter_gas-fuel_use_na,Lindz-donawitz converter gas,Fuel,Energy,CAEP,Volume
+fuel-type_liquefied_aromatic_hydrocarbons-fuel_use_stationary,Liquefied aromatic hydrocarbons,Fuel,Energy,"DISER,DISER","Volume,Energy"
+fuel-type_liquefied_petroleum_gas-fuel_use_na,Liquefied petroleum gas,Fuel,Energy,SEFR,Weight
+fuel-type_liquefied_petroleum_gases-fuel_use_na,LPG (liquefied petroleum gas),Fuel,Energy,EXIOBASE,Money
+fuel-type_liquid_fuels-fuel_use_na,Liquid fuels,Fuel,Energy,Market Economics Limited,Money
+fuel-type_lng-fuel_use_mobile,LNG (road / maritime and river transport),Fuel,Energy,"ADEME,ADEME","Weight,Volume"
+fuel-type_lng-fuel_use_mobile,Liquefied natural gas LNG,Fuel,Energy,EPA,Volume
+fuel-type_lng-fuel_use_mobile_hdv,Liquefied natural gas LNG - heavy duty vehicles - transport,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_lng-fuel_use_mobile_hdv_hdpi,Liquefied natural gas LNG - HPDI - heavy duty road,Fuel,Energy,GLEC,Weight
+fuel-type_lng-fuel_use_mobile_hdv_hdpi_methane_slip_0.54pc,Liquefied natural gas LNG - HPDI - heavy duty road - Methane slip 0.54%,Fuel,Energy,GLEC,Weight
+fuel-type_lng-fuel_use_mobile_hdv_hdpi_methane_slip_1.2pc,Liquefied natural gas LNG - HPDI road - slip 1.20%,Fuel,Energy,GLEC,Weight
+fuel-type_lng-fuel_use_mobile_hdv_si,Liquefied natural gas LNG - SI - heavy duty road,Fuel,Energy,GLEC,Weight
+fuel-type_lng-fuel_use_mobile_ldv,Liquefied natural gas LNG - light duty vehicles - transport,Fuel,Energy,"DISER,DISER","Volume,Energy"
+fuel-type_lng-fuel_use_mobile_ship,Liquefied natural gas LNG - compression ignition ship,Fuel,Energy,GLEC,Weight
+fuel-type_lng-fuel_use_mobile_ship_medium_speed,Liquefied natural gas LNG - Otto dual fuel - medium speed ship,Fuel,Energy,GLEC,Weight
+fuel-type_lng-fuel_use_mobile_ship_medium_speed_methane_slip_3.10pc,Liquefied natural gas LNG - Otto dual fuel - medium speed ship - Methane slip 3.10%,Fuel,Energy,GLEC,Weight
+fuel-type_lng-fuel_use_mobile_ship_methane_slip_0.20pc,Liquefied natural gas LNG - compression ignition ship - Methane slip 0.20%,Fuel,Energy,GLEC,Weight
+fuel-type_lng-fuel_use_mobile_ship_slow_speed,Liquefied natural gas LNG - Otto dual fuel - slow speed ship,Fuel,Energy,GLEC,Weight
+fuel-type_lng-fuel_use_mobile_ship_slow_speed_methane_slip_1.70pc,Liquefied natural gas LNG - Otto dual fuel - slow speed ship - Methane slip 1.70%,Fuel,Energy,GLEC,Weight
+fuel-type_lng-fuel_use_mobile_si_methane_slip_0.23pc,Liquefied natural gas LNG - SI road - slip 0.23%,Fuel,Energy,GLEC,Weight
+fuel-type_lng-fuel_use_mobile_si_methane_slip_0.32pc,Liquefied natural gas LNG - SI - heavy duty road - Methane slip 0.32%,Fuel,Energy,GLEC,Weight
+fuel-type_lng-fuel_use_na,Liquefied natural gas LNG,Fuel,Energy,"DISER,DISER,CAEP,BEIS,BEIS,CO2 Emissiefactoren","Energy,Volume,Weight,Volume,Weight,Weight"
+fuel-type_lng-fuel_use_na,Liquefied natural gas LNG (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_lng-fuel_use_na,Liquified natural gas LNG (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_lng_net-fuel_use_mobile,LNG (road / maritime and river transport) (net CV),Fuel,Energy,ADEME,Energy
+fuel-type_lng_net-fuel_use_na,Liquefied natural gas LNG (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_lng_net-fuel_use_na,Liquified natural gas LNG (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_lpg-fuel_use_agricultural_equipment,Liquefied petroleum gas LPG - Agricultural Equipment,Fuel,Energy,EPA,Volume
+fuel-type_lpg-fuel_use_commercial,Liquefied petroleum gas LPG - commercial,Fuel,Energy,MfE,Weight
+fuel-type_lpg-fuel_use_construction_mining_equipment,Liquefied petroleum gas LPG - Construction/Mining Equipment,Fuel,Energy,EPA,Volume
+fuel-type_lpg-fuel_use_industrial,Liquefied petroleum gas LPG - industrial,Fuel,Energy,MfE,Weight
+fuel-type_lpg-fuel_use_mobile,Liquefied petroleum gas LPG,Fuel,Energy,EPA,Volume
+fuel-type_lpg-fuel_use_mobile,Liquefied petroleum gas LPG - transport,Fuel,Energy,"DISER,DISER,MfE","Volume,Energy,Volume"
+fuel-type_lpg-fuel_use_mobile_airport_equipment,Liquefied petroleum gas LPG - Airport Equipment,Fuel,Energy,EPA,Volume
+fuel-type_lpg-fuel_use_mobile_industrial_commercial_equipment,Liquefied petroleum gas LPG - Industrial/Commercial Equipment,Fuel,Energy,EPA,Volume
+fuel-type_lpg-fuel_use_mobile_lawn_and_garden_equipment,Liquefied petroleum gas LPG - Lawn and Garden Equipment,Fuel,Energy,EPA,Volume
+fuel-type_lpg-fuel_use_mobile_post_2004,Liquefied petroleum gas LPG - post-2004 vehicles - transport,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_lpg-fuel_use_mobile_railroad_equipment,Liquefied petroleum gas LPG - Railroad Equipment,Fuel,Energy,EPA,Volume
+fuel-type_lpg-fuel_use_mobile_recreational_equipment,Liquefied petroleum gas LPG - Recreational Equipment,Fuel,Energy,EPA,Volume
+fuel-type_lpg-fuel_use_na,Liquefied petroleum gas,Fuel,Energy,CAEP,Volume
+fuel-type_lpg-fuel_use_na,Liquefied petroleum gas LPG,Fuel,Energy,"CAEP,GLEC,GLEC,BEIS,BEIS,CBAM,CBAM,CO2 Emissiefactoren","Weight,Volume,Weight,Weight,Volume,Energy,Weight,Volume"
+fuel-type_lpg-fuel_use_na,Liquefied petroleum gas LPG (gross CV),Fuel,Energy,"BEIS,Netherlands Enterprise Agency","Energy,Energy"
+fuel-type_lpg-fuel_use_stationary,Liquefied petroleum gas LPG,Fuel,Energy,"DISER,DISER,EPA,EPA,GHG Protocol","Volume,Energy,Volume,Energy,Energy"
+fuel-type_lpg_net-fuel_use_na,Liquefied petroleum gas LPG (net CV),Fuel,Energy,"BEIS,Netherlands Enterprise Agency","Energy,Energy"
+fuel-type_lubricants-fuel_use_na,Lubricants,Fuel,Energy,"BEIS,BEIS,CBAM,CBAM,SEFR","Weight,Volume,Weight,Energy,Weight"
+fuel-type_lubricants-fuel_use_na,Lubricants (gross CV),Fuel,Energy,"BEIS,Netherlands Enterprise Agency","Energy,Energy"
+fuel-type_lubricants-fuel_use_na,Lubricating oil,Fuel,Energy,"CAEP,CO2 Emissiefactoren","Weight,Weight"
+fuel-type_lubricants-fuel_use_stationary,Lubricants,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_lubricants_and_other_petroleum_refinery_products-fuel_use_na,Lubricants and other petroleum refinery products,Fuel,Energy,OpenIO-Canada,Money
+fuel-type_lubricants_net-fuel_use_na,Lubricants (net CV),Fuel,Energy,"BEIS,Netherlands Enterprise Agency","Energy,Energy"
+fuel-type_marine_diesel_oil-fuel_use_na,Marine diesel oil,Fuel,Energy,"GLEC,GLEC,CO2 Emissiefactoren","Weight,Volume,Volume"
+fuel-type_marine_fuel_oil-fuel_use_mobile_shipping,Marine fuel oil,Fuel,Energy,BEIS,Volume
+fuel-type_marine_fuel_oil-fuel_use_na,Marine fuel oil,Fuel,Energy,"BEIS,BEIS","Weight,Volume"
+fuel-type_marine_fuel_oil-fuel_use_na,Marine fuel oil (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_marine_fuel_oil_net-fuel_use_na,Marine fuel oil (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_marine_gas_oil-fuel_use_mobile_shipping,Marine gas oil,Fuel,Energy,BEIS,Volume
+fuel-type_marine_gas_oil-fuel_use_na,Marine gas oil,Fuel,Energy,"GLEC,GLEC,BEIS,BEIS","Volume,Weight,Volume,Weight"
+fuel-type_marine_gas_oil-fuel_use_na,Marine gas oil (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_marine_gas_oil_net-fuel_use_na,Marine gas oil (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_methane-fuel_use_na,Methane,Fuel,Energy,"CBAM,CBAM","Energy,Weight"
+fuel-type_methane-fuel_use_na,Methane (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_methane_hydrogen-fuel_use_na,Methane hydrogen,Fuel,Energy,CAEP,Weight
+fuel-type_methane_net-fuel_use_na,Methane (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_methanol_90_percent-fuel_use_na,Methanol 90%,Fuel,Energy,"GLEC,GLEC","Weight,Volume"
+fuel-type_methanol_bio_100-fuel_use_na,Methanol - bio,Fuel,Energy,"BEIS,BEIS","Weight,Volume"
+fuel-type_methanol_bio_100-fuel_use_na,Methanol - bio (gross CV),Fuel,Energy,"BEIS,BEIS","Weight,Volume"
+fuel-type_methanol_bio_100_net-fuel_use_na,Methanol - bio (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_methanol_reforming_hydrogen-fuel_use_na,Methanol reforming hydrogen,Fuel,Energy,CAEP,Weight
+fuel-type_middings-fuel_use_na,Middings,Fuel,Energy,CAEP,Weight
+fuel-type_motor_fuel-fuel_use_na,Retail trade of motor fuel (services),Fuel,Energy,EXIOBASE,Money
+fuel-type_motor_gasoline-fuel_use_mobile,Gasoline - other than for use as fuel in an aircraft - transport,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_motor_gasoline-fuel_use_mobile,Gasoline - without biofuel content - used in vehicle,Fuel,Energy,GEMIS,Volume
+fuel-type_motor_gasoline-fuel_use_mobile,Motor gasoline,Fuel,Energy,EPA,Volume
+fuel-type_motor_gasoline-fuel_use_mobile,Petrol - transport,Fuel,Energy,MfE,Volume
+fuel-type_motor_gasoline-fuel_use_mobile,Regular petrol - transport,Fuel,Energy,MfE,Volume
+fuel-type_motor_gasoline-fuel_use_mobile_agricultural_equipment,Motor gasoline - agricultural equipment,Fuel,Energy,GHG Protocol,Volume
+fuel-type_motor_gasoline-fuel_use_mobile_hdv,Motor gasoline - heavy-duty vehicles,Fuel,Energy,GHG Protocol,Volume
+fuel-type_motor_gasoline-fuel_use_mobile_hybrid_passenger_cars,Motor gasoline - hybrid passenger cars,Fuel,Energy,GHG Protocol,Volume
+fuel-type_motor_gasoline-fuel_use_mobile_ldv,Motor gasoline - light-duty trucks (vans/pickup trucks/suvs),Fuel,Energy,GHG Protocol,Volume
+fuel-type_motor_gasoline-fuel_use_mobile_motorcycles,Motor gasoline - motorcycles,Fuel,Energy,GHG Protocol,Volume
+fuel-type_motor_gasoline-fuel_use_mobile_other_non_road,Motor gasoline - other non-road vehicles,Fuel,Energy,GHG Protocol,Volume
+fuel-type_motor_gasoline-fuel_use_mobile_passenger_cars,Motor gasoline - passenger cars,Fuel,Energy,GHG Protocol,Volume
+fuel-type_motor_gasoline-fuel_use_mobile_post_2004,Gasoline - post-2004 vehicles - transport,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_motor_gasoline-fuel_use_mobile_ships_and_boats,Motor gasoline - ships and boats,Fuel,Energy,GHG Protocol,Volume
+fuel-type_motor_gasoline-fuel_use_na,Conventional gasoline,Fuel,Energy,"GLEC,GLEC","Volume,Weight"
+fuel-type_motor_gasoline-fuel_use_na,Gasoline,Fuel,Energy,"GLEC,GLEC","Volume,Weight"
+fuel-type_motor_gasoline-fuel_use_na,Motor gasoline,Fuel,Energy,"EXIOBASE,OpenIO-Canada,CBAM,CBAM,SEFR","Money,Money,Energy,Weight,Weight"
+fuel-type_motor_gasoline-fuel_use_na,Petrol - 100% mineral petrol,Fuel,Energy,"BEIS,BEIS","Volume,Weight"
+fuel-type_motor_gasoline-fuel_use_na,Petrol - 100% mineral petrol (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_motor_gasoline-fuel_use_na,Vehicle gasoline,Fuel,Energy,CAEP,Weight
+fuel-type_motor_gasoline-fuel_use_stationary,Gasoline,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_motor_gasoline-fuel_use_stationary,Motor gasoline,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_motor_gasoline_bio_average-fuel_use_mobile,Gasoline - with biofuel share - used in vehicle,Fuel,Energy,GEMIS,Volume
+fuel-type_motor_gasoline_bio_average-fuel_use_na,Petrol - average biofuel blend,Fuel,Energy,"BEIS,BEIS","Volume,Weight"
+fuel-type_motor_gasoline_bio_average-fuel_use_na,Petrol - average biofuel blend (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_motor_gasoline_bio_average_net-fuel_use_na,Petrol - average biofuel blend  (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_motor_gasoline_bio_average_net-fuel_use_na,Petrol - average biofuel blend (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_motor_gasoline_net-fuel_use_na,Petrol - 100% mineral petrol (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_motor_gasoline_premium-fuel_use_mobile,Premium petrol - transport,Fuel,Energy,MfE,Volume
+fuel-type_naphtha-fuel_use_na,Naphtha,Fuel,Energy,"EXIOBASE,CAEP,BEIS,BEIS,CBAM,CBAM,CO2 Emissiefactoren,SEFR","Money,Weight,Volume,Weight,Weight,Energy,Weight,Weight"
+fuel-type_naphtha-fuel_use_na,Naphtha (gross CV),Fuel,Energy,"BEIS,Netherlands Enterprise Agency","Energy,Energy"
+fuel-type_naphtha-fuel_use_stationary,Naphtha,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_naphtha-fuel_use_stationary,Naphtha - <401 deg F,Fuel,Energy,"EPA,EPA,GHG Protocol","Volume,Energy,Energy"
+fuel-type_naphtha_net-fuel_use_na,Naphtha (net CV),Fuel,Energy,"BEIS,Netherlands Enterprise Agency","Energy,Energy"
+fuel-type_naphtha_special-fuel_use_stationary,Special naphtha,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_natural_gas-fuel_use_commercial,Natural gas - commercial,Fuel,Energy,MfE,Energy
+fuel-type_natural_gas-fuel_use_electric_utilities,Natural gas (electric utilities subsector),Fuel,Energy,Government of Canada,Volume
+fuel-type_natural_gas-fuel_use_electricity_generation,Natural gas (electric utilities subsector),Fuel,Energy,Government of Canada,Volume
+fuel-type_natural_gas-fuel_use_heat_supply,Natural gas (gross CV),Fuel,Energy,UBA,Energy
+fuel-type_natural_gas-fuel_use_industrial,Natural gas (industrial subsector),Fuel,Energy,Government of Canada,Volume
+fuel-type_natural_gas-fuel_use_industrial,Natural gas - industrial,Fuel,Energy,MfE,Energy
+fuel-type_natural_gas-fuel_use_manufacturing,Natural gas (manufacturing industries subsector),Fuel,Energy,Government of Canada,Volume
+fuel-type_natural_gas-fuel_use_na,Natural gas,Fuel,Energy,"DISER,DISER,OpenIO-Canada,CAEP,UBA,ADEME,ADEME,BEIS,CBAM,CBAM,CO2 Emissiefactoren,CO2 Emissiefactoren,Market Economics Limited,SEFR,EPA","Energy,Volume,Money,Volume,Energy,Energy,Volume,Volume,Weight,Energy,Volume,Weight,Money,Weight,Money"
+fuel-type_natural_gas-fuel_use_na,Natural gas (gross CV),Fuel,Energy,"Netherlands Enterprise Agency,SEFR","Energy,Energy"
+fuel-type_natural_gas-fuel_use_na,Natural gas - 100% mineral blend,Fuel,Energy,"BEIS,BEIS","Weight,Volume"
+fuel-type_natural_gas-fuel_use_na,Natural gas - 100% mineral blend (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_natural_gas-fuel_use_na,Natural gas - upper heating value (gross CV),Fuel,Energy,GEMIS,Energy
+fuel-type_natural_gas-fuel_use_na,Natural gas used: T&D losses,Fuel,Energy,MfE,Energy
+fuel-type_natural_gas-fuel_use_residential_construction_commercial_institutional_agriculture,Natural gas (residential / construction / commercial / institutional / agriculture subsector),Fuel,Energy,Government of Canada,Volume
+fuel-type_natural_gas-fuel_use_stationary,Natural gas,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_natural_gas_bio_average-fuel_use_na,Natural gas - grid biogas blend,Fuel,Energy,"BEIS,BEIS","Weight,Volume"
+fuel-type_natural_gas_bio_average-fuel_use_na,Natural gas - grid biogas blend (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_natural_gas_bio_average_net-fuel_use_na,Natural gas - grid biogas blend (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_natural_gas_distribution-fuel_use_na,Natural gas distribution,Fuel,Energy,EPA,Money
+fuel-type_natural_gas_extraction-fuel_use_na,Natural gas extraction,Fuel,Energy,EPA,Money
+fuel-type_natural_gas_liquids-fuel_use_na,Natural gas liquids,Fuel,Energy,"CAEP,CBAM,CBAM,SEFR","Weight,Energy,Weight,Weight"
+fuel-type_natural_gas_liquids-fuel_use_na,Natural gas liquids (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_natural_gas_liquids_and_related_products-fuel_use_na,Natural gas liquids and related products,Fuel,Energy,OpenIO-Canada,Money
+fuel-type_natural_gas_liquids_net-fuel_use_na,Natural gas liquids (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_natural_gas_lower_heating_value-fuel_use_na,Natural gas (based on lower heating value),Fuel,Energy,GEMIS,Volume
+fuel-type_natural_gas_net-fuel_use_heat_supply,Natural gas (net CV),Fuel,Energy,UBA,Energy
+fuel-type_natural_gas_net-fuel_use_na,Natural gas (net CV),Fuel,Energy,"ADEME,Netherlands Enterprise Agency","Energy,Energy"
+fuel-type_natural_gas_net-fuel_use_na,Natural gas - 100% mineral blend (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_natural_gas_net-fuel_use_na,Natural gas - lower heating value (net CV),Fuel,Energy,GEMIS,Energy
+fuel-type_natural_gas_reforming_hydrogen-fuel_use_na,Natural gas reforming hydrogen,Fuel,Energy,CAEP,Weight
+fuel-type_natural_gas_reforming_hydrogen_with_carbon_capture_use_storage-fuel_use_na,Natural gas reforming hydrogen with carbon capture/use and storage,Fuel,Energy,CAEP,Weight
+fuel-type_natural_gasoline-fuel_use_stationary,Natural gasoline,Fuel,Energy,"EPA,EPA,GHG Protocol","Volume,Energy,Energy"
+fuel-type_nonspecified_petroleum_products-fuel_use_na,Nonspecified petroleum products,Fuel,Energy,EXIOBASE,Money
+fuel-type_nuclear_fuel-fuel_use_electricity_generation,Nuclear fuel,Fuel,Energy,UNECE,Energy
+fuel-type_nuclear_fuel-fuel_use_na,Nuclear fuel,Fuel,Energy,EXIOBASE,Money
+fuel-type_oil_and_gas-fuel_use_na,Oil and gas,Fuel,Energy,Climate TRACE,Weight
+fuel-type_oil_shale-fuel_use_na,Oil shale (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_oil_shale_and_tar_sands-fuel_use_na,Oil shale and tar sands,Fuel,Energy,SEFR,Weight
+fuel-type_oil_shale_net-fuel_use_na,Oil shale (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_oil_shale_tar_sands-fuel_use_na,Oil shale and tar sands,Fuel,Energy,"CBAM,CBAM","Energy,Weight"
+fuel-type_orimulsion-fuel_use_na,Orimulsion,Fuel,Energy,"CAEP,CBAM,CBAM,CO2 Emissiefactoren,SEFR","Weight,Weight,Energy,Weight,Weight"
+fuel-type_orimulsion-fuel_use_na,Orimulsion (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_orimulsion_net-fuel_use_na,Orimulsion (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_other_biogas_bio_100-fuel_use_na,Other biogas,Fuel,Energy,"CBAM,SEFR","Weight,Weight"
+fuel-type_other_biogas_bio_100_net-fuel_use_na,Other biogas (net CV),Fuel,Energy,CBAM,Energy
+fuel-type_other_biomass_bio_100-fuel_use_na,Other biomass gases,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_other_biomass_gases_bio_100-fuel_use_stationary,Other biomass gases,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_other_bituminous_coal-fuel_use_na,Other bituminous coal,Fuel,Energy,SEFR,Weight
+fuel-type_other_gas-fuel_use_na,Other gas,Fuel,Energy,CAEP,Volume
+fuel-type_other_kerosene-fuel_use_na,Other kerosene,Fuel,Energy,SEFR,Weight
+fuel-type_other_liquid_biofuels-fuel_use_na,Other liquid biofuels,Fuel,Energy,EXIOBASE,Money
+fuel-type_other_liquid_biofuels_bio_100-fuel_use_mobile,Other liquid biofuels - for transport,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_other_liquid_biofuels_bio_100-fuel_use_na,Other liquid biofuels,Fuel,Energy,"CBAM,SEFR","Weight,Weight"
+fuel-type_other_liquid_biofuels_bio_100-fuel_use_na,Other liquid biofuels (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_other_liquid_biofuels_bio_100_net-fuel_use_na,Other liquid biofuels (net CV),Fuel,Energy,"CBAM,Netherlands Enterprise Agency","Energy,Energy"
+fuel-type_other_natural_gas_liquids-fuel_use_stationary,Other natural gas liquids,Fuel,Energy,"DISER,DISER","Weight,Energy"
+fuel-type_other_oil-fuel_use_na,Other oil (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_other_oil_gt_401degf-fuel_use_stationary,Other oil - >401 deg F,Fuel,Energy,"EPA,EPA,GHG Protocol","Volume,Energy,Energy"
+fuel-type_other_oil_net-fuel_use_na,Other oil (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_other_oils-fuel_use_na,Other oils,Fuel,Energy,CO2 Emissiefactoren,Weight
+fuel-type_other_petroleum_coal_products-fuel_use_na,Other petroleum and coal products,Fuel,Energy,EPA,Money
+fuel-type_other_petroleum_gas-fuel_use_na,Other petroleum gas,Fuel,Energy,"BEIS,BEIS","Weight,Volume"
+fuel-type_other_petroleum_gas-fuel_use_na,Other petroleum gas (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_other_petroleum_gas_net-fuel_use_na,Other petroleum gas (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_other_petroleum_products-fuel_use_na,Other petroleum products,Fuel,Energy,"CBAM,CBAM,Market Economics Limited,SEFR","Energy,Weight,Money,Weight"
+fuel-type_other_petroleum_products-fuel_use_na,Other petroleum products (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_other_petroleum_products_net-fuel_use_na,Other petroleum products (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_other_primary_solid_biomass_bio_100-fuel_use_na,Other primary solid biomass,Fuel,Energy,"CBAM,SEFR","Weight,Weight"
+fuel-type_other_primary_solid_biomass_bio_100_net-fuel_use_na,Other primary solid biomass (net CV),Fuel,Energy,CBAM,Energy
+fuel-type_other_vehicle_fuels_and_lubricants-fuel_use_na,Other vehicle fuels and lubricants,Fuel,Energy,Market Economics Limited,Money
+fuel-type_oxy_gas-fuel_use_na,Oxy gas (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_oxy_gas_net-fuel_use_na,Oxy gas (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_oxygen_steel_furnace_gas-fuel_use_na,Oxygen steel furnace gas,Fuel,Energy,"EXIOBASE,CBAM,CBAM,SEFR","Money,Weight,Energy,Weight"
+fuel-type_paraffin_wax-fuel_use_na,Paraffin wax,Fuel,Energy,CAEP,Weight
+fuel-type_paraffin_wax-fuel_use_na,Paraffin waxes,Fuel,Energy,"CBAM,CBAM","Weight,Energy"
+fuel-type_paraffin_wax-fuel_use_na,Paraffin waxes (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_paraffin_wax_net-fuel_use_na,Paraffin waxes (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_paraffin_waxes-fuel_use_na,Paraffin waxes,Fuel,Energy,"EXIOBASE,SEFR","Money,Weight"
+fuel-type_patent_fuel-fuel_use_na,Patent fuel,Fuel,Energy,"CBAM,CBAM,SEFR","Energy,Weight,Weight"
+fuel-type_patent_fuel-fuel_use_na,Patent fuel (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_patent_fuel_net-fuel_use_na,Patent fuel (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_peat_bio_100-fuel_use_na,Peat,Fuel,Energy,"CAEP,CBAM,CO2 Emissiefactoren,SEFR,GHG Protocol","Weight,Weight,Weight,Weight,Energy"
+fuel-type_peat_bio_100-fuel_use_na,Peat (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_peat_bio_100-fuel_use_stationary,Peat,Fuel,Energy,"EPA,EPA","Weight,Energy"
+fuel-type_peat_bio_100_net-fuel_use_na,Peat (net CV),Fuel,Energy,"CBAM,Netherlands Enterprise Agency","Energy,Energy"
+fuel-type_pentanes_plus-fuel_use_stationary,Pentanes plus,Fuel,Energy,"EPA,EPA,GHG Protocol","Volume,Energy,Energy"
+fuel-type_petrochemical_feedstocks-fuel_use_stationary,Petrochemical feedstocks,Fuel,Energy,"EPA,EPA,GHG Protocol","Volume,Energy,Energy"
+fuel-type_petrol-fuel_use_na,Petrol,Fuel,Energy,Market Economics Limited,Money
+fuel-type_petrol_development_bio_average-fuel_use_na,Development Petrol,Fuel,Energy,"BEIS,BEIS,BEIS","Energy,Weight,Volume"
+fuel-type_petrol_renewable_bio_average-fuel_use_na,Renewable petrol,Fuel,Energy,"BEIS,BEIS","Weight,Volume"
+fuel-type_petrol_renewable_bio_average_net-fuel_use_na,Renewable petrol (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_petroleum-fuel_use_na,Petroleum,Fuel,Energy,CO2 Emissiefactoren,Weight
+fuel-type_petroleum_based_greases-fuel_use_stationary,Petroleum based greases,Fuel,Energy,"DISER,DISER","Volume,Energy"
+fuel-type_petroleum_based_oils_other_than_petroleum_based_oil_used_as_fuel-fuel_use_stationary,Petroleum based oils - other than petroleum based oil used as fuel,Fuel,Energy,"DISER,DISER","Volume,Energy"
+fuel-type_petroleum_based_products_other-fuel_use_stationary,Petroleum based products - other,Fuel,Energy,"DISER,DISER","Volume,Energy"
+fuel-type_petroleum_coke-fuel_use_na,Petroleum coke,Fuel,Energy,"EXIOBASE,CAEP,BEIS,CBAM,CBAM,CO2 Emissiefactoren,SEFR","Money,Weight,Weight,Weight,Energy,Weight,Weight"
+fuel-type_petroleum_coke-fuel_use_na,Petroleum coke (gross CV),Fuel,Energy,"BEIS,Netherlands Enterprise Agency","Energy,Energy"
+fuel-type_petroleum_coke-fuel_use_stationary,Petroleum coke,Fuel,Energy,"DISER,DISER,GHG Protocol","Weight,Energy,Energy"
+fuel-type_petroleum_coke-fuel_use_stationary,Petroleum coke  - solid,Fuel,Energy,"EPA,EPA","Weight,Energy"
+fuel-type_petroleum_coke_net-fuel_use_na,Petroleum coke (net CV),Fuel,Energy,"BEIS,Netherlands Enterprise Agency","Energy,Energy"
+fuel-type_petroleum_coke_solid-fuel_use_stationary,Petroleum coke - solid,Fuel,Energy,GHG Protocol,Energy
+fuel-type_petroleum_lubricating_oil_and_grease_manufacturing-fuel_use_na,Petroleum lubricating oil and grease manufacturing,Fuel,Energy,EPA,Money
+fuel-type_petroleum_petroleum_products-fuel_use_na,Petroleum and petroleum products,Fuel,Energy,EPA,Money
+fuel-type_petroleum_refineries-fuel_use_na,Petroleum refineries,Fuel,Energy,EPA,Money
+fuel-type_phosphorus_furnace_gas-fuel_use_na,Phosphorus furnace gas (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_phosphorus_furnace_gas_net-fuel_use_na,Phosphorus furnace gas (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_plastics-fuel_use_stationary,Plastics,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Weight,Energy"
+fuel-type_producer_gas-fuel_use_na,Producer gas - byproduct,Fuel,Energy,CAEP,Weight
+fuel-type_propane-fuel_use_na,Propane,Fuel,Energy,"BEIS,BEIS,CO2 Emissiefactoren","Volume,Weight,Volume"
+fuel-type_propane-fuel_use_na,Propane (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_propane-fuel_use_stationary,Propane,Fuel,Energy,"EPA,EPA,GHG Protocol","Volume,Energy,Energy"
+fuel-type_propane_gas-fuel_use_stationary,Propane gas,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_propane_net-fuel_use_na,Propane (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_propylene-fuel_use_stationary,Propylene,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_recycled_carbon_net-fuel_use_na,Recycled carbon fuel (net CV),Fuel,Energy,ADEME,Energy
+fuel-type_recycled_gas-fuel_use_na,Recycled gas,Fuel,Energy,CAEP,Weight
+fuel-type_refinery_coke-fuel_use_stationary,Refinery coke,Fuel,Energy,"DISER,DISER","Weight,Energy"
+fuel-type_refinery_feedstocks-fuel_use_na,Refinery feedstocks,Fuel,Energy,"EXIOBASE,SEFR","Money,Weight"
+fuel-type_refinery_gas-fuel_use_na,Refinery gas,Fuel,Energy,"EXIOBASE,CAEP,CBAM,CBAM,CO2 Emissiefactoren,SEFR","Money,Weight,Energy,Weight,Weight,Weight"
+fuel-type_refinery_gas-fuel_use_na,Refinery gas (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_refinery_gas-fuel_use_stationary,Refinery gas,Fuel,Energy,"DISER,DISER","Weight,Energy"
+fuel-type_refinery_gas_net-fuel_use_na,Refinery gas (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_refinery_misc-fuel_use_na,Refinery feedstocks,Fuel,Energy,"CBAM,CBAM,CO2 Emissiefactoren","Weight,Energy,Weight"
+fuel-type_refinery_misc-fuel_use_na,Refinery feedstocks (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_refinery_misc-fuel_use_na,Refinery miscellaneous,Fuel,Energy,BEIS,Weight
+fuel-type_refinery_misc-fuel_use_na,Refinery miscellaneous (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_refinery_misc_net-fuel_use_na,Refinery feedstocks (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_refinery_misc_net-fuel_use_na,Refinery miscellaneous (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_rendered_animal_fat_bio_100-fuel_use_na,Rendered animal fat,Fuel,Energy,"ADEME,ADEME","Volume,Weight"
+fuel-type_rendered_animal_fat_bio_100-fuel_use_stationary,Rendered animal fat,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_rendered_animal_fat_bio_100_net-fuel_use_na,Rendered animal fat (net CV),Fuel,Energy,ADEME,Energy
+fuel-type_renewables-fuel_use_electricity_generation,Renewables,Fuel,Energy,Climatiq,Energy
+fuel-type_residual_fuel_oil-fuel_use_mobile,Residual Fuel Oil,Fuel,Energy,EPA,Volume
+fuel-type_residual_fuel_oil-fuel_use_mobile_ships_and_boats,Residual fuel oil - ships and boats,Fuel,Energy,EPA,Volume
+fuel-type_residual_fuel_oil-fuel_use_na,Processed fuel oils - residual oil,Fuel,Energy,"BEIS,BEIS","Volume,Weight"
+fuel-type_residual_fuel_oil-fuel_use_na,Processed fuel oils - residual oil (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_residual_fuel_oil-fuel_use_na,Residual fuel oil,Fuel,Energy,"CBAM,CBAM,SEFR","Energy,Weight,Weight"
+fuel-type_residual_fuel_oil-fuel_use_na,Residual fuel oil (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_residual_fuel_oil_net-fuel_use_na,Processed fuel oils - residual oil (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_residual_fuel_oil_net-fuel_use_na,Residual fuel oil (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_residual_fuel_oil_no.5-fuel_use_stationary,Residual fuel oil no. 5,Fuel,Energy,"EPA,EPA,GHG Protocol","Volume,Energy,Energy"
+fuel-type_residual_fuel_oil_no.6-fuel_use_stationary,Residual fuel oil no. 6,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_shale_gas-fuel_use_na,Shale gas,Fuel,Energy,CAEP,Volume
+fuel-type_shale_oil-fuel_use_na,Shale oil,Fuel,Energy,"CAEP,CBAM,CBAM,CO2 Emissiefactoren,SEFR","Weight,Weight,Energy,Weight,Weight"
+fuel-type_shale_oil-fuel_use_na,Shale oil (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_shale_oil_net-fuel_use_na,Shale oil (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_sludge_biogas_bio_100-fuel_use_na,Green gas (sewage sludge),Fuel,Energy,CO2 Emissiefactoren,Volume
+fuel-type_sludge_biogas_bio_100-fuel_use_na,Sludge biogas - methane only,Fuel,Energy,"DISER,DISER","Volume,Energy"
+fuel-type_sludge_biogas_bio_100-fuel_use_na,Sludge gas,Fuel,Energy,CBAM,Weight
+fuel-type_sludge_biogas_bio_100_net-fuel_use_na,Sludge gas,Fuel,Energy,SEFR,Weight
+fuel-type_sludge_biogas_bio_100_net-fuel_use_na,Sludge gas (net CV),Fuel,Energy,CBAM,Energy
+fuel-type_softwood_north_american_bio_100-fuel_use_stationary,North American softwood,Fuel,Energy,"EPA,GHG Protocol","Energy,Energy"
+fuel-type_solid_biomass_bio_100-fuel_use_na,Solid biomass (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_solid_biomass_bio_100_net-fuel_use_na,Solid biomass (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_solid_byproducts-fuel_use_stationary,Solid byproducts,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Weight,Energy"
+fuel-type_solid_fossil_fuels_other-fuel_use_na,Solid fossil fuels - other,Fuel,Energy,"DISER,DISER","Energy,Weight"
+fuel-type_solid_fuel_products-fuel_use_na,Solid fuel products,Fuel,Energy,OpenIO-Canada,Money
+fuel-type_solid_fuels-fuel_use_na,Solid fuels,Fuel,Energy,Market Economics Limited,Money
+fuel-type_solvents_mineral_turpentine_white_spirits-fuel_use_stationary,Solvents: mineral turpentine or white spirits,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_straw-fuel_use_heating,Straw (biomass heating),Fuel,Energy,CAEP,Weight
+fuel-type_straw_bio_100-fuel_use_na,Straw,Fuel,Energy,CAEP,Weight
+fuel-type_straw_bio_100-fuel_use_stationary,Straw,Fuel,Energy,"EPA,GHG Protocol","Energy,Energy"
+fuel-type_straw_biogas-fuel_use_na,Straw biogas,Fuel,Energy,CAEP,Weight
+fuel-type_straw_biogas_bio_100-fuel_use_na,Straw biogas,Fuel,Energy,CAEP,Weight
+fuel-type_sub_bituminous_coal-fuel_use_na,Sub-bituminous coal,Fuel,Energy,SEFR,Weight
+fuel-type_sulphite_lyes_bio_100-fuel_use_na,Sulphite lyes,Fuel,Energy,"DISER,DISER","Energy,Weight"
+fuel-type_sulphite_lyes_bio_100-fuel_use_na,Sulphite lyes - black liquor,Fuel,Energy,"CBAM,SEFR","Weight,Weight"
+fuel-type_sulphite_lyes_bio_100_net-fuel_use_na,Sulphite lyes - black liquor (net CV),Fuel,Energy,CBAM,Energy
+fuel-type_sweet_sorghum_fuel_ethanol-fuel_use_na,Sweet sorghum fuel ethanol,Fuel,Energy,CAEP,Volume
+fuel-type_synthetic_crude_oil-fuel_use_na,Synthetic crude oil,Fuel,Energy,OpenIO-Canada,Money
+fuel-type_synthetic_natural_gas-fuel_use_na,Synthetic natural gas,Fuel,Energy,CAEP,Weight
+fuel-type_tires-fuel_use_na,Passenger car tyres - as fuel,Fuel,Energy,"DISER,DISER","Weight,Energy"
+fuel-type_tires-fuel_use_stationary,Tires,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Weight,Energy"
+fuel-type_town_gas-fuel_use_na,Town gas,Fuel,Energy,"DISER,DISER,SEFR","Energy,Volume,Weight"
+fuel-type_truck_tires-fuel_use_na,Truck and off-road tyres - as fuel,Fuel,Energy,"DISER,DISER","Energy,Weight"
+fuel-type_unfinished_oils-fuel_use_stationary,Unfinished oils,Fuel,Energy,"EPA,EPA,GHG Protocol","Volume,Energy,Energy"
+fuel-type_unprocessed_natural_gas-fuel_use_na,Unprocessed natural gas,Fuel,Energy,"DISER,DISER","Energy,Volume"
+fuel-type_unrefined_oil_gas-fuel_use_na,Unrefined oil and gas,Fuel,Energy,EPA,Money
+fuel-type_used_oil-fuel_use_stationary,Used oil,Fuel,Energy,"EPA,EPA,GHG Protocol","Volume,Energy,Energy"
+fuel-type_vegetable_oil_bio_100-fuel_use_stationary,Vegetable oil,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Volume,Energy"
+fuel-type_waste-fuel_use_na,Waste (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_waste_animal_bio_100-fuel_use_na,Animal waste,Fuel,Energy,CAEP,Weight
+fuel-type_waste_net-fuel_use_na,Waste (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_waste_oils-fuel_use_na,Waste oils,Fuel,Energy,"BEIS,BEIS,CBAM,CBAM,SEFR","Weight,Volume,Weight,Energy,Weight"
+fuel-type_waste_oils-fuel_use_na,Waste oils (gross CV),Fuel,Energy,BEIS,Energy
+fuel-type_waste_oils_net-fuel_use_na,Waste oils (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_waste_solid_municipal-fuel_use_na,Municipal solid waste,Fuel,Energy,"DISER,DISER","Energy,Weight"
+fuel-type_waste_solid_municipal-fuel_use_stationary,Municipal solid waste,Fuel,Energy,"EPA,EPA,GHG Protocol","Energy,Weight,Energy"
+fuel-type_waste_solid_municipal_bio_100-fuel_use_na,Municipal waste - biomass fraction,Fuel,Energy,CBAM,Weight
+fuel-type_waste_solid_municipal_bio_100_net-fuel_use_na,Municipal waste - biomass fraction (net CV),Fuel,Energy,CBAM,Energy
+fuel-type_waste_tires-fuel_use_na,Waste tyres,Fuel,Energy,CBAM,Energy
+fuel-type_water_electrolysis_hydrogen-fuel_use_na,Water electrolysis hydrogen,Fuel,Energy,CAEP,Weight
+fuel-type_white_spirit-fuel_use_na,White spirit / SBP,Fuel,Energy,"CBAM,CBAM","Energy,Weight"
+fuel-type_white_spirit-fuel_use_na,White spirit / SBP (gross CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_white_spirit_and_special_boiling_point_spirit-fuel_use_na,White spirit and special boiling point spirit,Fuel,Energy,SEFR,Weight
+fuel-type_white_spirit_net-fuel_use_na,White spirit / SBP (net CV),Fuel,Energy,Netherlands Enterprise Agency,Energy
+fuel-type_wood_air_20_percent_humidity_bio_100-fuel_use_na,Wood and wood residuals - humidity 20%,Fuel,Energy,ADEME,Weight
+fuel-type_wood_air_20_percent_humidity_bio_100_net-fuel_use_na,Wood and wood residuals - humidity 20% (net CV),Fuel,Energy,ADEME,Energy
+fuel-type_wood_air_dry_bio_100-fuel_use_na,Wood / Wood waste (air dry),Fuel,Energy,CBAM,Weight
+fuel-type_wood_air_dry_bio_100-fuel_use_na,Wood waste,Fuel,Energy,ADEME,Weight
+fuel-type_wood_air_dry_bio_100_net-fuel_use_na,Wood / Wood waste (air dry) (net CV),Fuel,Energy,CBAM,Energy
+fuel-type_wood_air_dry_bio_100_net-fuel_use_na,Wood waste (net CV),Fuel,Energy,ADEME,Energy
+fuel-type_wood_and_wood_residuals_bio_100-fuel_use_na,Wood and wood residuals,Fuel,Energy,ADEME,Weight
+fuel-type_wood_and_wood_residuals_bio_100-fuel_use_stationary,Wood and wood residuals,Fuel,Energy,"EPA,EPA,GHG Protocol","Weight,Energy,Energy"
+fuel-type_wood_and_wood_residuals_bio_100_net-fuel_use_na,Wood and wood residuals (net CV),Fuel,Energy,ADEME,Energy
+fuel-type_wood_bio_100-fuel_use_domestic,Wood - residential,Fuel,Energy,MfE,Weight
+fuel-type_wood_bio_100-fuel_use_industrial,Wood - industrial,Fuel,Energy,MfE,Weight
+fuel-type_wood_bio_100-fuel_use_na,Fuel wood,Fuel,Energy,CAEP,Weight
+fuel-type_wood_bio_100-fuel_use_na,Green and air dried wood,Fuel,Energy,"DISER,DISER","Energy,Weight"
+fuel-type_wood_chips_25_percent_humidity_bio_100-fuel_use_na,Wood chips - dry (25% humidity),Fuel,Energy,ADEME,Weight
+fuel-type_wood_chips_25_percent_humidity_bio_100_net-fuel_use_na,Wood chips - dry (25% humidity) (net CV),Fuel,Energy,ADEME,Energy
+fuel-type_wood_chips_45_percent_humidity_bio_100-fuel_use_na,Wood chips - wet (45% humidity),Fuel,Energy,ADEME,Weight
+fuel-type_wood_chips_45_percent_humidity_bio_100_net-fuel_use_na,Wood chips - wet (45% humidity) (net CV),Fuel,Energy,ADEME,Energy
+fuel-type_wood_chips_bio_100-fuel_use_commercial,Wood chips - commercial,Fuel,Energy,MfE,Weight
+fuel-type_wood_chips_bio_100-fuel_use_manufacturing,Wood chips - manufacturing,Fuel,Energy,MfE,Weight
+fuel-type_wood_chips_bio_100-fuel_use_na,Wood chips,Fuel,Energy,"BEIS,CO2 Emissiefactoren","Weight,Weight"
+fuel-type_wood_chips_bio_100_net-fuel_use_na,Wood chips (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_wood_dry_bio_100-fuel_use_na,Dry wood,Fuel,Energy,"DISER,DISER","Weight,Energy"
+fuel-type_wood_green_bio_100-fuel_use_manufacturing,Wood green - manufacturing,Fuel,Energy,MfE,Weight
+fuel-type_wood_logs_bio_100-fuel_use_na,Wood logs,Fuel,Energy,"BEIS,CO2 Emissiefactoren","Weight,Weight"
+fuel-type_wood_logs_bio_100_net-fuel_use_na,Wood logs (net CV),Fuel,Energy,BEIS,Energy
+fuel-type_wood_logs_residuals_bio_100-fuel_use_stationary,Wood logs - weak and forest residues,Fuel,Energy,GEMIS,Weight
+fuel-type_wood_pellets_bio_100-fuel_use_commercial,Wood pellets - commercial,Fuel,Energy,MfE,Weight
+fuel-type_wood_pellets_bio_100-fuel_use_manufacturing,Wood pellets - manufacturing,Fuel,Energy,MfE,Weight
+fuel-type_wood_pellets_bio_100-fuel_use_na,Wood pellets,Fuel,Energy,"ADEME,BEIS,CO2 Emissiefactoren","Weight,Weight,Weight"
+fuel-type_wood_pellets_bio_100_net-fuel_use_na,Wood pellets (net CV),Fuel,Energy,"ADEME,BEIS","Energy,Energy"
+fuel-type_wood_pellets_industrial_residues_bio_100-fuel_use_na,Wood pellets (industrial residues),Fuel,Energy,CO2 Emissiefactoren,Weight
+fuel-type_wood_pellets_sawdust_bio_100-fuel_use_stationary,Wood pellets - from sawdust,Fuel,Energy,GEMIS,Weight
+fuel-type_wood_shreds_bio_100-fuel_use_na,Wood shreds,Fuel,Energy,CO2 Emissiefactoren,Weight
+fuel-type_wood_waste_bio_100-fuel_use_na,Wood / wood waste,Fuel,Energy,SEFR,Weight
+heat_and_steam-type_air_source_heat_pump,Electric heat pump - air source,Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_chp_lignite_briquette_lausitz,CHP (Lausitz lignite briquette),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_chp_lignite_briquette_rhenish,CHP (Rhenish lignite briquette),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_cooking_natural_gas,Cooking (natural gas),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_district,District heat and steam,Heat and Steam,Energy,BEIS,Energy
+heat_and_steam-type_district,District heating,Heat and Steam,Energy,UBA,Energy
+heat_and_steam-type_district,District heating (fossil fuel mix),Heat and Steam,Energy,UBA,Energy
+heat_and_steam-type_district,District heating - heat network (average),Heat and Steam,Energy,CO2 Emissiefactoren,Energy
+heat_and_steam-type_district,Purchased heat and steam,Heat and Steam,Energy,GHG Protocol,Energy
+heat_and_steam-type_district,Steam and Heat,Heat and Steam,Energy,EPA,Energy
+heat_and_steam-type_district_chp,District heating (CHP and heating plant mix),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_district_chp_lpg,Central heating (LPG-fired CHP),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_district_chp_natural_gas,Central heating (natural gas-fired CHP),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_district_coal_briquette,Central heating (coal briquette),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_district_coking_coal,Central heating (coking coal),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_district_electric,District heating (electric power plant mix),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_district_heating_oil,Central heating (heating oil),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_district_hot_water,District hot water,Heat and Steam,Energy,EPA,Energy
+heat_and_steam-type_district_light_oil,Central heating (light heating oil),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_district_lignite_briquette_lausitz,Central heating (Lausitz lignite briquette),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_district_lignite_briquette_rhenish,Central heating (Rhenish lignite briquette),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_district_losses,District heat & steam distribution 5% loss,Heat and Steam,Energy,BEIS,Energy
+heat_and_steam-type_district_lpg,Central heating (LPG),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_district_natural_gas,Central heating (natural gas-fired),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_district_natural_gas_condensing_system,Central heating (natural gas with condensing system),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_district_residual_reduction,District heating - residual heat without co-firing reduction,Heat and Steam,Energy,CO2 Emissiefactoren,Energy
+heat_and_steam-type_district_short_rotation_woodchip_gas,District heating (short-rotation wood-chip and gas CHP),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_district_steam,District steam,Heat and Steam,Energy,EPA,Energy
+heat_and_steam-type_district_woodchip_gas,District heating (wood-chip and gas CHP),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_ground_source_heat_pump,Electric heat pump – ground source,Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_hard_coal_briquette_heating,Coal briquette (imported) heating,Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_industrial_boiler_coal_liquidized_bed_combustion,Industrial boiler (coal-fired with liquidized bed combustion),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_industrial_boiler_heavy_fuel_oil,Industrial boiler (heavy fuel oil-fired),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_industrial_boiler_lignite_liquidized_bed_combustion,Industrial boiler (lignite-fired with liquidized bed combustion),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_industrial_boiler_llight_fuel_oil,Industrial boiler (light fuel oil-fired),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_industrial_boiler_natural,Industrial boiler (natural gas-fired),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_local_heating_chp_biogas,Local heating (biogas-fired CHP),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_night_storage_heater,Night storage heater,Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_onsite,Onsite heat and steam,Heat and Steam,Energy,BEIS,Energy
+heat_and_steam-type_plant_large_light_oil,Heating plant (large light oil-fired),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_plant_large_natural_gas,Heating plant (large natural gas-fired),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_plant_medium_light_oil,Heating plant (medium light oil-fired),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_plant_medium_natural_gas,Heating plant (medium natural gas-fired),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_plant_small_light_oil,Heating plant (small light oil-fired),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_plant_small_natural_gas,Heating plant (small natural gas-fired),Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_solar_hot_water_flat,Solar hot water flat,Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_solar_hot_water_vacuum,Solar hot water vacuum,Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_steam_and_heated_or_cooled_air_or_water,Steam and heated or cooled air or water,Heat and Steam,Energy,OpenIO-Canada,Money
+heat_and_steam-type_steam_hot_water_supply_services,Steam and hot water supply (services),Heat and Steam,Energy,EXIOBASE,Money
+heat_and_steam-type_water_source_heat_pump,Electric heat pump – water source,Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_wood_chips,Wood chips,Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_wood_logs,Wood logs,Heat and Steam,Energy,GEMIS,Energy
+heat_and_steam-type_wood_pellets,Wood pellets,Heat and Steam,Energy,GEMIS,Energy
+real_estate_energy_consumption-type_distribution_warehouse_cold,Distribution warehouse cold (Energy consumption),Real Estate - Energy Consumption,Energy,PCAF,Energy
+real_estate_energy_consumption-type_distribution_warehouse_warm,Distribution warehouse warm (Energy consumption),Real Estate - Energy Consumption,Energy,PCAF,Energy
+real_estate_energy_consumption-type_healthcare,Healthcare (Energy consumption),Real Estate - Energy Consumption,Energy,PCAF,Energy
+real_estate_energy_consumption-type_hotel,Hotel (Energy consumption),Real Estate - Energy Consumption,Energy,PCAF,Energy
+real_estate_energy_consumption-type_leisure_lodging,Leisure/Lodging (Energy consumption),Real Estate - Energy Consumption,Energy,PCAF,Energy
+real_estate_energy_consumption-type_multi_family_home,Multi-family home (Energy consumption),Real Estate - Energy Consumption,Energy,PCAF,Energy
+real_estate_energy_consumption-type_non_residential_total,Non-residential total (Energy consumption),Real Estate - Energy Consumption,Energy,PCAF,Energy
+real_estate_energy_consumption-type_office,Office (Energy consumption),Real Estate - Energy Consumption,Energy,PCAF,Energy
+real_estate_energy_consumption-type_residential_total,Residential total (Energy consumption),Real Estate - Energy Consumption,Energy,PCAF,Energy
+real_estate_energy_consumption-type_retail_high_street,Retail - high street (Energy consumption),Real Estate - Energy Consumption,Energy,PCAF,Energy
+real_estate_energy_consumption-type_retail_shopping_center,Retail - shopping center (Energy consumption),Real Estate - Energy Consumption,Energy,PCAF,Energy
+real_estate_energy_consumption-type_retail_warehouse,Retail - warehouse (Energy consumption),Real Estate - Energy Consumption,Energy,PCAF,Energy
+real_estate_energy_consumption-type_single_family_home,Single-family home (Energy consumption),Real Estate - Energy Consumption,Energy,PCAF,Energy

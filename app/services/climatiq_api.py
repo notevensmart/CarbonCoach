@@ -51,7 +51,7 @@ def get_activity_id(description: str):
     return lookup.get(description.strip().lower())
 
 
-
+load_dotenv(dotenv_path="climatiq.env")
 CLIMATIQ_BASE_URL = "https://api.climatiq.io"
 CLIMATIQ_API_KEY = os.getenv("CLIMATIQ_API_KEY")
 def get_emissions(activity_id: str, parameters: dict):
