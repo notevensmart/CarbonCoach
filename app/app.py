@@ -3,7 +3,6 @@ from app.pipeline import pipeline
 from app.services.gcs_utils import download_files
 from fastapi.responses import HTMLResponse
 import os
-app = FastAPI()
 
 
 data_dir = "/tmp/data"

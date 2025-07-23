@@ -4,26 +4,24 @@ import requests
 import json
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
+import csv
 
 def load_activity_lookup():
     """
     Scans all activity_ids_*.csv files in the given directory,
     and builds a dict mapping `name` → `activity_id`.
     """
-    activity_lookup = {}
-    data_dir = "/tmp/data"
-
-    for filename in os.listdir(data_dir):
-        if filename.startswith("Climatiq") and filename.endswith(".csv"):
-            filepath = os.path.join(data_dir, filename)
-            df = pd.read_csv(filepath)
-
-            for _, row in df.iterrows():
-                name = str(row["name"]).strip().lower()        # Normalized key
-                activity_id = str(row["activity_id"]).strip()  # API value
-                activity_lookup[name] = activity_id
-
-    return activity_lookup
+    lookup = {}
+    for filename in os.listdir("/tmp/data"):
+        if filename.endswith(".csv"):
+            with open(os.path.join("/tmp/data", filename), encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    name = row.get("name", "").strip().lower()
+                    activity_id = row.get("activity_id", "").strip()
+                    if name and activity_id:
+                        lookup[name] = activity_id
+    return lookup
 
 # Load once globally when the module is imported
 
@@ -37,14 +35,7 @@ def get_activity_lookup():
     Always loads or returns the lookup dict.
     In production you can cache it.
     """
-    data_dir = "/tmp/data"
-    lookup = {}
-    for filename in os.listdir(data_dir):
-        if filename.startswith("Climatiq") and filename.endswith(".csv"):
-            df = pd.read_csv(os.path.join(data_dir, filename))
-            for _, row in df.iterrows():
-                lookup[str(row["name"]).strip().lower()] = str(row["activity_id"]).strip()
-    return lookup
+    return _activity_lookup
 
 
 def get_activity_id(description: str):
