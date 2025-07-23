@@ -14,5 +14,4 @@ python-multipart
 langchain_community
 chromadb
 bs4
-json
 httpx

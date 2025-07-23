@@ -24,7 +24,6 @@ vector_store = Chroma.from_documents(
     embedding=model,
     persist_directory="./chroma_store"
 )
-vector_store.persist()
 '''Function that creates vector embeddings for labels and loops through 
 each label and matches its embedding with one in the chroma databse based on simialrity. Outputs a '''
 @async_profile_step("Embed labels to vectors")
