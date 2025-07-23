@@ -1,13 +1,10 @@
 import os
-import httpx
 import pandas as pd
 import requests
-import traceback
 import json
 from dotenv import load_dotenv
-from app.utils import async_profile_step
 from bs4 import BeautifulSoup
-import aiohttp
+
 def load_activity_lookup():
     """
     Scans all activity_ids_*.csv files in the given directory,
@@ -61,8 +58,7 @@ load_dotenv(dotenv_path="climatiq.env")
 CLIMATIQ_BASE_URL = "https://api.climatiq.io"
 CLIMATIQ_API_KEY = os.getenv("CLIMATIQ_API_KEY")
 
-@async_profile_step("API request")
-async def get_emissions(activity_id: str, parameters: dict):
+def get_emissions(activity_id: str, parameters: dict):
     headers = {
         "Authorization": f"Bearer {CLIMATIQ_API_KEY}",
         "Content-Type": "application/json"
@@ -87,8 +83,8 @@ async def get_emissions(activity_id: str, parameters: dict):
     else:
         print("❌ Climatiq API error:", response.status_code, response.text)
         return None, None
-@async_profile_step("API request for units")
-async def extract_unit_info(activity_id: str) -> tuple[str, str]:
+
+def extract_unit_info(activity_id: str) -> tuple[str, str]:
     url = f"https://www.climatiq.io/data/activity/{activity_id}"
     headers = {"User-Agent": "Mozilla/5.0"}
 
@@ -119,8 +115,8 @@ async def extract_unit_info(activity_id: str) -> tuple[str, str]:
     except Exception as e:
         print(f"[Scrape Error] {e}")
         return "unknown", "unknown"
-@async_profile_step("API request for acivty id's")
-async def search_activity_ids(query: str, limit: int = 3):
+
+def search_activity_ids(query: str, limit: int = 3):
     payload = {
         "query": query,
         "results_per_page": limit,

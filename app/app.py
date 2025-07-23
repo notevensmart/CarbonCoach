@@ -13,7 +13,7 @@ file_list = [
     ("carboncoach-data", "Climatiq_Transport_ActivityIDs.csv"),
     ("carboncoach-data", "Climatiq_Waste_ActivityIDs.csv"),
 ]
-def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI):
     # This runs on startup
     os.makedirs(data_dir, exist_ok=True)
 

@@ -15,3 +15,5 @@ langchain_community
 chromadb
 bs4
 httpx
+sentence-transformers
+transformers
