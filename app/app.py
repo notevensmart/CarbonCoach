@@ -1,7 +1,6 @@
 from fastapi import FastAPI,Form,Request
 from app.pipeline import pipeline
-from app.utils.gcs_utils import download_files
-from contextlib import asynccontextmanager
+from app.services.gcs_utils import download_files
 from fastapi.responses import HTMLResponse
 import os
 app = FastAPI()
@@ -14,9 +13,7 @@ file_list = [
     ("carboncoach-data", "Climatiq_Transport_ActivityIDs.csv"),
     ("carboncoach-data", "Climatiq_Waste_ActivityIDs.csv"),
 ]
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
+def lifespan(app: FastAPI):
     # This runs on startup
     os.makedirs(data_dir, exist_ok=True)
 

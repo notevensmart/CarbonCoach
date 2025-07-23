@@ -29,11 +29,11 @@ def generate_params(unit_type: str) -> dict | None:
             case "money":
                 return {"money": 15, "money_unit": "usd"}
             case "area":
-                return {"area": 2, "area_unit": "m2"}
+                return {"area": 0.5, "area_unit": "m2"}
             case "number":
                 return {"number": 1}
             case "volume":
-                return {"volume": 2, "volume_unit": "l"}
+                return {"volume": 500, "volume_unit": "ml"}
         return None  # no match
 
 def get_default_params(category: str) -> dict:

@@ -73,7 +73,8 @@ Respond ONLY with the dictionary.
 matcher_chain = match_prompt | llm
 @async_profile_step("Match labels to acivity_id's")
 async def batch_match_activities(labels: list[str]):
-    candidate_names = list(activity_lookup.keys())
+    lookup = get_activity_lookup()
+    candidate_names = list(lookup.keys())
     choices_block = "\n".join(candidate_names)
     labels_block = "\n".join(labels)
 

@@ -12,3 +12,4 @@ def download_files(file_specs, target_dir):
             blob = bucket.blob(source_blob_name)
             blob.download_to_filename(dest_path)
             print(f"Downloaded {source_blob_name} to {dest_path}")
+            
