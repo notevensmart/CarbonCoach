@@ -5,7 +5,7 @@ import json
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 import csv
-
+_activity_lookup = {}
 def load_activity_lookup():
     """
     Scans all activity_ids_*.csv files in the given directory,
@@ -23,7 +23,6 @@ def load_activity_lookup():
                         lookup[name] = activity_id
     return lookup
 
-# Load once globally when the module is imported
 
 
 def set_activity_lookup(lookup):
@@ -35,6 +34,8 @@ def get_activity_lookup():
     Always loads or returns the lookup dict.
     In production you can cache it.
     """
+    if not _activity_lookup:
+        raise RuntimeError("activity_lookup is not loaded yet.")
     return _activity_lookup
 
 

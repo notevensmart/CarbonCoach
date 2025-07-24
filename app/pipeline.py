@@ -5,7 +5,7 @@ from app.services.param_utils import get_default_params ,generate_params
 from app.embedder import retrieve_best_activities
 
 def pipeline(journal_entry):
-  
+    lookup = get_activity_lookup()
     ##step 1 convert journal entry into acivity labels
     activities = classify_activities(journal_entry)
     results = []
