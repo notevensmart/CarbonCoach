@@ -1,11 +1,11 @@
 from app.chains.classify_chain import classify_activities
 from app.services.llm_matcher import batch_match_activities
-from app.services.climatiq_api import get_emissions , get_activity_id, extract_unit_info
+from app.services.climatiq_api import get_emissions , get_activity_id, extract_unit_info 
 from app.services.param_utils import get_default_params ,generate_params
 from app.embedder import retrieve_best_activities
 
 def pipeline(journal_entry):
-    lookup = get_activity_lookup()
+    
     ##step 1 convert journal entry into acivity labels
     activities = classify_activities(journal_entry)
     results = []

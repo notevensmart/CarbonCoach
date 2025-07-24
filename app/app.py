@@ -14,6 +14,8 @@ file_list = [
 ]
 async def lifespan(app: FastAPI):
     # This runs on startup
+    print("🚀 Lifespan startup triggered")
+
     os.makedirs(data_dir, exist_ok=True)
 
     # Download files synchronously
