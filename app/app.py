@@ -2,6 +2,7 @@ from fastapi import FastAPI,Form,Request
 from app.pipeline import pipeline
 from app.services.gcs_utils import download_files
 from fastapi.responses import HTMLResponse
+from app.embedder import init_vector_store
 import os
 
 
@@ -25,6 +26,7 @@ async def lifespan(app: FastAPI):
     from app.services import climatiq_api
     lookup = climatiq_api.load_activity_lookup()
     climatiq_api.set_activity_lookup(lookup)
+    init_vector_store()
     yield
 app = FastAPI(lifespan=lifespan)
 
