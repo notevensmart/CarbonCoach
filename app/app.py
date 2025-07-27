@@ -23,7 +23,7 @@ async def lifespan(app: FastAPI):
     os.makedirs(data_dir, exist_ok=True)
 
     # Download files synchronously
-   # download_files(file_list, data_dir)
+    download_files(file_list, data_dir)
 
     # Load activity lookup synchronously
     from app.services import climatiq_api

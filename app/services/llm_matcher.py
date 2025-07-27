@@ -8,7 +8,6 @@ import ast
 
 load_dotenv(dotenv_path="key.env")  # Load OpenRouter key
 api_key = os.getenv("OPENROUTER_API_KEY")
-print(api_key)
 
 # Setup LLM (Claude via OpenRouter)
 llm = ChatOpenAI(
