@@ -4,6 +4,8 @@ from app.services.gcs_utils import download_files
 from fastapi.responses import HTMLResponse
 from app.embedder import init_vector_store
 import os
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 
 data_dir = "/tmp/data"
@@ -64,3 +66,26 @@ def process_entry(journal_entry: str = Form(...)):
         </body>
     </html>
     """
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # You can replace "*" with your Vercel frontend URL later
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+@app.post("/api/estimate")
+async def estimate_emissions(request: Request):
+    try:
+        data = await request.json()
+        journal = data.get("journal", "")
+        if not journal:
+            return JSONResponse(status_code=400, content={"error": "Missing 'journal' field"})
+
+        result_str = pipeline(journal)
+        
+        # You can parse out co2e and unit from the result string if needed
+        # For now, return whole thing
+        return {"co2e_text": result_str}
+
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
