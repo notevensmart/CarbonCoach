@@ -11,7 +11,7 @@ const handleSubmit = async () => {
   setError("");
 
   try {
-    const res = await fetch("http://127.0.0.1:8000/process", {
+    const res = await fetch("https://carboncoach-518373042997.us-central1.run.app/process", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",

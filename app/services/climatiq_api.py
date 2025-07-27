@@ -14,6 +14,7 @@ def load_activity_lookup():
     lookup = {}
     data_dir = "/tmp/data"  ##remove . for gcp
 
+
     print("starting loadup!")
     for filename in os.listdir(data_dir):
         print(f"📂 Found: {filename}")
