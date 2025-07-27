@@ -11,6 +11,7 @@ model = HuggingFaceEmbeddings(
 )
 def init_vector_store():
     global vector_store
+    print("🧠 Initializing vector store...")
     lookup = get_activity_lookup()
     docs = [
         Document(

@@ -6,50 +6,68 @@ from app.embedder import retrieve_best_activities
 
 def pipeline(journal_entry):
     
-    ##step 1 convert journal entry into acivity labels
     activities = classify_activities(journal_entry)
-    results = []
     total_emissions = 0.0
+    details = []
 
-    labels = [label for label, category in activities]
-
-    
+    labels = [label for label, _ in activities]
     matched_dict = retrieve_best_activities(labels)
 
     for (label, category) in activities:
         match = matched_dict.get(label)
-       
-        print(f"\n🔍 Processing label: {label} | Category: {category}")
+        detail = {
+            "label": label,
+            "category": category,
+            "activity": None,
+            "co2e": None,
+            "unit": None,
+            "status": "error",
+            "error_message": ""
+        }
+
         if not match:
-            print(f"❌ No match found for label '{label}'")
-            results.append(f" No match found for '{label}'")
+            detail["error_message"] = f"No match found for '{label}'"
+            details.append(detail)
             continue
 
-        print(f"✅ Found match: {match}")
         activity_id = match.get("activity_id")
-      
-        if not activity_id:
-            print(f"❌ No activity ID in match for '{label}' → {match}")
-            results.append(f" No activity ID found for '{match['activity_name']}'")
-            continue
-        unit_type,unit = extract_unit_info(activity_id)
-        if not unit_type:
-            print(f"❌ No unit types found for activity {activity_id}")
-            results.append(f" {label} → No valid unit types found")
-            continue
-        params = generate_params(unit_type)    
-        print(f"→ Calling API: {label} → activity_id: {activity_id}, params: {params} , unit_type: {unit_type}")
+        activity_name = match.get("activity_name")
+        detail["activity"] = activity_name
 
+        if not activity_id:
+            detail["error_message"] = f"No activity ID found for '{activity_name}'"
+            details.append(detail)
+            continue
+
+        unit_type, unit = extract_unit_info(activity_id)
+        if not unit_type:
+            detail["error_message"] = f"No valid unit types found for activity ID '{activity_id}'"
+            details.append(detail)
+            continue
+
+        params = generate_params(unit_type)
         co2, unit = get_emissions(activity_id, params)
+
         if co2:
-            results.append(f" {label} ({category}) → {round(co2,3)} {unit} CO2e")
+            detail["co2e"] = round(co2, 3)
+            detail["unit"] = unit
+            detail["status"] = "ok"
             total_emissions += co2
         else:
-            results.append(f" {label} ({category}) → Emission lookup failed")
+            detail["error_message"] = f"Emission lookup failed for activity '{activity_name}'"
 
+        details.append(detail)
 
-    summary = f"\n🧾 Total Emissions: {round(total_emissions,3)} kg CO2e"
-    return "\n".join(results + [summary])
+    summary_text = f"🧾 Total Emissions: {round(total_emissions, 3)} kg CO2e"
+
+    return {
+        "result": {
+            "co2e": round(total_emissions, 3),
+            "unit": "kg",
+            "details": details,
+            "summary": summary_text
+        }
+    }
 
 
 

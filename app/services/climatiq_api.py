@@ -12,9 +12,13 @@ def load_activity_lookup():
     and builds a dict mapping `name` → `activity_id`.
     """
     lookup = {}
-    for filename in os.listdir("/tmp/data"):
+    data_dir = "./tmp/data"  ##remove . for gcp
+
+    print("starting loadup!")
+    for filename in os.listdir(data_dir):
+        print(f"📂 Found: {filename}")
         if filename.endswith(".csv"):
-            with open(os.path.join("/tmp/data", filename), encoding="utf-8") as f:
+            with open(os.path.join(data_dir, filename), encoding="utf-8") as f:
                 reader = csv.DictReader(f)
                 for row in reader:
                     name = row.get("name", "").strip().lower()
@@ -27,7 +31,9 @@ def load_activity_lookup():
 
 def set_activity_lookup(lookup):
     global _activity_lookup
+    print("✅ setting activity_lookup...")
     _activity_lookup = lookup
+    print(f"✅ set! Total activities: {len(lookup)}")
 
 def get_activity_lookup():
     """

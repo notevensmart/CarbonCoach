@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 
+
 data_dir = "/tmp/data"
 file_list = [
     ("carboncoach-data", "Climatiq_Energy_ActivityIDs.csv"),
@@ -22,12 +23,15 @@ async def lifespan(app: FastAPI):
     os.makedirs(data_dir, exist_ok=True)
 
     # Download files synchronously
-    download_files(file_list, data_dir)
+   # download_files(file_list, data_dir)
 
     # Load activity lookup synchronously
     from app.services import climatiq_api
+    print("🔍 Loading activity lookup...")
     lookup = climatiq_api.load_activity_lookup()
+    print("🔧 Setting activity lookup...")
     climatiq_api.set_activity_lookup(lookup)
+    print("🧠 Initializing vector store...")
     init_vector_store()
     yield
 app = FastAPI(lifespan=lifespan)
@@ -51,21 +55,13 @@ def read_form():
     </html>
     """
 
-@app.post("/process", response_class=HTMLResponse)
+@app.post("/process")
 def process_entry(journal_entry: str = Form(...)):
-    result = pipeline(journal_entry).replace("\n", "<br>")
-    return f"""
-    <html>
-        <head>
-            <title>CarbonCoach Results</title>
-        </head>
-        <body>
-            <h2>Estimated Emissions</h2>
-            <p>{result}</p>
-            <a href="/">Back</a>
-        </body>
-    </html>
-    """
+    result = pipeline(journal_entry)
+    return JSONResponse(content=pipeline(journal_entry))
+
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # You can replace "*" with your Vercel frontend URL later
