@@ -19,6 +19,7 @@ def pipeline(journal_entry):
             "label": label,
             "category": category,
             "activity": None,
+            "activity_id": None,    
             "co2e": None,
             "unit": None,
             "status": "error",
@@ -31,6 +32,8 @@ def pipeline(journal_entry):
             continue
 
         activity_id = match.get("activity_id")
+        
+        print(f"Activity ID for label :{label}is: {activity_id}")
         activity_name = match.get("activity_name")
         detail["activity"] = activity_name
 

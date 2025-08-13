@@ -12,7 +12,7 @@ def load_activity_lookup():
     and builds a dict mapping `name` → `activity_id`.
     """
     lookup = {}
-    data_dir = "/tmp/data"  ##remove . for gcp
+    data_dir = "./tmp/data"  ##remove . for gcp
 
 
     print("starting loadup!")

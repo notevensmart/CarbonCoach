@@ -34,6 +34,9 @@ def generate_params(unit_type: str) -> dict | None:
                 return {"number": 1}
             case "volume":
                 return {"volume": 500, "volume_unit": "ml"}
+            case "passengeroverdistance":
+                return {"passengers":1 ,"distance": 10, "distance_unit": "km" }
+            
         return None  # no match
 
 def get_default_params(category: str) -> dict:
