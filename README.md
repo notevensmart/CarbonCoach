@@ -22,23 +22,6 @@ Journal[User Journal Entry] --> Segmentation[Segmentation into Activities (Claud
     API --> Extract[Extract Emissions from JSON Response] <br>
     Extract --> Return[Return Results to User] <br>
 
-🔹 Steps
-
-search_activity_ids(text)
-Retrieves candidate emission activities (via Climatiq API or embeddings index).
-Output: candidates = [{"id": ..., "label": ...}, ...]
-
-pick_activity_id(text, candidates)
-Chooses the most relevant activity for the user’s description.
-Output: activity_id = "transport-public_bus_km"
-
-extract_quantity(text)
-Extracts numeric values and units from text (e.g., "11 km").
-Output: {"value": 11, "unit": "km"}
-
-estimate_emissions(activity_id, value, unit)
-Calls the Climatiq API to compute carbon emissions.
-Output: {"co2e": 2.34, "co2e_unit": "kg"}
 
 🧩 Example Usage
 journal = "I took the bus to work for 11 km"
