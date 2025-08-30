@@ -16,7 +16,7 @@ Each journal entry is processed step-by-step in a fixed order:
 
     [User Journal Entry]
               |
-  Segmentation of input into activities using Claude
+  [Segmentation of input into activities using Claude]
               |
   Each activity is embedded into a vector
               |
