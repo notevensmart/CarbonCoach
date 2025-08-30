@@ -1,7 +1,7 @@
 🌱 CarbonCoach
 
 CarbonCoach is an AI-powered sustainability tool that estimates daily carbon emissions from free-text journal entries.
-The goal is to help individuals and organizations understand and reduce their carbon footprint through transparent and accurate CO₂e estimates.
+The goal is to help individuals understand and reduce their carbon footprint through transparent and accurate CO₂e estimates.
 
 🚀 Project Status
 
