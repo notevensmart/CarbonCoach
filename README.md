@@ -13,7 +13,7 @@ Next milestone: v0.7 (Agentic workflow with class-based architecture, logging, a
 
 The current backend uses a deterministic function pipeline.
 Each journal entry is processed step-by-step in a fixed order:
-```mermaid
+## Workflow
 Journal[User Journal Entry] --> Segmentation[Segmentation into Activities (Claude)]
     Segmentation --> Embedding[Embed each Activity into Vector]
     Embedding --> Compare[Compare with Stored Activity Embeddings]
