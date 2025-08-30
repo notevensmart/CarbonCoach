@@ -46,10 +46,10 @@ journal = "I took the bus to work for 11 km"
 candidates = search_activity_ids(journal)
 activity_id = pick_activity_id(journal, candidates)
 quantity = extract_quantity(journal)
-estimate = estimate_emissions(activity_id, quantity["value"], quantity["unit"])
+estimate = estimate_emissions(activity_id, quantity["value"], quantity["unit"]) <br>
 
 print(estimate)
-# ➝ {"co2e": 2.34, "co2e_unit": "kg"}
+➝ {"co2e": 2.34, "co2e_unit": "kg"}
 Important project files:
 app/pipeline.py
 app/embedder.py
