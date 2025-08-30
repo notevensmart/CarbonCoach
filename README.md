@@ -14,13 +14,13 @@ Next milestone: v0.7 (Agentic workflow with class-based architecture, logging, a
 The current backend uses a deterministic function pipeline.
 Each journal entry is processed step-by-step in a fixed order:
 ## Workflow
-Journal[User Journal Entry] --> Segmentation[Segmentation into Activities (Claude)]
-    Segmentation --> Embedding[Embed each Activity into Vector]
-    Embedding --> Compare[Compare with Stored Activity Embeddings]
-    Compare --> Match[Select Activity ID with Highest Cosine Similarity]
-    Match --> API[Call Climatiq API with Activity IDs]
-    API --> Extract[Extract Emissions from JSON Response]
-    Extract --> Return[Return Results to User]
+Journal[User Journal Entry] --> Segmentation[Segmentation into Activities (Claude)] <br>
+    Segmentation --> Embedding[Embed each Activity into Vector] <br>
+    Embedding --> Compare[Compare with Stored Activity Embeddings] <br>
+    Compare --> Match[Select Activity ID with Highest Cosine Similarity] <br>
+    Match --> API[Call Climatiq API with Activity IDs] <br>
+    API --> Extract[Extract Emissions from JSON Response] <br>
+    Extract --> Return[Return Results to User] <br>
 
 🔹 Steps
 
