@@ -1,50 +1,66 @@
-# 🧭 CarbonCoach (v0.1)
+🌱 CarbonCoach
 
-**CarbonCoach** is an AI-powered assistant that estimates carbon emissions based on natural language journal entries. It uses language models to classify, match, and query emissions data using the Climatiq API.
+CarbonCoach is an AI-powered sustainability tool that estimates daily carbon emissions from free-text journal entries.
+The goal is to help individuals and organizations understand and reduce their carbon footprint through transparent and accurate CO₂e estimates.
 
----
+🚀 Project Status
 
-## 🌱 What It Does
+Current version: v0.5 (Deterministic pipeline)
 
-You can write something like:
+Next milestone: v0.7 (Agentic workflow with class-based architecture, logging, and CI/CD)
 
-> “I took a 10 km bus ride to work, had a vegetarian meal for lunch and took a shower at night."
+⚙️ How It Works (Current Pipeline)
 
-And CarbonCoach will:
+The current backend uses a deterministic function pipeline.
+Each journal entry is processed step-by-step in a fixed order:
 
-1. **Extract** carbon-relevant activities from the journal.
-2. **Match** each activity to an official emissions category.
-3. **Select** default parameters (e.g. distance, energy).
-4. **Query** Climatiq’s API to estimate emissions.
-5. **Return** emissions per activity and a total footprint.
+    [User Journal Entry]
+              |
+  Segmentation of input into activities using Claude
+              |
+  Each activity is embedded into a vector
+              |
+  The embeddings are compared with existing embeddings of activity_id descriptions in database
+              |
+  Matched activty embedding to activity_id of highest cosine similarity
+              |
+  Made API calls to climatiq api with list of activity_ids
+              |
+  Extracted estimated carbon emissions from response JSON
+              |
+  Returned results to user
 
----
+🔹 Steps
 
-## ⚙️ Current Features (v0.1)
+search_activity_ids(text)
+Retrieves candidate emission activities (via Climatiq API or embeddings index).
+Output: candidates = [{"id": ..., "label": ...}, ...]
 
-✅ LLM-based journal activity classification  
-✅ Activity matching with exact + fuzzy fallback  
-✅ Emissions estimation via Climatiq API  
-✅ Default parameters based on category (transport, energy, waste, goods)  
-✅ Sum of total emissions printed to terminal  
+pick_activity_id(text, candidates)
+Chooses the most relevant activity for the user’s description.
+Output: activity_id = "transport-public_bus_km"
 
----
+extract_quantity(text)
+Extracts numeric values and units from text (e.g., "11 km").
+Output: {"value": 11, "unit": "km"}
 
-## 🧪 Example Output
+estimate_emissions(activity_id, value, unit)
+Calls the Climatiq API to compute carbon emissions.
+Output: {"co2e": 2.34, "co2e_unit": "kg"}
 
-```bash
-🧠 LLM-classified labels: [('bus ride', 'transport'), ('vegetarian meals', 'goods_services'), ('shower', 'energy')]
+🧩 Example Usage
+journal = "I took the bus to work for 11 km"
 
-✅ Exact match: bus → passenger_vehicle-vehicle_type_bus-...
-🌱 Emission estimate: 0.414 kg
+candidates = search_activity_ids(journal)
+activity_id = pick_activity_id(journal, candidates)
+quantity = extract_quantity(journal)
+estimate = estimate_emissions(activity_id, quantity["value"], quantity["unit"])
 
-✅ Exact match: vegetables (fresh) → consumer_goods-type_vegetables_fresh
-
-
-✅ Exact match: electricity - use: sanitary hot water → ...
-🌱 Emission estimate: 0.257 kg
-
-🧾 Total CO2 emissions: 0.671 kg CO2e
-
-
+print(estimate)
+# ➝ {"co2e": 2.34, "co2e_unit": "kg"}
+Important project files:
+app/pipeline.py
+app/embedder.py
+app/services/climatiq_api.py
+app/chains/classify_chain.py
 
