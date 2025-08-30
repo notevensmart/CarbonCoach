@@ -23,19 +23,12 @@ Journal[User Journal Entry] --> Segmentation[Segmentation into Activities (Claud
     Extract --> Return[Return Results to User] <br>
 
 
-🧩 Example Usage
-journal = "I took the bus to work for 11 km"
-
-candidates = search_activity_ids(journal)
-activity_id = pick_activity_id(journal, candidates)
-quantity = extract_quantity(journal)
-estimate = estimate_emissions(activity_id, quantity["value"], quantity["unit"]) <br>
-
-print(estimate)
-➝ {"co2e": 2.34, "co2e_unit": "kg"}
-Important project files:
-app/pipeline.py
-app/embedder.py
-app/services/climatiq_api.py
-app/chains/classify_chain.py
+# Example Usage
+journal = "I took the bus to work for 11 km" <br>
+➝ {"co2e": 2.34, "co2e_unit": "kg"} <br>
+Important project files: <br>
+app/pipeline.py<br>
+app/embedder.py <br>
+app/services/climatiq_api.py<br>
+app/chains/classify_chain.py<br>
 
