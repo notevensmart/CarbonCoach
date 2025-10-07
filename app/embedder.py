@@ -49,3 +49,5 @@ def retrieve_best_activities(labels: List[str]) -> Dict[str, dict]:
             matched_dict[label] = None
 
     return matched_dict
+
+print("🔐 HF_TOKEN present:", bool(os.getenv("HF_TOKEN")))
