@@ -4,10 +4,14 @@ from langchain_community.vectorstores import Chroma
 from app.services.climatiq_api import get_activity_lookup
 from langchain.schema import Document
 from typing import List,Dict
-sentences = ["This is an example sentence", "Each sentence is converted"]
+import os
+from dotenv import load_dotenv
 
+sentences = ["This is an example sentence", "Each sentence is converted"]
+load_dotenv(dotenv_path="key.env")
 model = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2"
+    model_name="sentence-transformers/all-MiniLM-L6-v2",
+    model_kwargs={"use_auth_token": os.getenv("HF_TOKEN")}
 )
 def init_vector_store():
     global vector_store
