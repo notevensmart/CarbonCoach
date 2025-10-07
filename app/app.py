@@ -1,11 +1,13 @@
 from fastapi import FastAPI,Form,Request
 from app.pipeline import pipeline
+from app.services import climatiq_api
 from app.services.gcs_utils import download_files
 from fastapi.responses import HTMLResponse
 from app.embedder import init_vector_store
 import os
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+import asyncio
 
 
 
@@ -19,22 +21,24 @@ file_list = [
 async def lifespan(app: FastAPI):
     # This runs on startup
     print("🚀 Lifespan startup triggered")
+    async def preload():
+        os.makedirs(data_dir, exist_ok=True)
+        download_files(file_list, data_dir)   # still from GCS
+        print("🔍 Loading activity lookup...")
+        lookup = climatiq_api.load_activity_lookup()
+        climatiq_api.set_activity_lookup(lookup)
+        print("🧠 Initializing vector store...")
+        init_vector_store()
+        print("✅ Preload finished")
 
-    os.makedirs(data_dir, exist_ok=True)
-
-    # Download files synchronously
-    download_files(file_list, data_dir)
-
-    # Load activity lookup synchronously
-    from app.services import climatiq_api
-    print("🔍 Loading activity lookup...")
-    lookup = climatiq_api.load_activity_lookup()
-    print("🔧 Setting activity lookup...")
-    climatiq_api.set_activity_lookup(lookup)
-    print("🧠 Initializing vector store...")
-    init_vector_store()
+    # Kick off the preload *after* FastAPI binds the port
+    asyncio.create_task(preload())
     yield
 app = FastAPI(lifespan=lifespan)
+
+@app.get("/healthz")
+def healthz():
+    return {"status": "ok"}
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -64,7 +68,7 @@ def process_entry(journal_entry: str = Form(...)):
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # You can replace "*" with your Vercel frontend URL later
+    allow_origins=["*"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
