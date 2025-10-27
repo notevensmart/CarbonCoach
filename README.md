@@ -70,10 +70,11 @@ CarbonCoach exposes a REST API that takes a natural-language journal entry and r
 curl -X POST "http://localhost:8000/estimate" \
      -H "Content-Type: application/json" \
      -d '{"journal_entry": "I drove 10 km in a petrol car and had coffee at a café."}'
-{
+
 ```
 ### **Response Example**
 ```bash
+{
   "activities": [
     {
       "description": "Driving a petrol car",
