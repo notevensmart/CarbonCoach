@@ -103,6 +103,7 @@ curl -X POST "http://localhost:8000/estimate" \
   },
   "explanation": "Based on your journal entry, the system matched two activities and retrieved their emission factors from Climatiq."
 }
+```
 ## 🌍 Potential Uses
 
 CarbonCoach’s natural-language understanding and emission estimation capabilities make it applicable across several sustainability-focused use cases.
