@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import os
+from pathlib import Path
 from typing import Dict, List
 
+from dotenv import load_dotenv
 from langchain.schema import Document
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
@@ -53,7 +56,22 @@ def retrieve_best_activities(labels: List[str]) -> Dict[str, dict]:
 def _get_model():
     global model
     if model is None:
+        _load_env_file("key.env")
+        model_kwargs = {}
+        hf_token = os.getenv("HF_TOKEN")
+        if hf_token:
+            model_kwargs["token"] = hf_token
         model = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2"
+            model_name="sentence-transformers/all-MiniLM-L6-v2",
+            model_kwargs=model_kwargs,
         )
     return model
+
+
+def _load_env_file(filename: str) -> None:
+    here = Path(__file__).resolve()
+    for parent in [here.parent, *here.parents]:
+        candidate = parent / filename
+        if candidate.exists():
+            load_dotenv(dotenv_path=candidate)
+            return

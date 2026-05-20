@@ -1,3 +1,4 @@
+import asyncio
 import os
 
 from fastapi import FastAPI, Form, Request
@@ -6,6 +7,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 
 from app.embedder import init_vector_store
 from app.pipeline import pipeline
+from app.services import climatiq_api
 from app.services.gcs_utils import download_files
 
 
@@ -17,19 +19,32 @@ file_list = [
     ("carboncoach-data", "Climatiq_Waste_ActivityIDs.csv"),
 ]
 
+is_ready = False
+preload_error = None
+
 
 async def lifespan(app: FastAPI):
     print("Lifespan startup triggered")
-    os.makedirs(data_dir, exist_ok=True)
-    download_files(file_list, data_dir)
-
-    from app.services import climatiq_api
-
-    print("Loading activity lookup...")
-    climatiq_api.load_activity_lookup(data_dir)
-    print("Initializing vector store...")
-    init_vector_store()
+    preload_task = asyncio.create_task(asyncio.to_thread(_preload))
     yield
+    if not preload_task.done():
+        preload_task.cancel()
+
+
+def _preload() -> None:
+    global is_ready, preload_error
+    try:
+        os.makedirs(data_dir, exist_ok=True)
+        download_files(file_list, data_dir)
+        print("Loading activity lookup...")
+        climatiq_api.load_activity_lookup(data_dir)
+        print("Initializing vector store...")
+        init_vector_store()
+        is_ready = True
+        print("Preload finished")
+    except Exception as exc:
+        preload_error = str(exc)
+        print(f"Preload failed: {exc}")
 
 
 app = FastAPI(lifespan=lifespan)
@@ -41,6 +56,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/healthz")
+def healthz():
+    return {
+        "status": "ok" if preload_error is None else "degraded",
+        "ready": is_ready,
+        "error": preload_error,
+    }
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -64,11 +88,18 @@ def read_form():
 
 @app.post("/process")
 def process_entry(journal_entry: str = Form(...)):
+    readiness_error = _readiness_error()
+    if readiness_error:
+        return readiness_error
     return JSONResponse(content=pipeline(journal_entry))
 
 
 @app.post("/api/estimate")
 async def estimate_emissions(request: Request):
+    readiness_error = _readiness_error()
+    if readiness_error:
+        return readiness_error
+
     try:
         data = await request.json()
         journal = data.get("journal", "")
@@ -79,3 +110,17 @@ async def estimate_emissions(request: Request):
 
     except Exception as exc:
         return JSONResponse(status_code=500, content={"error": str(exc)})
+
+
+def _readiness_error():
+    if preload_error:
+        return JSONResponse(
+            status_code=503,
+            content={"error": "CarbonCoach failed to initialize.", "details": preload_error},
+        )
+    if not is_ready:
+        return JSONResponse(
+            status_code=503,
+            content={"error": "CarbonCoach is still warming up. Please retry shortly."},
+        )
+    return None
