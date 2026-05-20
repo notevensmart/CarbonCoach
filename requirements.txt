@@ -3,7 +3,7 @@ requests
 langchain
 langchain_openai
 langchain_core
-dotenv
+python-dotenv
 rapidfuzz
 uvicorn
 requests
@@ -17,3 +17,4 @@ bs4
 httpx
 sentence-transformers
 transformers
+pytest
