@@ -11,12 +11,13 @@ const handleSubmit = async () => {
   setError("");
 
   try {
-    const res = await fetch("https://carboncoach-518373042997.us-central1.run.app/process", {
+    const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "";
+    const res = await fetch(`${apiBaseUrl}/api/estimate`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json",
       },
-      body: new URLSearchParams({ journal_entry: entry }),
+      body: JSON.stringify({ journal: entry }),
     });
 
     if (!res.ok) {
@@ -64,7 +65,7 @@ const handleSubmit = async () => {
         {loading ? "Estimating..." : "Estimate Emissions"}
       </button>
 
-      {emissions && emissions.co2e && (
+      {emissions && emissions.co2e !== null && (
         <div className="mt-6 p-4 bg-white rounded-md shadow-md">
             <p className="text-lg">
             ✅ <strong>Estimated Emissions:</strong>{" "}
@@ -78,9 +79,14 @@ const handleSubmit = async () => {
             {emissions.details.map((d, idx) => (
                 <li key={idx}>
                 <strong>{d.label}</strong> ({d.category}) →{" "}
-                {d.status === "ok"
-                    ? `${d.co2e.toFixed(2)} ${d.unit} CO2e`
+                {d.status === "ok" || d.status === "fallback"
+                    ? `${d.co2e.toFixed(2)} ${d.unit} CO2e (${d.source})`
                     : d.error_message}
+                {d.parameters && (
+                  <span className="text-gray-500">
+                    {" "}using {Object.entries(d.parameters).map(([key, value]) => `${key}: ${value}`).join(", ")}
+                  </span>
+                )}
                 </li>
             ))}
             </ul>

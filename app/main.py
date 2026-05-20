@@ -1,15 +1,10 @@
-from app.pipeline import pipeline
 from app.embedder import init_vector_store
+from app.pipeline import pipeline
 from app.services import climatiq_api
 
 
-    # Load activity lookup synchronously
-   
-lookup = climatiq_api.load_activity_lookup()
-print("🔧 Setting activity lookup...")
-climatiq_api.set_activity_lookup(lookup)
-prompt = "I took a bus"
-init_vector_store()
-result = pipeline(prompt)
-print(result)
-
+if __name__ == "__main__":
+    climatiq_api.load_activity_lookup()
+    init_vector_store()
+    result = pipeline("I took a 5 km bus ride")
+    print(result)

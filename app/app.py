@@ -1,12 +1,12 @@
-from fastapi import FastAPI,Form,Request
+import os
+
+from fastapi import FastAPI, Form, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse, JSONResponse
+
+from app.embedder import init_vector_store
 from app.pipeline import pipeline
 from app.services.gcs_utils import download_files
-from fastapi.responses import HTMLResponse
-from app.embedder import init_vector_store
-import os
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-
 
 
 data_dir = "/tmp/data"
@@ -16,25 +16,31 @@ file_list = [
     ("carboncoach-data", "Climatiq_Transport_ActivityIDs.csv"),
     ("carboncoach-data", "Climatiq_Waste_ActivityIDs.csv"),
 ]
+
+
 async def lifespan(app: FastAPI):
-    # This runs on startup
-    print("🚀 Lifespan startup triggered")
-
+    print("Lifespan startup triggered")
     os.makedirs(data_dir, exist_ok=True)
-
-    # Download files synchronously
     download_files(file_list, data_dir)
 
-    # Load activity lookup synchronously
     from app.services import climatiq_api
-    print("🔍 Loading activity lookup...")
-    lookup = climatiq_api.load_activity_lookup()
-    print("🔧 Setting activity lookup...")
-    climatiq_api.set_activity_lookup(lookup)
-    print("🧠 Initializing vector store...")
+
+    print("Loading activity lookup...")
+    climatiq_api.load_activity_lookup(data_dir)
+    print("Initializing vector store...")
     init_vector_store()
     yield
+
+
 app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -55,20 +61,12 @@ def read_form():
     </html>
     """
 
+
 @app.post("/process")
 def process_entry(journal_entry: str = Form(...)):
-    result = pipeline(journal_entry)
     return JSONResponse(content=pipeline(journal_entry))
 
 
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # You can replace "*" with your Vercel frontend URL later
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 @app.post("/api/estimate")
 async def estimate_emissions(request: Request):
     try:
@@ -77,11 +75,7 @@ async def estimate_emissions(request: Request):
         if not journal:
             return JSONResponse(status_code=400, content={"error": "Missing 'journal' field"})
 
-        result_str = pipeline(journal)
-        
-        # You can parse out co2e and unit from the result string if needed
-        # For now, return whole thing
-        return {"co2e_text": result_str}
+        return pipeline(journal)
 
-    except Exception as e:
-        return JSONResponse(status_code=500, content={"error": str(e)})
+    except Exception as exc:
+        return JSONResponse(status_code=500, content={"error": str(exc)})
