@@ -4,6 +4,8 @@ import os
 from pathlib import Path
 from typing import Dict, List
 
+os.environ.setdefault("HF_HUB_DISABLE_XET", "1")
+
 from dotenv import load_dotenv
 from langchain_core.documents import Document
 from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -57,15 +59,23 @@ def _get_model():
     global model
     if model is None:
         _load_env_file("key.env")
-        model_kwargs = {}
         hf_token = os.getenv("HF_TOKEN")
-        if hf_token:
-            model_kwargs["token"] = hf_token
-        model = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2",
-            model_kwargs=model_kwargs,
-        )
+        model = _load_embedding_model(hf_token)
     return model
+
+
+def _load_embedding_model(hf_token: str | None):
+    model_name = "sentence-transformers/all-MiniLM-L6-v2"
+    if hf_token:
+        try:
+            return HuggingFaceEmbeddings(
+                model_name=model_name,
+                model_kwargs={"token": hf_token},
+            )
+        except Exception as exc:
+            print(f"HF_TOKEN embedding load failed, retrying without token: {exc}")
+
+    return HuggingFaceEmbeddings(model_name=model_name)
 
 
 def _load_env_file(filename: str) -> None:
