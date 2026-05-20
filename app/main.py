@@ -1,33 +1,49 @@
-from app.chains.classify_chain import classify_activities
-from app.services.llm_matcher import match_activity
-from app.services.climatiq_api import get_emissions
-from app.services.param_utils import get_default_params
+from __future__ import annotations
 
-journal_entry = "I took a 10 km bus ride to work, ate three vegetarian meals and took a shower."
+from pathlib import Path
 
-# Step 1: Classify
-activities = classify_activities(journal_entry)
-print(f"🧠 LLM-classified labels: {activities}")
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, Field
 
-total_emissions = 0.0
-emission_unit = "kg"  # default to kg CO2e
+from .services.carbon_pipeline import CarbonEstimator
 
-# Step 2: Loop through each label → match → estimate
-for label, category in activities:
-    activity_id = match_activity(label)
 
-    if activity_id:
-        params = get_default_params(category)
-        co2, unit = get_emissions(activity_id, params)
+class EstimateRequest(BaseModel):
+    journal: str = Field(..., min_length=1)
 
-        if co2 is not None:
-            print(f"🌱 Emissions for '{label}' → {co2} {unit} CO2e")
-            total_emissions += co2
-            emission_unit = unit  # update unit in case it varies
-        else:
-            print(f"⚠️ Could not calculate emissions for: {label}")
-    else:
-        print(f"⚠️ No match found for: {label}")
 
-# Step 3: Print total
-print(f"\n🧾 Total CO2 emissions: {round(total_emissions, 3)} {emission_unit}")
+app = FastAPI(title="CarbonCoach API")
+estimator = CarbonEstimator()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.get("/api/health")
+def health() -> dict[str, str]:
+    return {"status": "ok"}
+
+
+@app.post("/api/estimate")
+def estimate(request: EstimateRequest) -> dict:
+    result = estimator.estimate(request.journal)
+    if result["errors"] and not result["activities"]:
+        raise HTTPException(status_code=400, detail=result["errors"][0])
+    return result
+
+
+frontend_build = Path(__file__).resolve().parent / "frontend" / "build"
+if frontend_build.exists():
+    app.mount("/", StaticFiles(directory=frontend_build, html=True), name="frontend")
