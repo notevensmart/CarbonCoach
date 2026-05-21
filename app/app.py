@@ -7,6 +7,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 
 from app.embedder import init_vector_store
 from app.pipeline import pipeline
+from app.pipeline_v2.pipeline import pipeline_v2
 from app.services import climatiq_api
 from app.services.gcs_utils import download_files
 
@@ -115,6 +116,20 @@ async def estimate_emissions(request: Request):
             return JSONResponse(status_code=400, content={"error": "Missing 'journal' field"})
 
         return pipeline(journal)
+
+    except Exception as exc:
+        return JSONResponse(status_code=500, content={"error": str(exc)})
+
+
+@app.post("/api/estimate-v2")
+async def estimate_emissions_v2(request: Request):
+    try:
+        data = await request.json()
+        journal = data.get("journal", "")
+        if not journal:
+            return JSONResponse(status_code=400, content={"error": "Missing 'journal' field"})
+
+        return pipeline_v2(journal)
 
     except Exception as exc:
         return JSONResponse(status_code=500, content={"error": str(exc)})
