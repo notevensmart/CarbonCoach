@@ -124,6 +124,10 @@ Example assumption:
 Assumed return trip distance matched outbound trip: 10 km.
 ```
 
+Do not stop extraction after the first recognized event. A journal entry can contain several activities, and each supported activity should become its own detail in the V2 response. If an activity is carbon-relevant but not yet supported, keep it visible as `unresolved` or `not_estimated` with an issue rather than silently dropping it.
+
+The examples in each ticket are minimum regression cases. Agents should add nearby wording variations and mixed-journal tests so the implementation becomes broader over time instead of becoming a pile of narrow phrase branches.
+
 ## Categories
 
 Use the existing four top-level categories:
@@ -755,6 +759,23 @@ I used 5 kWh of electricity.
 
 V1 endpoint must continue to work while V2 is built.
 
+### Deployment Visibility Rule
+
+Frontend work is not done when the React build succeeds locally. It is done when the user can see the changed UI through the production deployment path.
+
+For the current Cloud Run-style deployment, agents must either:
+
+- build and serve the React production app from the FastAPI container, or
+- document and use a separate frontend host that points at the deployed FastAPI API URL.
+
+If the backend container is responsible for the UI, make sure:
+
+- `app/frontend/` is not excluded from the Docker build context
+- the Dockerfile builds or copies the React production assets
+- FastAPI serves the React app at `/`
+- the old inline FastAPI form is no longer the production root page
+- `/api/estimate` and `/api/estimate-v2` remain available as API routes
+
 ## Ticket Strategy
 
 All implementation tickets must be vertical slices that gradually improve both backend and frontend behavior.
@@ -777,7 +798,7 @@ Energy heater slice:
   backend extracts heater events, normalizes duration/power, derives kWh,
   returns assumptions/confidence/status,
   frontend displays those new fields,
-  tests cover the full behavior.
+  tests cover the full behavior plus nearby wording variations and mixed journals.
 ```
 
 Shared architecture may be introduced inside a vertical slice, but only the pieces needed for that slice should be built.
@@ -823,6 +844,8 @@ npm run build
 
 If the ticket changes meaningful UI behavior, verify that the page renders the new response fields locally or with browser/screenshot testing.
 
+If the UI is expected to ship through Cloud Run or another production deployment, also verify the production-like deployment path. A local React dev server is not enough for deployment readiness.
+
 ### External Service Rule
 
 Unit and pipeline tests must not require live:
@@ -844,7 +867,10 @@ A ticket is not done unless:
 backend tests pass
 new slice tests pass
 frontend build passes if frontend changed
+production-like UI path is verified if frontend changed
 existing V1 behavior is not broken
 assumptions/confidence/status are visible where relevant
+extractors do not drop later supported events in multi-activity journals
+tests include robustness cases beyond the listed happy path
 no live external service is required for tests
 ```

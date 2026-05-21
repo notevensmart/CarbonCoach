@@ -1,9 +1,11 @@
 import asyncio
 import os
+from pathlib import Path
 
 from fastapi import FastAPI, Form, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.embedder import init_vector_store
 from app.pipeline import pipeline
@@ -25,6 +27,8 @@ is_ready = False
 preload_error = None
 preload_started = False
 preload_finished = False
+react_build_dir = Path(__file__).resolve().parent / "frontend" / "build"
+react_index_path = react_build_dir / "index.html"
 
 
 async def lifespan(app: FastAPI):
@@ -64,6 +68,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+if (react_build_dir / "static").exists():
+    app.mount(
+        "/static",
+        StaticFiles(directory=react_build_dir / "static"),
+        name="react-static",
+    )
+
 
 @app.get("/healthz")
 def healthz():
@@ -74,25 +85,6 @@ def healthz():
         "preload_finished": preload_finished,
         "error": preload_error,
     }
-
-
-@app.get("/", response_class=HTMLResponse)
-def read_form():
-    return """
-    <html>
-        <head>
-            <title>CarbonCoach Journal</title>
-        </head>
-        <body>
-            <h2>Enter Your Daily Journal</h2>
-            <p>Describe your activities (e.g., commuting, shopping, meals). We will calculate your estimated CO2 emissions.</p>
-            <form action="/process" method="post">
-                <textarea name="journal_entry" rows="8" cols="80" placeholder="Today I drove 10 miles and ate beef..."></textarea><br>
-                <input type="submit" value="Calculate Emissions">
-            </form>
-        </body>
-    </html>
-    """
 
 
 @app.post("/process")
@@ -166,3 +158,46 @@ async def _readiness_error_async(wait_seconds: int = preload_wait_seconds):
             break
         await asyncio.sleep(0.1)
     return _readiness_error()
+
+
+@app.get("/", response_class=HTMLResponse)
+async def serve_react_root():
+    return _serve_react_app()
+
+
+@app.get("/{full_path:path}", response_class=HTMLResponse)
+async def serve_react_routes(full_path: str):
+    if full_path.startswith("api/") or full_path in {"healthz", "process"}:
+        return JSONResponse(status_code=404, content={"error": "Not found"})
+    static_asset = _react_build_asset(full_path)
+    if static_asset:
+        return FileResponse(static_asset)
+    return _serve_react_app()
+
+
+def _serve_react_app():
+    if react_index_path.exists():
+        return HTMLResponse(react_index_path.read_text(encoding="utf-8"))
+    return HTMLResponse(
+        status_code=503,
+        content="""
+        <html>
+            <head><title>CarbonCoach</title></head>
+            <body>
+                <h1>CarbonCoach frontend build not found</h1>
+                <p>Run <code>npm run build</code> in <code>app/frontend</code> or rebuild the Docker image.</p>
+            </body>
+        </html>
+        """,
+    )
+
+
+def _react_build_asset(full_path: str) -> Path | None:
+    candidate = (react_build_dir / full_path).resolve()
+    try:
+        candidate.relative_to(react_build_dir.resolve())
+    except ValueError:
+        return None
+    if candidate.is_file():
+        return candidate
+    return None

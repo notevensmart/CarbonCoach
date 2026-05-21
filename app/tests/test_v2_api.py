@@ -39,7 +39,15 @@ def test_estimate_v2_requires_journal_field():
     assert response.json()["error"] == "Missing 'journal' field"
 
 
+def test_root_serves_react_shell_not_legacy_inline_form():
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert "root" in response.text or "CarbonCoach frontend build not found" in response.text
+    assert "Enter Your Daily Journal" not in response.text
+    assert 'action="/process"' not in response.text
+
+
 def test_v1_pipeline_still_imports():
     assert callable(pipeline)
     assert CarbonPipeline is not None
-

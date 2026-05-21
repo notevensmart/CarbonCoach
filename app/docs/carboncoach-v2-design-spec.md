@@ -204,6 +204,16 @@ Implementation options:
 
 The schema should remain fairly flat. Deep schemas are harder for LLMs to fill reliably.
 
+Extraction must be additive across the journal. The extractor should not return immediately after the first matching keyword if later text may contain another supported activity. Each slice should expand the set of supported event patterns while preserving previously supported patterns.
+
+Robustness expectations:
+
+- handle multiple supported activities in one journal entry
+- preserve supported events when surrounded by irrelevant text
+- record unsupported carbon-relevant activities as `unresolved` or `not_estimated` where possible
+- include tests for wording variations near the ticket examples
+- avoid making the listed ticket examples the only phrases that work
+
 #### QuantityNormalizer
 
 Extracts, normalizes, and canonicalizes quantities.
@@ -708,9 +718,13 @@ Every slice must include:
 - unit tests for deterministic logic
 - pipeline/API tests from journal input to response
 - frontend build verification when frontend changes
+- production-like deployment verification when frontend changes
+- robustness tests for wording variation and mixed multi-event journals when extraction changes
 - mocks/fakes for external services
 
 Tests must not require live Climatiq, OpenRouter, Hugging Face, or Google Cloud Storage.
+
+Frontend visibility must be verified through the same deployment path users open. For the current single-service Cloud Run target, the production container must include the React production build and FastAPI must serve it at `/`; otherwise UI tickets can pass locally while deployed users still see the legacy inline FastAPI form.
 
 ### Phase 1: First Vertical Slice
 
@@ -732,6 +746,17 @@ This slice should introduce only the shared foundation needed for that behavior:
 - energy parameter builder
 - V2 response shape
 - frontend display for confidence/assumptions/status
+
+### Phase 1A: Deployment Visibility
+
+Before adding more UI-dependent slices, fix the deployment path so frontend changes are visible after deployment.
+
+Required outcome:
+
+- the deployed root page serves the React app, or a separate frontend host is documented and configured
+- the backend image no longer hides React changes behind the old inline FastAPI form
+- `/api/estimate` and `/api/estimate-v2` stay reachable after the frontend routing change
+- a production-like build/run is verified before marking UI tickets done
 
 ### Phase 2: Quantity And Domain Builders
 

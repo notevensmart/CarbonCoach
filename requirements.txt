@@ -18,3 +18,4 @@ httpx
 sentence-transformers
 transformers
 pytest
+dataclasses

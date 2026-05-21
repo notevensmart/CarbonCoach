@@ -1,3 +1,13 @@
+FROM node:20-slim AS frontend-build
+
+WORKDIR /frontend
+
+COPY app/frontend/package*.json ./
+RUN npm ci
+
+COPY app/frontend/ ./
+RUN npm run build
+
 # Use a slim official Python image
 FROM python:3.11-slim
 
@@ -20,6 +30,10 @@ RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTr
 
 # Copy the rest of your code
 COPY app/ ./app/
+
+# Copy the built React app into the FastAPI app so Cloud Run serves the same UI
+# users open at the service root.
+COPY --from=frontend-build /frontend/build ./app/frontend/build/
 
 # Start Uvicorn server on port 8080
 CMD ["uvicorn", "app.app:app", "--host", "0.0.0.0", "--port", "8080"]

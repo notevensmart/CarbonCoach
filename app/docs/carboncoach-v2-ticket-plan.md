@@ -35,6 +35,36 @@ All tickets are vertical slices. Each ticket should improve backend behavior and
 
 Do not create architecture-only tickets unless the architecture is required by the vertical slice being implemented.
 
+### Robustness Ratchet
+
+Each ticket must make the system more robust than the previous ticket. Do not implement a slice as a single narrow keyword branch that only handles the listed happy-path examples.
+
+Every extraction ticket must consider:
+
+- multiple carbon-relevant events in one journal entry
+- common wording variations for the supported activity
+- irrelevant text before, between, and after supported activities
+- ambiguous or missing quantities with visible assumptions or issues
+- unsupported activities returned as `not_estimated` or `unresolved` instead of being silently dropped when they are carbon-relevant
+
+The supported examples in a ticket are minimum regression cases, not the full boundary of expected behavior.
+
+### Deployment Visibility Gate
+
+Frontend changes are not complete until they are visible through the same deployment path users open in production.
+
+For the current Cloud Run deployment, that means one of these must be true:
+
+- FastAPI serves the built React app from the deployed container.
+- The React app is deployed separately and points at the deployed FastAPI API base URL.
+
+Do not count `npm run build` alone as deployment-ready. The ticket must also verify that:
+
+- the Docker build context includes the frontend source or build artifacts when the backend image serves the UI
+- the Dockerfile builds or copies the frontend assets needed by production
+- FastAPI no longer serves the old inline HTML form at `/` when the React app is meant to be the production UI
+- `/api/estimate-v2` is reachable from the deployed UI without relying on localhost-only configuration
+
 ### Testing Standard
 
 Each ticket must include:
@@ -42,6 +72,8 @@ Each ticket must include:
 1. Unit tests for deterministic logic.
 2. Pipeline/API tests from journal input to response.
 3. Frontend build verification if frontend changes.
+4. Deployment visibility verification if frontend changes.
+5. Robustness tests for wording variation, irrelevant surrounding text, and multi-event behavior when extraction changes.
 
 Tests must not require live:
 
@@ -260,6 +292,7 @@ Minimum shape:
 ### Acceptance Criteria
 
 - `/api/estimate-v2` exists.
+- `/api/estimate-v2` uses the same readiness guard as `/api/estimate` so startup failures are visible.
 - `/api/estimate` still works/imports.
 - Raw journal text is preserved in V2 processing.
 - Conservative preprocessing normalizes obvious unit formatting like `2kw`, `3hrs`, and `5kwh`.
@@ -270,6 +303,9 @@ Minimum shape:
 - Plain `heater` defaults to electric space heater.
 - V2 response includes status, parameters, assumptions, issues, total, and source breakdown.
 - Frontend can display the new fields.
+- If Ticket 1 changes the visible UI, the deployed app path is updated so those fields are visible after Cloud Run deployment.
+- Energy extraction is not implemented as an early-return single-event detector; it can coexist with other events in the same journal entry.
+- Unsupported or irrelevant text around the heater/electricity event does not prevent the supported energy event from being estimated.
 
 ### Tests
 
@@ -283,6 +319,8 @@ Add tests for:
 - `2 kW heater for 3 hours -> 6 kWh`
 - `heater for 3 hours -> 4.5 kWh` with assumptions
 - `5 kWh electricity -> 5 kWh`
+- journal with unrelated surrounding text plus heater event still estimates the heater event
+- journal with heater and another carbon-relevant activity returns more than one event or clearly marks the unsupported event as `unresolved`/`not_estimated`
 - `/api/estimate-v2` response shape
 - V1 pipeline or endpoint still imports
 
@@ -306,6 +344,110 @@ from `app/frontend`.
 - Do not add external vehicle APIs.
 - Do not depend on live LLM/Climatiq/Hugging Face/GCS in tests.
 - Do not replace `/api/estimate`.
+
+## Ticket 1A: Deployment Visibility Fix For V2 UI
+
+### Goal
+
+Make frontend changes visible in the deployed app.
+
+This ticket exists because a React build can pass locally while Cloud Run still serves the old FastAPI inline HTML page.
+
+### Dependencies
+
+Ticket 1.
+
+### Current Problem To Fix
+
+The production image currently:
+
+- excludes `app/frontend/` from the Docker build context
+- runs only `uvicorn app.app:app`
+- serves a hard-coded FastAPI HTML form at `/`
+- does not serve the React build from the deployed container
+
+### Required Decision
+
+Choose one deployment model and document it in the ticket PR or commit message:
+
+```text
+Option A: single Cloud Run service
+  Docker builds React and FastAPI serves the React build.
+
+Option B: split deployment
+  Frontend is deployed separately and calls the Cloud Run API URL.
+```
+
+Prefer Option A unless the project already has a separate frontend host configured.
+
+### Backend/Deployment Scope For Option A
+
+Update the deployment path so the Cloud Run image includes and serves the React app:
+
+- remove the Docker ignore rule that excludes `app/frontend/`
+- use a Node build stage or equivalent install/build step for `app/frontend`
+- copy the React production build into the final image
+- mount the React build with FastAPI static serving
+- keep `/api/estimate` and `/api/estimate-v2` available as API routes
+- remove or move the old inline root form so `/` returns the React app
+
+### Frontend Scope
+
+Ensure the deployed React app calls the deployed backend correctly:
+
+- same-origin `/api/estimate-v2` for Option A
+- configurable production API base URL for Option B
+- no localhost-only endpoint assumptions
+
+### Acceptance Criteria
+
+- The deployed root page shows the React UI, not the old `Enter Your Daily Journal` inline FastAPI form.
+- A production Docker build contains the frontend assets needed to render the UI.
+- `GET /` returns the React app shell.
+- `POST /api/estimate-v2` still returns the V2 response shape.
+- `POST /api/estimate` still works until V1 is intentionally retired.
+- Browser verification confirms a heater journal can be submitted through the visible deployed UI.
+- Frontend build passes.
+- Backend/API tests pass.
+
+### Tests And Verification
+
+Run:
+
+```powershell
+..\venv\Scripts\python.exe -m pytest tests
+```
+
+from `app`.
+
+Run:
+
+```powershell
+npm run build
+```
+
+from `app/frontend`.
+
+Also verify one production-like path:
+
+```powershell
+docker build -t carboncoach-v2-ui .
+docker run --rm -p 8080:8080 carboncoach-v2-ui
+```
+
+Then open:
+
+```text
+http://localhost:8080/
+```
+
+and confirm the React UI submits to `/api/estimate-v2`.
+
+### Do Not Do
+
+- Do not leave the production root path serving the old inline FastAPI form.
+- Do not require users to open a separate local React dev server to see deployed UI changes.
+- Do not hardcode localhost as the production API URL.
 
 ## Ticket 2: V2 Transport Slice, Distance And Vehicle Defaults
 
@@ -416,6 +558,7 @@ Expected:
 ### Acceptance Criteria
 
 - Transport events produce V2 response details.
+- Transport extraction can return transport events alongside existing energy events from the same journal.
 - `7k` only becomes km when context supports distance.
 - `7k` in purchase/money context does not become distance.
 - Vehicle model defaults are centralized.
@@ -438,6 +581,8 @@ Add tests for:
 - diesel SUV
 - Tesla/diesel contradiction lowers confidence
 - pipeline/API responses for supported transport inputs
+- mixed journal containing transport and energy activities
+- transport wording variations with extra non-carbon journal text
 
 ### Do Not Do
 
@@ -526,6 +671,7 @@ Show factor match reasons in expanded/details view if available.
 ### Acceptance Criteria
 
 - V2 retrieval returns scored candidates.
+- Retrieval supports multiple candidate lookups in one request without one event suppressing later events.
 - Candidates include match reasons.
 - Wrong unit type candidates are rejected.
 - Low-score candidates are not used for Climatiq calls.
@@ -603,6 +749,7 @@ Show fallback assumptions and API/factor issues when present.
 ### Acceptance Criteria
 
 - V2 never calls Climatiq with missing required parameters.
+- Climatiq/fallback handling is per event, so one failed event does not prevent other valid events from being estimated.
 - Invalid factor/parameter combinations are rejected before API call.
 - Successful mocked Climatiq response yields `estimated`.
 - Mocked API failure yields `fallback_estimated` where fallback exists.
@@ -676,6 +823,7 @@ Do not permanently remove V1 usage unless the user explicitly asks.
 ### Acceptance Criteria
 
 - V2 response renders without crashing.
+- Multiple event cards/details render in one journal result.
 - Confidence appears as `Medium (0.72)` style.
 - Assumptions and issues are visible.
 - Source breakdown is visible.
@@ -768,6 +916,7 @@ Include at least:
 - Golden tests pass deterministically.
 - `not_estimated` events are returned but excluded from totals.
 - `unresolved` events include visible issues.
+- Mixed journals with multiple activities produce multiple details instead of only the first recognized event.
 - Edge cases do not crash the API.
 - V1 endpoint remains intact.
 - Frontend build passes.
@@ -795,6 +944,7 @@ Implement in this order:
 
 ```text
 1. V2 Energy Slice, Heater And Electricity
+1A. Deployment Visibility Fix For V2 UI
 2. V2 Transport Slice, Distance And Vehicle Defaults
 3. V2 Local-First Scored Factor Retrieval
 4. V2 Climatiq Validation And Fallback Integration
@@ -808,11 +958,15 @@ V2 is complete when:
 
 - `/api/estimate-v2` supports the energy and transport examples above.
 - V2 responses include confidence, assumptions, statuses, issues, totals, and source breakdown.
+- V2 handles multi-activity journal entries without dropping later supported events.
+- Each slice adds robustness coverage beyond the happy-path examples.
 - Factor retrieval is scored, local-first, and validates unit compatibility.
 - Climatiq calls are made only with valid parameters.
 - Fallback estimates count toward totals with transparent source breakdown.
 - `not_estimated` and `unresolved` statuses are handled.
 - Frontend can display V2 outputs clearly.
+- Frontend changes are visible through the deployed production path.
+- The production deployment serves the intended UI instead of the legacy inline FastAPI form.
 - Golden regression tests pass.
 - Unit/API tests do not require live external services.
 - V1 `/api/estimate` still works until the user explicitly migrates away from it.
