@@ -12,6 +12,7 @@ from app.services.gcs_utils import download_files
 
 
 data_dir = "/tmp/data"
+preload_wait_seconds = int(os.getenv("PRELOAD_WAIT_SECONDS", "60"))
 file_list = [
     ("carboncoach-data", "Climatiq_Energy_ActivityIDs.csv"),
     ("carboncoach-data", "Climatiq_Goods_ActivityIDs.csv"),
@@ -21,6 +22,8 @@ file_list = [
 
 is_ready = False
 preload_error = None
+preload_started = False
+preload_finished = False
 
 
 async def lifespan(app: FastAPI):
@@ -32,7 +35,8 @@ async def lifespan(app: FastAPI):
 
 
 def _preload() -> None:
-    global is_ready, preload_error
+    global is_ready, preload_error, preload_started, preload_finished
+    preload_started = True
     try:
         os.makedirs(data_dir, exist_ok=True)
         download_files(file_list, data_dir)
@@ -45,6 +49,8 @@ def _preload() -> None:
     except Exception as exc:
         preload_error = str(exc)
         print(f"Preload failed: {exc}")
+    finally:
+        preload_finished = True
 
 
 app = FastAPI(lifespan=lifespan)
@@ -63,6 +69,8 @@ def healthz():
     return {
         "status": "ok" if preload_error is None else "degraded",
         "ready": is_ready,
+        "preload_started": preload_started,
+        "preload_finished": preload_finished,
         "error": preload_error,
     }
 
@@ -87,8 +95,8 @@ def read_form():
 
 
 @app.post("/process")
-def process_entry(journal_entry: str = Form(...)):
-    readiness_error = _readiness_error()
+async def process_entry(journal_entry: str = Form(...)):
+    readiness_error = await _readiness_error_async()
     if readiness_error:
         return readiness_error
     return JSONResponse(content=pipeline(journal_entry))
@@ -96,7 +104,7 @@ def process_entry(journal_entry: str = Form(...)):
 
 @app.post("/api/estimate")
 async def estimate_emissions(request: Request):
-    readiness_error = _readiness_error()
+    readiness_error = await _readiness_error_async()
     if readiness_error:
         return readiness_error
 
@@ -116,11 +124,30 @@ def _readiness_error():
     if preload_error:
         return JSONResponse(
             status_code=503,
-            content={"error": "CarbonCoach failed to initialize.", "details": preload_error},
+            content={
+                "error": "CarbonCoach failed to initialize.",
+                "details": preload_error,
+                "ready": is_ready,
+                "preload_started": preload_started,
+                "preload_finished": preload_finished,
+            },
         )
     if not is_ready:
         return JSONResponse(
             status_code=503,
-            content={"error": "CarbonCoach is still warming up. Please retry shortly."},
+            content={
+                "error": "CarbonCoach is still warming up. Please retry shortly.",
+                "ready": is_ready,
+                "preload_started": preload_started,
+                "preload_finished": preload_finished,
+            },
         )
     return None
+
+
+async def _readiness_error_async(wait_seconds: int = preload_wait_seconds):
+    for _ in range(wait_seconds * 10):
+        if is_ready or preload_error:
+            break
+        await asyncio.sleep(0.1)
+    return _readiness_error()

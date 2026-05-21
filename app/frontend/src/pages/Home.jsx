@@ -20,11 +20,12 @@ const handleSubmit = async () => {
       body: JSON.stringify({ journal: entry }),
     });
 
+    const data = await res.json();
+
     if (!res.ok) {
-      throw new Error("Server error");
+      throw new Error(data.error || "Server error");
     }
 
-    const data = await res.json(); // Because FastAPI returns JSON
     setEmissions({
      co2e: data.result.co2e,
      unit: data.result.unit,
@@ -33,7 +34,7 @@ const handleSubmit = async () => {
     }); 
   } catch (err) {
     console.error(err);
-    setError("Failed to estimate emissions. Please try again.");
+    setError(err.message || "Failed to estimate emissions. Please try again.");
   } finally {
     setLoading(false);
   }
