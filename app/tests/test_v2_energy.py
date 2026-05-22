@@ -123,6 +123,32 @@ def test_pipeline_v2_direct_electricity_response():
     assert _assumption_codes(detail["assumptions"]) == ["region.default_au_electricity"]
 
 
+def test_pipeline_v2_estimates_heater_with_unrelated_surrounding_text():
+    result = CarbonPipelineV2().run(
+        "I worked from home today, then I turned on the heater for 3 hours and read a book."
+    ).model_dump()
+
+    assert len(result["details"]) == 1
+    detail = result["details"][0]
+    assert detail["activity_type"] == "space_heater_use"
+    assert detail["parameters"]["energy"] == 4.5
+    assert detail["status"] == "fallback_estimated"
+
+
+def test_pipeline_v2_returns_multiple_energy_events_without_quantity_bleed():
+    result = CarbonPipelineV2().run(
+        "I turned on the heater for 3 hours and used 5 kWh of electricity later."
+    ).model_dump()
+
+    assert [detail["activity_type"] for detail in result["details"]] == [
+        "space_heater_use",
+        "electricity_use",
+    ]
+    assert result["details"][0]["parameters"]["energy"] == 4.5
+    assert result["details"][1]["parameters"]["energy"] == 5
+    assert result["total"]["co2e"] == 5.7
+
+
 def _energy_event(activity_type, raw_text):
     return CarbonEvent(
         raw_text=raw_text,
@@ -134,4 +160,3 @@ def _energy_event(activity_type, raw_text):
 
 def _assumption_codes(assumptions):
     return [assumption["code"] if isinstance(assumption, dict) else assumption.code for assumption in assumptions]
-

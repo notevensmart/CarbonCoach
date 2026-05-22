@@ -31,9 +31,12 @@ class CarbonPipelineV2:
     def run(self, journal_entry: str) -> CarbonEstimateResponse:
         preprocessed = self.preprocessor.preprocess(journal_entry)
         extracted_events = self.event_extractor.extract(preprocessed)
-        quantities = self.quantity_normalizer.normalize(preprocessed.cleaned_journal)
         details = [
-            self._estimate_event(event.model_copy(update={"quantities": quantities}))
+            self._estimate_event(
+                event.model_copy(
+                    update={"quantities": self.quantity_normalizer.normalize(event.raw_text)}
+                )
+            )
             for event in extracted_events
         ]
 
@@ -118,4 +121,3 @@ def _build_total(details: list[EstimateDetail]) -> EstimateTotal:
         confidence=Confidence.from_score(score),
         source_breakdown=breakdown,
     )
-

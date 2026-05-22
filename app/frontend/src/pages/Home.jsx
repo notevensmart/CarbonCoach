@@ -65,6 +65,10 @@ const Home = () => {
 
       {emissions && (
         <section className="mt-6 rounded-md bg-white p-4 shadow-md">
+          <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+            Response version: {emissions.version.toUpperCase()}
+          </div>
+
           <p className="text-lg">
             <strong>Estimated Emissions:</strong>{" "}
             <span className="font-bold text-green-700">

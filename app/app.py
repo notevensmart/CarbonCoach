@@ -115,6 +115,10 @@ async def estimate_emissions(request: Request):
 
 @app.post("/api/estimate-v2")
 async def estimate_emissions_v2(request: Request):
+    readiness_error = await _readiness_error_async()
+    if readiness_error:
+        return readiness_error
+
     try:
         data = await request.json()
         journal = data.get("journal", "")
