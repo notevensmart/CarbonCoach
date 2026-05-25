@@ -8,6 +8,41 @@ DEFAULT_ELECTRICITY_REGION = "AU"
 SPACE_HEATER_DEFAULT_POWER_KW = 1.5
 AU_ELECTRICITY_FALLBACK_KG_CO2E_PER_KWH = 0.6
 
+VEHICLE_MODEL_DEFAULTS = {
+    ("toyota", "camry"): {
+        "vehicle_type": "car",
+        "vehicle_size": "medium",
+        "fuel_type": "petrol",
+        "confidence": 0.65,
+        "assumption_code": "vehicle.toyota_camry.default_petrol_medium",
+        "display_name": "Toyota Camry",
+    },
+    ("tesla", "model 3"): {
+        "vehicle_type": "car",
+        "vehicle_size": "medium",
+        "fuel_type": "electric",
+        "confidence": 0.85,
+        "assumption_code": "vehicle.tesla_model_3.default_electric",
+        "display_name": "Tesla Model 3",
+    },
+    ("tesla", ""): {
+        "vehicle_type": "car",
+        "vehicle_size": "medium",
+        "fuel_type": "electric",
+        "confidence": 0.80,
+        "assumption_code": "vehicle.tesla.default_electric",
+        "display_name": "Tesla",
+    },
+}
+
+TRANSPORT_FALLBACK_KG_CO2E_PER_KM = {
+    ("car", "medium", "petrol"): 0.192,
+    ("car", "medium", "diesel"): 0.209,
+    ("car", "large", "diesel"): 0.27,
+    ("car", "medium", "electric"): 0.09,
+    ("car", "large", "petrol"): 0.25,
+}
+
 
 def space_heater_default_power_assumption() -> Assumption:
     return Assumption(
@@ -26,3 +61,68 @@ def default_au_electricity_region_assumption() -> Assumption:
         confidence_impact=-0.05,
     )
 
+
+def distance_compact_k_context_assumption(surface: str) -> Assumption:
+    return Assumption(
+        code="distance.compact_k_context_km",
+        message=f'Interpreted "{surface}" as kilometres based on transport context.',
+        source="inference",
+        confidence_impact=-0.23,
+    )
+
+
+def vehicle_model_default_assumption(code: str, display_name: str) -> Assumption:
+    messages = {
+        "vehicle.toyota_camry.default_petrol_medium": (
+            "Mapped Toyota Camry to a medium petrol passenger car because model year "
+            "and fuel type were not provided."
+        ),
+        "vehicle.tesla_model_3.default_electric": (
+            "Mapped Tesla Model 3 to a medium electric passenger car because model "
+            "year was not provided."
+        ),
+        "vehicle.tesla.default_electric": (
+            "Mapped Tesla to an electric passenger car because Tesla vehicles are "
+            "normally electric and no model was provided."
+        ),
+    }
+    return Assumption(
+        code=code,
+        message=messages.get(code, f"Mapped {display_name} to local vehicle defaults."),
+        source="default",
+        confidence_impact=-0.15,
+    )
+
+
+def generic_car_default_assumption() -> Assumption:
+    return Assumption(
+        code="vehicle.generic_car.default_petrol_medium",
+        message="Assumed a medium petrol passenger car because vehicle details were not provided.",
+        source="default",
+        confidence_impact=-0.30,
+    )
+
+
+def generic_car_size_default_assumption() -> Assumption:
+    return Assumption(
+        code="vehicle.generic_car.default_medium",
+        message="Assumed a medium passenger car because vehicle size was not provided.",
+        source="default",
+        confidence_impact=-0.10,
+    )
+
+
+def explicit_fuel_override_assumption(
+    vehicle_name: str,
+    default_fuel: str,
+    explicit_fuel: str,
+) -> Assumption:
+    return Assumption(
+        code="vehicle.fuel_type.user_override",
+        message=(
+            f"Used the explicit {explicit_fuel} fuel type from the journal for "
+            f"{vehicle_name} instead of the local {default_fuel} default."
+        ),
+        source="user",
+        confidence_impact=0.0,
+    )

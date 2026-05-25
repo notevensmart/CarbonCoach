@@ -149,6 +149,33 @@ def test_pipeline_v2_returns_multiple_energy_events_without_quantity_bleed():
     assert result["total"]["co2e"] == 5.7
 
 
+def test_pipeline_v2_marks_unsupported_transport_as_unresolved_instead_of_dropping():
+    result = CarbonPipelineV2().run("12 km in train").model_dump()
+
+    assert result["total"]["co2e"] == 0
+    assert result["total"]["confidence"] == {"score": 0.0, "level": "low"}
+    assert len(result["details"]) == 1
+    detail = result["details"][0]
+    assert detail["category"] == "transport"
+    assert detail["activity_type"] == "train_ride"
+    assert detail["status"] == "unresolved"
+    assert detail["issues"][0]["code"] == "transport.not_implemented"
+
+
+def test_pipeline_v2_keeps_supported_energy_and_unsupported_transport_visible():
+    result = CarbonPipelineV2().run(
+        "12 km in train and turned on the heater for 3 hours."
+    ).model_dump()
+
+    assert [detail["activity_type"] for detail in result["details"]] == [
+        "train_ride",
+        "space_heater_use",
+    ]
+    assert result["details"][0]["status"] == "unresolved"
+    assert result["details"][1]["status"] == "fallback_estimated"
+    assert result["total"]["co2e"] == 2.7
+
+
 def _energy_event(activity_type, raw_text):
     return CarbonEvent(
         raw_text=raw_text,
