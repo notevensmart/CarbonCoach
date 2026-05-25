@@ -243,6 +243,52 @@ Make extraction as deterministic as possible:
 
 The model can assist, but validation decides what the rest of the app can use.
 
+## Engineering Depth And Generalization Rule
+
+V2 must be built around normalized activity data and maintained domain
+metadata, not a collection of branches for the journal entries seen during
+testing.
+
+Every new capability must state the input family it covers and its uncertainty
+boundary. An input family includes variations in:
+
+```text
+activity or mode
+unit spelling and formatting
+named, unknown, and ambiguous entities
+explicit versus assumed properties
+missing or contradictory evidence
+surrounding irrelevant text
+multiple activities and ordering
+```
+
+Implementation requirements:
+
+- store activity vocabulary, synonyms, parameter requirements, and fallback
+  keys centrally in taxonomy or reviewable metadata
+- preserve unrecognized but meaningful entities in the event and response
+- calculate from normalized quantities and evidence-backed parameters
+- expose assumptions and issues when the system lacks enough evidence
+- use provider abstractions for broad reference data, with deterministic fake
+  or cache-backed tests and defined outage fallback behavior
+- ensure a new data record can be handled without adding code for its literal
+  name whenever the domain pathway is already supported
+
+Agents must not:
+
+```text
+add one regex/if branch per make, model, product, phrase, or golden input
+drop user-provided specificity merely because no mapping is available
+claim precision from a name when variant/fuel/class data is unknown
+hard-code winning factor IDs or UI behavior for selected demonstrations
+declare a V2-default UI complete while common working V1 inputs regress silently
+```
+
+Narrow rules remain appropriate for controlled units, controlled vocabulary,
+strict validation, safety boundaries, and explicitly maintained bootstrap
+metadata. Those rules must remain visible, centralized, and replaceable by a
+data-backed provider when breadth is needed.
+
 ## Quantity Extraction
 
 Use hybrid extraction:
@@ -456,9 +502,43 @@ unknown
 
 Avoid ambiguous values like `gas`; normalize to `petrol` or `natural_gas` based on context.
 
-## Vehicle Defaults
+## Vehicle Enrichment And Defaults
 
-V2 should start with local vehicle defaults, not external vehicle APIs.
+V2 must not depend on an ever-growing list of hard-coded make/model branches.
+
+For every named vehicle mentioned by the user:
+
+- preserve the supplied vehicle description, even when no mapping exists
+- use explicit fuel and body-class terms such as `electric`, `diesel`, `SUV`,
+  `ute`, `van`, or `hatchback` before any defaults
+- if no verified make/model mapping exists, estimate using only explicit traits
+  plus visible generic assumptions
+- add a visible issue such as `vehicle.named_model.unmapped` when a supplied
+  model cannot be mapped to verified attributes
+- never claim that vehicle details were not supplied when a name was supplied
+- never infer a model's fuel or size from its name without verified metadata
+
+Examples:
+
+```text
+BMW X5
+-> preserve vehicle_description = "BMW X5"
+-> do not guess size or fuel from the name
+-> visible fallback assumptions and unmapped-model issue
+
+BMW X5 SUV
+-> preserve vehicle_description = "BMW X5"
+-> use explicit vehicle class SUV / large
+-> assume fuel only if not supplied
+
+electric BMW iX SUV
+-> preserve vehicle_description = "BMW iX"
+-> use explicit electric fuel and SUV / large class
+```
+
+Ticket 2 begins with local verified vehicle defaults and deterministic
+class/fuel handling, not external vehicle APIs. Local known-model entries may
+improve common cases but are not the long-term coverage strategy.
 
 Example:
 
@@ -481,7 +561,10 @@ VEHICLE_MODEL_DEFAULTS = {
 }
 ```
 
-External vehicle APIs may be added later.
+Broad make/model/version accuracy requires a maintained vehicle metadata source
+or external lookup in a later vertical slice. That slice must use cached or
+fake records in tests and must preserve transparent fallbacks when a lookup is
+unavailable.
 
 ## Explicit User Input Wins
 
@@ -500,7 +583,7 @@ Precedence:
 ```text
 1. explicit user input
 2. strong context inference
-3. known model default
+3. verified model metadata or local known-model default
 4. category default
 5. generic fallback
 ```
@@ -610,6 +693,11 @@ Candidate results should include match reasons:
 }
 ```
 
+Retrieval implementation must score structured candidate metadata generically.
+It must not assign winners by literal activity ID, journal sentence, or named
+entity introduced for a regression test. A compatible new local record should
+be retrievable through the same metadata/scoring path without code changes.
+
 ## Retrieval Thresholds
 
 Use thresholds:
@@ -715,6 +803,12 @@ Keep V1 working:
 ```text
 POST /api/estimate
 ```
+
+When the production frontend submits to V2 by default, keeping V1 reachable is
+not enough by itself. Common activities already estimated in V1 must be audited
+for V2 parity, estimated through a deliberate compatibility path, or exposed
+as a clearly accepted product gap before deployment. A common input must not
+quietly change from an estimate to zero merely because the UI switched endpoints.
 
 Suggested file structure:
 
@@ -874,3 +968,21 @@ extractors do not drop later supported events in multi-activity journals
 tests include robustness cases beyond the listed happy path
 no live external service is required for tests
 ```
+
+For any slice that expands extraction, enrichment, retrieval, or fallback
+behavior, "robustness cases" must include a coverage matrix rather than only
+more golden strings:
+
+```text
+an input not explicitly listed in the ticket examples
+wording/unit formatting variation
+unknown or ambiguous entity preservation
+explicit-property override
+missing or contradictory property handling
+nearby negative case
+mixed-event case
+invariance case where irrelevant prose does not change normalized parameters
+```
+
+If the production UI targets V2, add parity regressions for common user paths
+that V1 already estimated, including user-reported failures.

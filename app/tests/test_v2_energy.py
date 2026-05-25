@@ -84,22 +84,23 @@ def test_energy_builder_uses_direct_kwh_for_electricity():
     assert _assumption_codes(result.assumptions) == ["region.default_au_electricity"]
 
 
-def test_pipeline_v2_explicit_heater_response():
-    result = CarbonPipelineV2().run("I used a 2 kW heater for 3 hours.").model_dump()
+def test_pipeline_v2_explicit_heater_response(v2_pipeline):
+    result = v2_pipeline.run("I used a 2 kW heater for 3 hours.").model_dump()
     detail = result["details"][0]
 
     assert result["version"] == "v2"
     assert result["total"]["co2e"] == 3.6
-    assert result["total"]["source_breakdown"]["fallback_estimated"] == 3.6
+    assert result["total"]["source_breakdown"]["estimated"] == 3.6
     assert detail["category"] == "energy"
     assert detail["activity_type"] == "space_heater_use"
-    assert detail["status"] == "fallback_estimated"
+    assert detail["status"] == "estimated"
+    assert detail["source"] == "climatiq"
     assert detail["parameters"]["energy"] == 6
     assert detail["confidence"]["level"] == "high"
 
 
-def test_pipeline_v2_duration_only_heater_response():
-    result = CarbonPipelineV2().run("I turned on the heater for 3 hours.").model_dump()
+def test_pipeline_v2_duration_only_heater_response(v2_pipeline):
+    result = v2_pipeline.run("I turned on the heater for 3 hours.").model_dump()
     detail = result["details"][0]
 
     assert result["total"]["co2e"] == 2.7
@@ -112,8 +113,8 @@ def test_pipeline_v2_duration_only_heater_response():
     assert detail["issues"] == []
 
 
-def test_pipeline_v2_direct_electricity_response():
-    result = CarbonPipelineV2().run("I used 5 kWh of electricity.").model_dump()
+def test_pipeline_v2_direct_electricity_response(v2_pipeline):
+    result = v2_pipeline.run("I used 5 kWh of electricity.").model_dump()
     detail = result["details"][0]
 
     assert result["total"]["co2e"] == 3.0
@@ -123,8 +124,8 @@ def test_pipeline_v2_direct_electricity_response():
     assert _assumption_codes(detail["assumptions"]) == ["region.default_au_electricity"]
 
 
-def test_pipeline_v2_estimates_heater_with_unrelated_surrounding_text():
-    result = CarbonPipelineV2().run(
+def test_pipeline_v2_estimates_heater_with_unrelated_surrounding_text(v2_pipeline):
+    result = v2_pipeline.run(
         "I worked from home today, then I turned on the heater for 3 hours and read a book."
     ).model_dump()
 
@@ -132,11 +133,11 @@ def test_pipeline_v2_estimates_heater_with_unrelated_surrounding_text():
     detail = result["details"][0]
     assert detail["activity_type"] == "space_heater_use"
     assert detail["parameters"]["energy"] == 4.5
-    assert detail["status"] == "fallback_estimated"
+    assert detail["status"] == "estimated"
 
 
-def test_pipeline_v2_returns_multiple_energy_events_without_quantity_bleed():
-    result = CarbonPipelineV2().run(
+def test_pipeline_v2_returns_multiple_energy_events_without_quantity_bleed(v2_pipeline):
+    result = v2_pipeline.run(
         "I turned on the heater for 3 hours and used 5 kWh of electricity later."
     ).model_dump()
 
@@ -149,21 +150,21 @@ def test_pipeline_v2_returns_multiple_energy_events_without_quantity_bleed():
     assert result["total"]["co2e"] == 5.7
 
 
-def test_pipeline_v2_marks_unsupported_transport_as_unresolved_instead_of_dropping():
-    result = CarbonPipelineV2().run("12 km in train").model_dump()
+def test_pipeline_v2_estimates_supported_train_transport(v2_pipeline):
+    result = v2_pipeline.run("12 km in train").model_dump()
 
-    assert result["total"]["co2e"] == 0
-    assert result["total"]["confidence"] == {"score": 0.0, "level": "low"}
+    assert result["total"]["co2e"] == 0.48
     assert len(result["details"]) == 1
     detail = result["details"][0]
     assert detail["category"] == "transport"
     assert detail["activity_type"] == "train_ride"
-    assert detail["status"] == "unresolved"
-    assert detail["issues"][0]["code"] == "transport.not_implemented"
+    assert detail["status"] == "estimated"
+    assert detail["source"] == "climatiq"
+    assert detail["issues"] == []
 
 
-def test_pipeline_v2_keeps_supported_energy_and_unsupported_transport_visible():
-    result = CarbonPipelineV2().run(
+def test_pipeline_v2_keeps_transport_and_energy_visible(v2_pipeline):
+    result = v2_pipeline.run(
         "12 km in train and turned on the heater for 3 hours."
     ).model_dump()
 
@@ -171,9 +172,9 @@ def test_pipeline_v2_keeps_supported_energy_and_unsupported_transport_visible():
         "train_ride",
         "space_heater_use",
     ]
-    assert result["details"][0]["status"] == "unresolved"
-    assert result["details"][1]["status"] == "fallback_estimated"
-    assert result["total"]["co2e"] == 2.7
+    assert result["details"][0]["status"] == "estimated"
+    assert result["details"][1]["status"] == "estimated"
+    assert result["total"]["co2e"] == 3.18
 
 
 def _energy_event(activity_type, raw_text):

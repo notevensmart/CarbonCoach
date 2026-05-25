@@ -49,6 +49,59 @@ Every extraction ticket must consider:
 
 The supported examples in a ticket are minimum regression cases, not the full boundary of expected behavior.
 
+### Generalization And Engineering Gate
+
+Agents must implement input families, not memorize examples.
+
+Before completing a slice, identify the variation dimensions it is meant to
+handle, such as:
+
+```text
+activity or mode
+quantity spelling and unit formatting
+explicit versus inferred properties
+known, unknown, and ambiguous entities
+missing data
+contradictory data
+multiple events in one journal
+unsupported near-neighbor inputs
+```
+
+Implementation rules:
+
+- put controlled vocabulary, synonyms, defaults, and fallback keys in taxonomy
+  or maintained metadata rather than distributing phrase checks through the pipeline
+- make normalizers, enrichers, parameter builders, retrieval, and validation
+  operate on structured dimensions, not ticket-example strings
+- preserve meaningful user-provided entities that are not recognized; expose
+  assumptions or issues rather than dropping them or pretending they were absent
+- use explicit user evidence before inference, verified metadata before
+  defaults, and defaults before low-confidence fallback
+- introduce provider interfaces for external or broad reference data, with
+  deterministic fixture/cache-backed test implementations and failure behavior
+- avoid activity IDs, product/model names, or complete journal sentences in
+  decision logic unless they are entries in reviewable domain metadata
+- document the supported family and the honest fallback boundary in each ticket
+
+Hard-coded rules are acceptable only for controlled grammar/unit normalization,
+controlled taxonomy synonyms, safety validation, or small reviewed bootstrap
+metadata. They are not acceptable as the primary strategy for broad real-world
+entity coverage.
+
+### User-Visible Parity Gate
+
+Once the production frontend defaults to V2, common inputs that already
+produced an estimate in V1 must not silently regress to zero or `unresolved`
+without a deliberate product decision visible to the user.
+
+Before a V2-default UI is treated as complete:
+
+- audit representative working V1 pathways against V2
+- implement parity for common pathways, or keep a deliberate routing/fallback
+  strategy while V2 coverage is incomplete
+- add regressions for any user-observed loss of behavior, including common
+  public-transport inputs
+
 ### Deployment Visibility Gate
 
 Frontend changes are not complete until they are visible through the same deployment path users open in production.
@@ -74,6 +127,20 @@ Each ticket must include:
 3. Frontend build verification if frontend changes.
 4. Deployment visibility verification if frontend changes.
 5. Robustness tests for wording variation, irrelevant surrounding text, and multi-event behavior when extraction changes.
+6. A coverage-matrix test set for each new supported family.
+7. V1-to-V2 visible parity regressions when the production UI targets V2.
+
+A coverage matrix must include, where applicable:
+
+- at least one example not named in the ticket's supported-input list
+- unit/spacing or wording variation
+- an explicit-property override
+- an unknown or ambiguous entity
+- a missing-data or contradictory-data path
+- a nearby negative example that must not be converted into an estimate
+- a mixed multi-event journal
+- an invariance test, such as unrelated surrounding prose not changing the
+  normalized parameters or factor selection
 
 Tests must not require live:
 
@@ -398,6 +465,9 @@ Ensure the deployed React app calls the deployed backend correctly:
 - same-origin `/api/estimate-v2` for Option A
 - configurable production API base URL for Option B
 - no localhost-only endpoint assumptions
+- while V2 coverage is narrower than V1, expose V2 deliberately as a
+  selectable/clearly identified path or keep the general default on a path
+  that does not remove already-working estimates
 
 ### Acceptance Criteria
 
@@ -406,6 +476,9 @@ Ensure the deployed React app calls the deployed backend correctly:
 - `GET /` returns the React app shell.
 - `POST /api/estimate-v2` still returns the V2 response shape.
 - `POST /api/estimate` still works until V1 is intentionally retired.
+- The visible default estimation workflow does not silently turn common
+  V1-estimated journal inputs into zero/unresolved V2 responses; if V2 remains
+  incomplete, its reduced scope is explicitly selected or signposted.
 - Browser verification confirms a heater journal can be submitted through the visible deployed UI.
 - Frontend build passes.
 - Backend/API tests pass.
@@ -449,11 +522,12 @@ and confirm the React UI submits to `/api/estimate-v2`.
 - Do not require users to open a separate local React dev server to see deployed UI changes.
 - Do not hardcode localhost as the production API URL.
 
-## Ticket 2: V2 Transport Slice, Distance And Vehicle Defaults
+## Ticket 2: V2 Transport Slice, Distance And Transparent Vehicle Defaults
 
 ### Goal
 
-Add transport support for distance, compact `k`, vehicle/fuel details, and local vehicle defaults.
+Add transport support for distance, compact `k`, vehicle/fuel details, local
+verified defaults, and honest fallback behavior for arbitrary named vehicles.
 
 ### Dependencies
 
@@ -469,7 +543,9 @@ Extend V2 with:
 - compact `k` context rule
 - transport event extraction
 - transport entity enrichment
-- vehicle defaults
+- explicit vehicle class/fuel enrichment independent of named-model support
+- preservation of arbitrary named vehicle descriptions
+- local verified vehicle defaults
 - transport parameter builder
 - contradiction handling through lowered confidence and issues
 
@@ -479,6 +555,7 @@ Display transport-specific assumptions and issues, including:
 
 - compact `k` interpretation
 - vehicle default mapping
+- unknown named-vehicle fallback mapping
 - explicit user override
 - contradictions
 
@@ -494,6 +571,9 @@ I drove 12 km in a diesel SUV.
 I drove 7 km in my electric Toyota Camry.
 I drove my Tesla Model 3 for 8 km.
 I drove my Tesla using diesel for 10 km.
+I took a 5 km ride in a BMW X5.
+I took a 5 km ride in a BMW X5 SUV.
+I drove 5 km in an electric BMW iX SUV.
 ```
 
 ### Required Behavior
@@ -555,6 +635,17 @@ Expected:
 - add visible issue
 - do not silently hide the contradiction
 
+#### Arbitrary Named Vehicles
+
+```text
+BMW X5 -> preserve vehicle_description; generic class/fuel fallback with an explicit issue
+BMW X5 SUV -> preserve vehicle_description; use the explicit large/SUV class; assume only fuel
+electric BMW iX SUV -> preserve vehicle_description; use explicit electric and large/SUV traits
+```
+
+Do not alter emissions merely because an unverified model name sounds more
+specific. Model-specific emissions require maintained vehicle metadata.
+
 ### Acceptance Criteria
 
 - Transport events produce V2 response details.
@@ -562,6 +653,10 @@ Expected:
 - `7k` only becomes km when context supports distance.
 - `7k` in purchase/money context does not become distance.
 - Vehicle model defaults are centralized.
+- Arbitrary supplied vehicle descriptions are preserved in response parameters.
+- Unknown named vehicles expose `vehicle.named_model.unmapped` rather than
+  silently collapsing to a generic car with a misleading assumption.
+- Explicit body class and fuel attributes affect estimates for any vehicle name.
 - Known typo corrections, such as `toytoa camery`, are recorded and slightly lower confidence.
 - Explicit user fuel type overrides defaults.
 - Contradictions lower confidence and add issues.
@@ -580,6 +675,8 @@ Add tests for:
 - Tesla Model 3 default
 - diesel SUV
 - Tesla/diesel contradiction lowers confidence
+- unknown named vehicle is retained with a visible fallback assumption and issue
+- explicit SUV/fuel traits work with an unmapped vehicle name
 - pipeline/API responses for supported transport inputs
 - mixed journal containing transport and energy activities
 - transport wording variations with extra non-carbon journal text
@@ -588,8 +685,121 @@ Add tests for:
 
 - Do not call external vehicle APIs.
 - Do not require vehicle model year.
+- Do not grow hand-written model regexes as the primary coverage strategy.
 - Do not replace V1 matching.
 - Do not add broad autocorrect that can change user meaning.
+
+## Ticket 2A: Common Transport Mode Parity
+
+### Goal
+
+Restore and improve the common transport pathways a user reasonably expects
+when the visible frontend submits to V2, including inputs already estimated by
+V1 such as bus journeys.
+
+### Dependencies
+
+Ticket 2.
+
+### Backend Scope
+
+- Drive mode recognition from transport taxonomy/synonym metadata rather than
+  separate sentence-specific branches.
+- Support distance-based estimation or explicit zero-operational-emissions
+  handling for the controlled transport families appropriate to available factors:
+  `bus_ride`, `train_ride`, `rideshare`, `bicycle_ride`, and `walking`.
+- Handle `flight` only where a defensible distance/factor path exists; otherwise
+  keep it visible as unresolved with a useful issue.
+- Keep unknown transport wording visible when carbon-relevant, and record the
+  unsupported normalized mode or raw description rather than silently dropping it.
+- Use reusable distance normalization and transport parameter construction
+  across transport modes.
+- Maintain mode fallback-factor metadata centrally with source/provenance notes.
+
+### Required Behavior
+
+Minimum cases:
+
+```text
+took a 5km bus ride -> estimated or fallback_estimated, not unresolved
+caught the train for 12 km -> estimated or fallback_estimated
+rode my bike 6 km -> not_estimated with zero operational emissions or estimated only if a documented boundary applies
+walked 2 km -> not_estimated with zero operational emissions
+took a rideshare 8 km -> estimate with a visible vehicle/default assumption
+```
+
+Mode synonyms such as `bus`, `coach`, `train`, `rail`, `bike`, `bicycle`,
+`walked`, `taxi`, and `rideshare` should be maintained as data associated with
+the activity taxonomy, not scattered one-off code paths.
+
+### Acceptance Criteria
+
+- The bus input reported by users no longer shows `0.00 kg CO2e` solely
+  because the frontend uses V2.
+- Common modes use one data-driven transport pipeline and centralized factor defaults.
+- Unsupported modes are visible and produce one meaningful issue, not duplicated issues.
+- Existing car and energy behavior remains intact in mixed journals.
+- The frontend can keep rendering the existing V2 detail contract without mode-specific markup.
+
+### Tests
+
+- Add a table-driven matrix for mode synonyms, distance formatting, and expected statuses.
+- Include `took a 5km bus ride` as a V1-visible-parity regression.
+- Test bus/train mixed with heater and car events.
+- Test walking/bicycle zero-operational-emissions behavior.
+- Test an unknown transport mode and issue de-duplication.
+
+### Do Not Do
+
+- Do not solve public transport by adding a conditional for only the reported bus phrase.
+- Do not claim full lifecycle emissions for walking/bicycling without a defined methodology.
+- Do not depend on live external services in tests.
+
+## Ticket 2B: Data-Backed Vehicle Specificity
+
+### Goal
+
+Provide broad make/model/version accuracy through maintained vehicle metadata,
+instead of adding individual model branches whenever a user encounters one.
+
+### Dependencies
+
+Ticket 2.
+
+### Backend Scope
+
+- Add a vehicle metadata provider abstraction with a deterministic local/cache-backed test path.
+- Query and normalize arbitrary makes/models/variants through the provider
+  contract; do not introduce a new source-code branch per recognized model.
+- Evaluate a suitable body/fuel metadata source and an emissions/fuel-economy
+  source; body metadata alone must not be treated as precise emissions data.
+- Enrich known make/model/year or variant information only when supported by
+  verified metadata.
+- Keep explicit user fuel/class inputs higher priority than provider defaults.
+- Keep the current transparent named-vehicle fallback when metadata is missing
+  or ambiguous.
+
+### Required Behavior
+
+- `BMW X5` is retained today with fallback assumptions; with verified variant
+  metadata it may use a more specific class/fuel factor.
+- Ambiguous model families with petrol, diesel, hybrid, and electric variants
+  do not receive a precise fuel factor unless the variant is resolved.
+- Provider failures do not prevent a visible fallback estimate.
+
+### Tests
+
+- Use faked/cached provider records only; never require live vehicle services.
+- Cover ambiguous model variants, explicit user overrides, successful
+  enrichment, missing records, and provider failure fallback.
+- Include multiple fixture makes/models that are not literal product examples
+  in this ticket, proving the path is provider-driven rather than whitelist-driven.
+
+### Do Not Do
+
+- Do not replace transparent uncertainty with guessed model-specific factors.
+- Do not require live external APIs in tests.
+- Do not add make/model-specific extraction branches to make fixtures pass.
 
 ## Ticket 3: V2 Local-First Scored Factor Retrieval
 
@@ -599,7 +809,7 @@ Improve V2 emission-factor search using local-first scored retrieval.
 
 ### Dependencies
 
-Tickets 1 and 2.
+Tickets 1, 2, 2A, and 2B.
 
 ### Backend Scope
 
@@ -618,6 +828,11 @@ Retrieval must use:
 3. semantic/vector score if available
 4. optional Climatiq Search API fallback only when local retrieval is weak
 ```
+
+The scorer must be generic over normalized event metadata and candidate
+records. Adding a new compatible factor record or vehicle/provider result
+must not require adding an `if` branch for that activity name, activity ID,
+make, model, or journal phrase.
 
 ### Scoring
 
@@ -663,6 +878,8 @@ match_reasons
 - Energy events must not use distance factors.
 - Transport events must not use waste factors.
 - Wrong unit types must be rejected before Climatiq.
+- Required-dimension and compatibility rules come from taxonomy/validation
+  metadata, not a growing list of example-specific exclusions.
 
 ### Frontend Scope
 
@@ -676,6 +893,8 @@ Show factor match reasons in expanded/details view if available.
 - Wrong unit type candidates are rejected.
 - Low-score candidates are not used for Climatiq calls.
 - Energy and transport V2 slices still pass.
+- New fixture candidates can be selected correctly without code changes.
+- Match reasons identify structured evidence, not merely that a literal name matched.
 
 ### Tests
 
@@ -688,11 +907,16 @@ Test:
 - wrong unit type rejected
 - low score becomes fallback/unresolved
 - match reasons populated
+- an unseen fixture activity with compatible metadata ranks through the same scorer
+- adding an irrelevant candidate does not change the selected compatible factor
+- entity changes such as explicit electric versus diesel alter factor ranking
+  through metadata, without model-specific retrieval code
 
 ### Do Not Do
 
 - Do not depend on live Climatiq Search API in tests.
 - Do not delete V1 Chroma retrieval.
+- Do not hard-code winning activity IDs or per-example score bonuses.
 
 ## Ticket 4: V2 Climatiq Validation And Fallback Integration
 
@@ -716,6 +940,11 @@ activity_id exists
 ```
 
 Use the existing `ClimatiqClient` where possible, but keep V2 validation separate.
+
+Validation and fallback selection must dispatch from parameter dimensions,
+unit compatibility, status rules, and centrally maintained fallback metadata.
+They must not dispatch from complete journal strings or fixture-specific
+activity IDs.
 
 ### Behavior
 
@@ -756,6 +985,8 @@ Show fallback assumptions and API/factor issues when present.
 - If no fallback exists, response is `failed` or `unresolved` with issues.
 - Totals include fallback estimates.
 - Source breakdown is correct.
+- A newly introduced compatible candidate/fallback fixture follows the same
+  validation path without a new code branch.
 
 ### Tests
 
@@ -769,11 +1000,14 @@ Test:
 - Climatiq error becomes fallback
 - fallback counts toward total
 - source breakdown is correct
+- validation behavior is invariant to wording once normalized event/parameters match
+- failures in one event do not alter valid estimates for unrelated mixed events
 
 ### Do Not Do
 
 - Do not use live Climatiq in tests.
 - Do not remove fallback estimates from totals.
+- Do not build fallback handling as one conditional per demonstration input.
 
 ## Ticket 5: V2 Frontend Transparency And UX Pass
 
@@ -783,7 +1017,7 @@ Make V2 results understandable in the frontend.
 
 ### Dependencies
 
-Tickets 1 through 4.
+Tickets 1, 1A, 2, 2A, 2B, 3, and 4.
 
 ### Backend Scope
 
@@ -805,8 +1039,13 @@ Render V2 responses with:
 - issues
 - factor match reasons if available
 - fallback vs Climatiq source
+- preserved unknown entities and their visible fallback issues/assumptions
 
 Show `not_estimated` support only if present from Ticket 6; otherwise make the UI tolerant of it.
+
+Render from the response contract generically. Do not add UI components that
+know individual model names, activity example strings, or fixed assumption
+codes solely to make selected demonstrations look correct.
 
 ### Endpoint Strategy
 
@@ -828,6 +1067,7 @@ Do not permanently remove V1 usage unless the user explicitly asks.
 - Assumptions and issues are visible.
 - Source breakdown is visible.
 - Frontend remains usable if an event has no assumptions/issues.
+- New activity types and unknown named entities render using the same generic detail view.
 - Frontend build passes.
 
 ### Tests And Verification
@@ -844,11 +1084,13 @@ If browser tooling is available, manually verify:
 - car ride response
 - fallback response
 - unresolved response if available
+- unknown named vehicle and a multi-event response
 
 ### Do Not Do
 
 - Do not redesign the entire product UI.
 - Do not remove V1 endpoint.
+- Do not create per-entity presentation branches for inputs such as individual vehicle models.
 
 ## Ticket 6: V2 Regression, Not Estimated, And Hardening
 
@@ -858,7 +1100,7 @@ Harden V2 with golden regressions, `not_estimated` behavior, unresolved behavior
 
 ### Dependencies
 
-Tickets 1 through 5.
+Tickets 1, 1A, 2, 2A, 2B, 3, 4, and 5.
 
 ### Backend Scope
 
@@ -908,8 +1150,16 @@ Include at least:
 {"input":"I took a 7k ride.","expected_category":"transport","expected_activity_type":"car_ride","expected_distance_km":7,"expected_assumption_code":"distance.compact_k_context_km"}
 {"input":"I took a 7 km ride in a Toyota Camry.","expected_category":"transport","expected_activity_type":"car_ride","expected_distance_km":7,"expected_assumption_code":"vehicle.toyota_camry.default_petrol_medium"}
 {"input":"I drove 7 km in my electric Toyota Camry.","expected_category":"transport","expected_activity_type":"car_ride","expected_fuel_type":"electric"}
+{"input":"I took a 5km bus ride.","expected_category":"transport","expected_activity_type":"bus_ride","expected_status":"fallback_estimated"}
+{"input":"I took a 5 km ride in a BMW X5.","expected_category":"transport","expected_activity_type":"car_ride","expected_issue_code":"vehicle.named_model.unmapped"}
 {"input":"I read a book for 2 hours.","expected_status":"not_estimated"}
 ```
+
+Golden cases are regressions, not the coverage strategy. Add table-driven or
+generated variation matrices around activity modes, units, named/unknown
+entities, explicit overrides, missing values, contradictions, and
+multi-event ordering. The suite should demonstrate that related unseen inputs
+exercise the same structured pathway.
 
 ### Acceptance Criteria
 
@@ -918,6 +1168,9 @@ Include at least:
 - `unresolved` events include visible issues.
 - Mixed journals with multiple activities produce multiple details instead of only the first recognized event.
 - Edge cases do not crash the API.
+- Visible V1-to-V2 parity regressions for common supported behavior pass while
+  the frontend targets V2.
+- Generalization matrices pass without requiring example-specific branches.
 - V1 endpoint remains intact.
 - Frontend build passes.
 
@@ -931,12 +1184,16 @@ Add tests for:
 - empty/irrelevant input behavior
 - malformed input does not crash endpoint
 - existing V1 tests still pass
+- common V1 estimated inputs submitted through V2 do not unexpectedly return zero
+- equivalent phrasing/spacing variants normalize to equivalent parameter sets
+- explicit property changes produce justified output changes
 
 ### Do Not Do
 
 - Do not add telemetry.
 - Do not add external vehicle APIs.
 - Do not make tests depend on live services.
+- Do not mistake a growing golden fixture list for robust implementation.
 
 ## Final Ticket Order
 
@@ -945,7 +1202,9 @@ Implement in this order:
 ```text
 1. V2 Energy Slice, Heater And Electricity
 1A. Deployment Visibility Fix For V2 UI
-2. V2 Transport Slice, Distance And Vehicle Defaults
+2. V2 Transport Slice, Distance And Transparent Vehicle Defaults
+2A. Common Transport Mode Parity
+2B. Data-Backed Vehicle Specificity
 3. V2 Local-First Scored Factor Retrieval
 4. V2 Climatiq Validation And Fallback Integration
 5. V2 Frontend Transparency And UX Pass
@@ -957,6 +1216,14 @@ Implement in this order:
 V2 is complete when:
 
 - `/api/estimate-v2` supports the energy and transport examples above.
+- Arbitrary named vehicles are retained and never presented as if no vehicle
+  details were supplied.
+- Model-specific estimates use verified metadata or explicit user traits rather
+  than unbounded hand-written model branches.
+- Common V1 transport inputs used in the V2-default UI no longer silently
+  regress to unresolved/zero results.
+- Supported families generalize across variation matrices rather than only
+  passing their named regression examples.
 - V2 responses include confidence, assumptions, statuses, issues, totals, and source breakdown.
 - V2 handles multi-activity journal entries without dropping later supported events.
 - Each slice adds robustness coverage beyond the happy-path examples.

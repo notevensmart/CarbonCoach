@@ -3,14 +3,14 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
+from app.domain.activity_taxonomy import TRANSPORT_TAXONOMY
 from app.domain.assumptions import (
     SPACE_HEATER_DEFAULT_POWER_KW,
-    TRANSPORT_FALLBACK_KG_CO2E_PER_KM,
     distance_compact_k_context_assumption,
     default_au_electricity_region_assumption,
     space_heater_default_power_assumption,
 )
-from app.domain.models import Assumption, CarbonEvent, Confidence, Issue, Quantity
+from app.domain.models import Assumption, CarbonEvent, Confidence, EstimateStatus, Issue, Quantity
 
 
 @dataclass(frozen=True)
@@ -20,7 +20,7 @@ class ParameterBuildResult:
     assumptions: list[Assumption] = field(default_factory=list)
     issues: list[Issue] = field(default_factory=list)
     can_estimate: bool = True
-    fallback_factor: float | None = None
+    status: EstimateStatus | None = None
 
 
 class EnergyParameterBuilder:
@@ -91,9 +91,6 @@ class EnergyParameterBuilder:
 
 class TransportParameterBuilder:
     def build(self, event: CarbonEvent) -> ParameterBuildResult:
-        if event.activity_type != "car_ride":
-            return _unsupported_transport_build(event)
-
         distance = _first_quantity(event.quantities, "distance")
         if distance is None:
             return ParameterBuildResult(
@@ -109,34 +106,84 @@ class TransportParameterBuilder:
                 can_estimate=False,
             )
 
-        vehicle_type = _entity_text(event.entities.get("vehicle_type")) or "car"
-        vehicle_size = _entity_text(event.entities.get("vehicle_size")) or "medium"
-        fuel_type = _entity_text(event.entities.get("fuel_type")) or "petrol"
-        factor = _transport_factor(vehicle_type, vehicle_size, fuel_type)
-
+        metadata = TRANSPORT_TAXONOMY[event.activity_type]
+        policy = str(metadata.get("estimate_policy", "unresolved"))
         assumptions = []
         if _is_compact_k_distance(distance):
             assumptions.append(distance_compact_k_context_assumption(distance.surface or "k"))
-
         parameters = {
             "distance": _round_quantity(distance.value),
             "distance_unit": "km",
+            "transport_mode": event.activity_type,
+        }
+
+        if policy == "operational_zero":
+            parameters["emissions_boundary"] = metadata["emissions_boundary"]
+            return ParameterBuildResult(
+                parameters=parameters,
+                confidence=Confidence.from_score(_distance_confidence(event, distance)),
+                assumptions=assumptions,
+                status="not_estimated",
+            )
+
+        if policy == "unresolved":
+            issue_code = (
+                "transport.flight.factor_unresolved"
+                if event.activity_type == "flight"
+                else "transport.mode.unsupported"
+            )
+            return ParameterBuildResult(
+                parameters=parameters,
+                confidence=Confidence.from_score(0.30),
+                assumptions=assumptions,
+                issues=[
+                    Issue(
+                        code=issue_code,
+                        message=(
+                            f"Detected {event.activity_type}, but no approved Climatiq "
+                            "factor pathway is configured for this mode yet."
+                        ),
+                        severity="warning",
+                    )
+                ],
+                can_estimate=False,
+            )
+
+        if policy == "climatiq_distance":
+            return ParameterBuildResult(
+                parameters=parameters,
+                confidence=Confidence.from_score(_distance_confidence(event, distance)),
+                assumptions=assumptions,
+            )
+
+        vehicle_type = _entity_text(event.entities.get("vehicle_type")) or "car"
+        vehicle_size = _entity_text(event.entities.get("vehicle_size")) or "medium"
+        fuel_type = _entity_text(event.entities.get("fuel_type")) or "petrol"
+
+        parameters.update({
             "vehicle_type": vehicle_type,
             "vehicle_size": vehicle_size,
             "fuel_type": fuel_type,
-        }
+        })
         if event.entities.get("vehicle_make"):
             parameters["vehicle_make"] = event.entities["vehicle_make"]
         if event.entities.get("vehicle_model"):
             parameters["vehicle_model"] = event.entities["vehicle_model"]
         if event.entities.get("vehicle_class"):
             parameters["vehicle_class"] = event.entities["vehicle_class"]
+        if event.entities.get("vehicle_description"):
+            parameters["vehicle_description"] = event.entities["vehicle_description"]
+        if event.entities.get("vehicle_metadata_record_id"):
+            parameters["vehicle_metadata_record_id"] = event.entities["vehicle_metadata_record_id"]
+        if event.entities.get("vehicle_metadata_source"):
+            parameters["vehicle_metadata_source"] = event.entities["vehicle_metadata_source"]
+        if event.entities.get("vehicle_year"):
+            parameters["vehicle_year"] = event.entities["vehicle_year"]
 
         return ParameterBuildResult(
             parameters=parameters,
             confidence=Confidence.from_score(_transport_confidence(event, distance)),
             assumptions=assumptions,
-            fallback_factor=factor,
         )
 
 
@@ -146,30 +193,6 @@ def _first_quantity(quantities: list[Quantity], dimension: str) -> Quantity | No
 
 def _round_quantity(value: float) -> float:
     return round(float(value), 3)
-
-
-def _unsupported_transport_build(event: CarbonEvent) -> ParameterBuildResult:
-    return ParameterBuildResult(
-        parameters={},
-        confidence=Confidence.from_score(0.20),
-        issues=[
-            Issue(
-                code="transport.not_implemented",
-                message=(
-                    f"Detected {event.activity_type}, but this transport type is not estimated yet."
-                ),
-                severity="warning",
-            )
-        ],
-        can_estimate=False,
-    )
-
-
-def _transport_factor(vehicle_type: str, vehicle_size: str, fuel_type: str) -> float:
-    return TRANSPORT_FALLBACK_KG_CO2E_PER_KM.get(
-        (vehicle_type, vehicle_size, fuel_type),
-        TRANSPORT_FALLBACK_KG_CO2E_PER_KM[("car", "medium", "petrol")],
-    )
 
 
 def _transport_confidence(event: CarbonEvent, distance: Quantity) -> float:
@@ -183,6 +206,10 @@ def _transport_confidence(event: CarbonEvent, distance: Quantity) -> float:
     if any(issue.code == "vehicle.fuel_type.contradiction" for issue in event.issues):
         score = min(score, 0.50)
     return score
+
+
+def _distance_confidence(event: CarbonEvent, distance: Quantity) -> float:
+    return min(event.confidence.score, distance.confidence)
 
 
 def _is_compact_k_distance(quantity: Quantity) -> bool:

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 
+from app.domain.activity_taxonomy import TRANSPORT_TAXONOMY
 from app.domain.models import (
     CarbonEvent,
     Confidence,
@@ -13,18 +14,54 @@ from app.domain.models import (
 
 HEATER_RE = re.compile(r"\b(space\s+heater|heater|heating)\b", re.IGNORECASE)
 ELECTRICITY_RE = re.compile(r"\b(electricity|kwh|kilowatt\s+hours?)\b", re.IGNORECASE)
-TRAIN_RE = re.compile(r"\b(train|rail)\b", re.IGNORECASE)
-BUS_RE = re.compile(r"\bbus\b", re.IGNORECASE)
-CAR_RE = re.compile(r"\b(drive|drove|driving|ride|trip|commute|commuted)\b", re.IGNORECASE)
 PETROL_RE = re.compile(r"\b(petrol|gasoline)\b", re.IGNORECASE)
 DIESEL_RE = re.compile(r"\bdiesel\b", re.IGNORECASE)
 ELECTRIC_RE = re.compile(r"\b(electric|ev)\b", re.IGNORECASE)
 HYBRID_RE = re.compile(r"\bhybrid\b", re.IGNORECASE)
-TOYOTA_CAMRY_RE = re.compile(r"\btoyota\s+camry\b", re.IGNORECASE)
-TESLA_MODEL_3_RE = re.compile(r"\btesla\s+model\s*3\b", re.IGNORECASE)
-TESLA_RE = re.compile(r"\btesla\b", re.IGNORECASE)
-SUV_RE = re.compile(r"\bsuv\b", re.IGNORECASE)
+VEHICLE_DESCRIPTION_IN_RE = re.compile(
+    r"\bin\s+(?:(?:my|a|an|the)\s+)?(?P<description>[^,.;]+?)"
+    r"(?=\s+(?:for|using)\b|\s+to\b|[,.;]|$)",
+    re.IGNORECASE,
+)
+VEHICLE_DESCRIPTION_MY_RE = re.compile(
+    r"\b(?:drive|drove|driving)\s+my\s+(?P<description>[^,.;]+?)"
+    r"(?=\s+(?:for|using|to)\b|[,.;]|$)",
+    re.IGNORECASE,
+)
+VEHICLE_CLASSES = (
+    ("suv", "large", re.compile(r"\b(suv|4wd|four[- ]wheel[- ]drive|crossover)\b", re.I)),
+    ("ute", "large", re.compile(r"\b(ute|pickup|pick-up)\b", re.I)),
+    ("van", "large", re.compile(r"\bvan\b", re.I)),
+    ("sedan", "medium", re.compile(r"\bsedan\b", re.I)),
+    ("hatchback", "medium", re.compile(r"\bhatchback\b", re.I)),
+    ("wagon", "medium", re.compile(r"\bwagon\b", re.I)),
+    ("coupe", "medium", re.compile(r"\bcoupe\b", re.I)),
+)
+VEHICLE_TRAIT_RE = re.compile(
+    r"\b(?:my|a|an|the|petrol|gasoline|diesel|electric|ev|hybrid|car|vehicle|"
+    r"passenger|small|medium|large|suv|4wd|four[- ]wheel[- ]drive|crossover|"
+    r"ute|pickup|pick-up|van|sedan|hatchback|wagon|coupe)\b",
+    re.IGNORECASE,
+)
+VEHICLE_YEAR_RE = re.compile(r"\b(?P<year>(?:19|20)\d{2})\b")
 CLAUSE_SPLIT_RE = re.compile(r"\s*(?:[.;]|\bthen\b|\band\b)\s+", re.IGNORECASE)
+TRANSPORT_MATCH_PRIORITY = (
+    "walking",
+    "bicycle_ride",
+    "bus_ride",
+    "train_ride",
+    "rideshare",
+    "flight",
+    "car_ride",
+    "generic_transport",
+)
+TRANSPORT_MODE_PATTERNS = {
+    activity_type: re.compile(
+        rf"\b(?:{'|'.join(re.escape(term) for term in metadata['mode_synonyms'])})\b",
+        re.IGNORECASE,
+    )
+    for activity_type, metadata in TRANSPORT_TAXONOMY.items()
+}
 
 
 class JournalEventExtractor:
@@ -56,7 +93,7 @@ class JournalEventExtractor:
                 )
                 continue
 
-            transport_event = _unsupported_transport_event(clause, journal.corrections)
+            transport_event = _transport_event(clause, journal.corrections)
             if transport_event is not None:
                 events.append(transport_event)
 
@@ -68,48 +105,29 @@ def _candidate_clauses(text: str) -> list[str]:
     return [clause for clause in clauses if clause]
 
 
-def _unsupported_transport_event(
+def _transport_event(
     clause: str,
     corrections: list[PreprocessingCorrection],
 ) -> CarbonEvent | None:
-    if TRAIN_RE.search(clause):
-        activity_type = "train_ride"
-    elif BUS_RE.search(clause):
-        activity_type = "bus_ride"
-    elif CAR_RE.search(clause):
-        return _car_ride_event(clause, corrections)
-    else:
+    activity_type = next(
+        (
+            candidate
+            for candidate in TRANSPORT_MATCH_PRIORITY
+            if TRANSPORT_MODE_PATTERNS[candidate].search(clause)
+        ),
+        None,
+    )
+    if activity_type is None:
         return None
+    entities = _transport_entities(clause, corrections, activity_type)
+    issues = _vehicle_correction_issues(clause, corrections)
+    confidence_score = 0.86 if activity_type != "generic_transport" else 0.50
+    confidence_score -= 0.05 if issues else 0.0
 
     return CarbonEvent(
         raw_text=clause,
         category="transport",
         activity_type=activity_type,
-        confidence=Confidence.from_score(0.55),
-        issues=[
-            Issue(
-                code="transport.not_implemented",
-                message=(
-                    "Detected a transport activity, but V2 transport estimation is not implemented yet."
-                ),
-                severity="warning",
-            )
-        ],
-    )
-
-
-def _car_ride_event(
-    clause: str,
-    corrections: list[PreprocessingCorrection],
-) -> CarbonEvent:
-    entities = _transport_entities(clause, corrections)
-    issues = _vehicle_correction_issues(clause, corrections)
-    confidence_score = 0.86 - (0.05 if issues else 0.0)
-
-    return CarbonEvent(
-        raw_text=clause,
-        category="transport",
-        activity_type="car_ride",
         entities=entities,
         confidence=Confidence.from_score(confidence_score),
         issues=issues,
@@ -119,26 +137,29 @@ def _car_ride_event(
 def _transport_entities(
     clause: str,
     corrections: list[PreprocessingCorrection],
+    activity_type: str,
 ) -> dict[str, str | float | int | bool | None]:
-    entities: dict[str, str | float | int | bool | None] = {"vehicle_type": "car"}
+    entities: dict[str, str | float | int | bool | None] = {"transport_mode": activity_type}
+    if activity_type in {"car_ride", "rideshare"}:
+        entities["vehicle_type"] = "car"
 
     explicit_fuel = _explicit_fuel_type(clause)
     if explicit_fuel:
         entities["explicit_fuel_type"] = explicit_fuel
 
-    if TOYOTA_CAMRY_RE.search(clause):
-        entities["vehicle_make"] = "toyota"
-        entities["vehicle_model"] = "camry"
-    elif TESLA_MODEL_3_RE.search(clause):
-        entities["vehicle_make"] = "tesla"
-        entities["vehicle_model"] = "model 3"
-    elif TESLA_RE.search(clause):
-        entities["vehicle_make"] = "tesla"
-        entities["vehicle_model"] = ""
+    if activity_type in {"car_ride", "rideshare"}:
+        vehicle_description = _unknown_vehicle_description(clause)
+        if vehicle_description:
+            entities["vehicle_description"] = vehicle_description
+            year_match = VEHICLE_YEAR_RE.search(vehicle_description)
+            if year_match:
+                entities["vehicle_year"] = int(year_match.group("year"))
 
-    if SUV_RE.search(clause):
-        entities["vehicle_size"] = "large"
-        entities["vehicle_class"] = "suv"
+    for vehicle_class, vehicle_size, pattern in VEHICLE_CLASSES:
+        if pattern.search(clause):
+            entities["vehicle_size"] = vehicle_size
+            entities["vehicle_class"] = vehicle_class
+            break
 
     if _has_vehicle_typo_correction(clause, corrections):
         entities["vehicle_typo_corrected"] = True
@@ -156,6 +177,15 @@ def _explicit_fuel_type(clause: str) -> str | None:
     if PETROL_RE.search(clause):
         return "petrol"
     return None
+
+
+def _unknown_vehicle_description(clause: str) -> str | None:
+    match = VEHICLE_DESCRIPTION_IN_RE.search(clause) or VEHICLE_DESCRIPTION_MY_RE.search(clause)
+    if match is None:
+        return None
+    description = VEHICLE_TRAIT_RE.sub(" ", match.group("description"))
+    description = re.sub(r"\s+", " ", description).strip(" ,")
+    return description or None
 
 
 def _vehicle_correction_issues(

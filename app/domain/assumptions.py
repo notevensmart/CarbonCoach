@@ -6,42 +6,6 @@ from app.domain.models import Assumption
 DEFAULT_REGION = "AU"
 DEFAULT_ELECTRICITY_REGION = "AU"
 SPACE_HEATER_DEFAULT_POWER_KW = 1.5
-AU_ELECTRICITY_FALLBACK_KG_CO2E_PER_KWH = 0.6
-
-VEHICLE_MODEL_DEFAULTS = {
-    ("toyota", "camry"): {
-        "vehicle_type": "car",
-        "vehicle_size": "medium",
-        "fuel_type": "petrol",
-        "confidence": 0.65,
-        "assumption_code": "vehicle.toyota_camry.default_petrol_medium",
-        "display_name": "Toyota Camry",
-    },
-    ("tesla", "model 3"): {
-        "vehicle_type": "car",
-        "vehicle_size": "medium",
-        "fuel_type": "electric",
-        "confidence": 0.85,
-        "assumption_code": "vehicle.tesla_model_3.default_electric",
-        "display_name": "Tesla Model 3",
-    },
-    ("tesla", ""): {
-        "vehicle_type": "car",
-        "vehicle_size": "medium",
-        "fuel_type": "electric",
-        "confidence": 0.80,
-        "assumption_code": "vehicle.tesla.default_electric",
-        "display_name": "Tesla",
-    },
-}
-
-TRANSPORT_FALLBACK_KG_CO2E_PER_KM = {
-    ("car", "medium", "petrol"): 0.192,
-    ("car", "medium", "diesel"): 0.209,
-    ("car", "large", "diesel"): 0.27,
-    ("car", "medium", "electric"): 0.09,
-    ("car", "large", "petrol"): 0.25,
-}
 
 
 def space_heater_default_power_assumption() -> Assumption:
@@ -107,6 +71,44 @@ def generic_car_size_default_assumption() -> Assumption:
     return Assumption(
         code="vehicle.generic_car.default_medium",
         message="Assumed a medium passenger car because vehicle size was not provided.",
+        source="default",
+        confidence_impact=-0.10,
+    )
+
+
+def named_vehicle_default_assumption(
+    vehicle_description: str,
+    vehicle_size: str | None = None,
+) -> Assumption:
+    if vehicle_size:
+        return Assumption(
+            code="vehicle.named.default_petrol",
+            message=(
+                f"Assumed petrol for {vehicle_description} because its fuel type "
+                "was not provided or verified."
+            ),
+            source="default",
+            confidence_impact=-0.20,
+        )
+    return Assumption(
+        code="vehicle.named.default_petrol_medium",
+        message=(
+            f"Recognized the supplied vehicle name {vehicle_description}, but no verified "
+            "class or fuel mapping is available; supplied medium petrol passenger-car "
+            "parameters for the Climatiq estimate."
+        ),
+        source="fallback",
+        confidence_impact=-0.30,
+    )
+
+
+def named_vehicle_size_default_assumption(vehicle_description: str) -> Assumption:
+    return Assumption(
+        code="vehicle.named.default_medium",
+        message=(
+            f"Assumed a medium passenger car for {vehicle_description} because its body "
+            "class was not provided or verified."
+        ),
         source="default",
         confidence_impact=-0.10,
     )

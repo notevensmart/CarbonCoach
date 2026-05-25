@@ -27,6 +27,42 @@ The V2 architecture should treat journal parsing as structured information extra
 4. Assumptions must be explicit in the API response.
 5. Every estimate should expose source, confidence, parameters, factor match, and fallback behavior.
 6. Domain-specific logic beats one generic parser for transport, energy, waste, and goods.
+7. Supported pathways should generalize from structured evidence and metadata,
+   not depend on individual example phrases or entity whitelists.
+
+## Generalization Standard
+
+The examples in this specification are regressions and product illustrations,
+not an implementation whitelist. Each supported pathway should operate over
+normalized dimensions:
+
+```text
+category and activity type
+quantity dimensions and canonical units
+explicit normalized entities/properties
+verified metadata, when present
+typed assumptions and issues, when evidence is missing or contradictory
+```
+
+Good engineering behavior:
+
+- arbitrary user-provided entities survive extraction even if they cannot yet
+  be enriched
+- controlled taxonomy and provider metadata drive variation, with one builder
+  and validator path per domain calculation shape
+- adding a new metadata record does not require a new hard-coded entity branch
+- unknown and ambiguous inputs receive honest fallback or unresolved behavior
+- integration failures are isolated per event and explained in the response
+
+Poor engineering behavior:
+
+```text
+regex branch for each demonstrated brand/model/item
+special score bonus for a fixture activity_id
+dropping an unknown named entity and saying no details were supplied
+UI conditional code for selected example results
+golden-input growth without family-level variation or negative tests
+```
 
 ## Research Basis
 
@@ -213,6 +249,9 @@ Robustness expectations:
 - record unsupported carbon-relevant activities as `unresolved` or `not_estimated` where possible
 - include tests for wording variations near the ticket examples
 - avoid making the listed ticket examples the only phrases that work
+- retain unknown entity text for later enrichment or visible fallback handling
+- use taxonomy-driven synonym sets where a controlled activity family exists,
+  instead of one-off complete-phrase patterns
 
 #### QuantityNormalizer
 
@@ -248,9 +287,21 @@ Toyota Camry -> passenger car, medium, petrol by default unless hybrid/electric 
 Tesla Model 3 -> passenger car, electric
 Prius -> passenger car, hybrid
 SUV -> passenger car, large
+BMW X5 -> preserve named vehicle; use visible generic defaults unless verified metadata is available
+BMW X5 SUV -> named vehicle plus explicit large/SUV class; assume only missing fuel
+electric BMW iX SUV -> named vehicle plus explicit electric and large/SUV class
 bus -> bus
 train -> rail
 ```
+
+Entity enrichment must be general before it is model-specific:
+
+- retain an arbitrary supplied make/model description in the structured event
+- extract user-provided fuel and vehicle-class terms without needing a model rule
+- use a known-model default only when it comes from maintained, reviewable metadata
+- return an unmapped-model issue and honest fallback assumptions for unknown named vehicles
+- do not silently collapse `BMW X5` to a generic car while claiming no vehicle details were supplied
+- do not manufacture model-level accuracy from a short regex list
 
 Energy examples:
 
@@ -260,7 +311,7 @@ AC -> air conditioner, assumed 2.0 kW
 oven -> oven, assumed 2.4 kW
 ```
 
-Potential vehicle enrichment sources:
+Potential vehicle enrichment sources for model-level accuracy:
 
 - local rules table for common models
 - optional NHTSA vPIC API for make/model/body metadata
@@ -387,6 +438,10 @@ Current matching uses vector similarity over activity names. V2 should use a hyb
 3. Keyword/entity boosts.
 4. Data quality/source preference.
 5. Reject candidates below threshold.
+
+The retrieval implementation must remain generic over candidate metadata. It
+should select compatible unseen local records without introducing
+activity-ID-specific or example-entity-specific scoring branches.
 
 Example query for car:
 
@@ -657,6 +712,25 @@ Interpreted "7k" as 7 km based on transport context.
 
 ## Tests And Evaluation
 
+### Family Coverage Matrices
+
+Every newly supported pathway requires a matrix that proves the system
+generalizes beyond its examples. Include appropriate combinations of:
+
+- synonyms and natural wording variation
+- compact and expanded units
+- explicit properties and overrides
+- unknown or ambiguous named entities
+- absent required or supporting data
+- contradictions
+- unsupported near neighbors
+- multiple event orderings
+- irrelevant surrounding prose
+
+Include invariance assertions where possible: two phrases that normalize to
+the same structured event should build the same calculation parameters and
+choose compatible factors through the same path.
+
 ### Unit Tests
 
 Quantity normalization:
@@ -720,6 +794,8 @@ Every slice must include:
 - frontend build verification when frontend changes
 - production-like deployment verification when frontend changes
 - robustness tests for wording variation and mixed multi-event journals when extraction changes
+- coverage-matrix and negative/invariance tests for any expanded input family
+- V1-visible-parity regressions when the production UI is routed to V2
 - mocks/fakes for external services
 
 Tests must not require live Climatiq, OpenRouter, Hugging Face, or Google Cloud Storage.
@@ -762,9 +838,28 @@ Required outcome:
 
 Add further vertical slices for:
 
-- transport distance and vehicle defaults
+- transport distance, arbitrary named-vehicle retention, explicit vehicle traits, and transparent defaults
 - waste material and weight
 - goods/services count and money
+
+### Phase 2A: Common Transport Mode Parity
+
+- Add data-driven mode synonyms and centrally maintained fallback/status rules
+  for common distance-based transport families.
+- Restore user-visible parity for common V1-estimated inputs, including bus
+  journeys, before considering a V2-default frontend complete.
+- Treat walking and bicycle behavior according to a clearly documented
+  operational-emissions boundary rather than forcing nonzero estimates.
+
+### Phase 2B: Data-Backed Vehicle Specificity
+
+- Add a maintainable vehicle metadata lookup for broad make/model/version support
+  rather than extending hand-written model branches indefinitely.
+- Evaluate vehicle model/body lookup through NHTSA vPIC and a suitable fuel or
+  emissions data source; body metadata alone must not be treated as exact
+  emissions data.
+- Cache or fake all vehicle-provider responses in tests, and retain a
+  transparent local fallback when data is unavailable.
 
 ### Phase 3: Better Retrieval
 
@@ -781,9 +876,8 @@ Add further vertical slices for:
   - confidence
   - source: Climatiq or fallback
 
-### Phase 5: External Enrichment
+### Phase 5: Further External Enrichment
 
-- Optional vehicle model lookup through NHTSA vPIC.
 - Optional appliance/fuel economy data source.
 - Optional user profile defaults, such as region and electricity grid.
 
@@ -792,8 +886,7 @@ Add further vertical slices for:
 1. Should ambiguous estimates return low-confidence fallback, or ask the user a follow-up?
 2. Should the app optimize for personal journaling speed or emissions accounting rigor?
 3. What geography should defaults assume: Australia, US, or user-selected region?
-4. Should exact vehicle model support be limited to common models first?
-5. Should V2 keep Climatiq as the only authoritative factor source, or add local factor tables for common personal activities?
+4. Should V2 keep Climatiq as the only authoritative factor source, or add local factor tables for common personal activities?
 
 ## Recommended Immediate Next Step
 

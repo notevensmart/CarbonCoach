@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from app.domain.assumptions import AU_ELECTRICITY_FALLBACK_KG_CO2E_PER_KWH
 from app.domain.models import (
     CarbonEstimateResponse,
     CarbonEvent,
@@ -9,10 +8,15 @@ from app.domain.models import (
     EstimateTotal,
     SourceBreakdown,
 )
+from app.pipeline_v2.emission_estimator import ClimatiqEmissionEstimator, EmissionEstimator
 from app.pipeline_v2.event_extractor import JournalEventExtractor
 from app.pipeline_v2.entity_enricher import EntityEnricher
 from app.pipeline_v2.journal_preprocessor import JournalPreprocessor
-from app.pipeline_v2.parameter_builders import EnergyParameterBuilder, TransportParameterBuilder
+from app.pipeline_v2.parameter_builders import (
+    EnergyParameterBuilder,
+    ParameterBuildResult,
+    TransportParameterBuilder,
+)
 from app.pipeline_v2.quantity_normalizer import QuantityNormalizer
 
 
@@ -25,6 +29,7 @@ class CarbonPipelineV2:
         entity_enricher: EntityEnricher | None = None,
         energy_builder: EnergyParameterBuilder | None = None,
         transport_builder: TransportParameterBuilder | None = None,
+        emission_estimator: EmissionEstimator | None = None,
     ) -> None:
         self.preprocessor = preprocessor or JournalPreprocessor()
         self.event_extractor = event_extractor or JournalEventExtractor()
@@ -32,6 +37,7 @@ class CarbonPipelineV2:
         self.entity_enricher = entity_enricher or EntityEnricher()
         self.energy_builder = energy_builder or EnergyParameterBuilder()
         self.transport_builder = transport_builder or TransportParameterBuilder()
+        self.emission_estimator = emission_estimator or ClimatiqEmissionEstimator()
 
     def run(self, journal_entry: str) -> CarbonEstimateResponse:
         preprocessed = self.preprocessor.preprocess(journal_entry)
@@ -67,39 +73,32 @@ class CarbonPipelineV2:
 
     def _estimate_energy_event(self, event: CarbonEvent) -> EstimateDetail:
         build = self.energy_builder.build(event)
-        if not build.can_estimate:
-            return EstimateDetail(
-                raw_text=event.raw_text,
-                category=event.category,
-                activity_type=event.activity_type,
-                status="unresolved",
-                parameters=build.parameters,
-                source="unresolved",
-                confidence=build.confidence,
-                assumptions=[*event.assumptions, *build.assumptions],
-                issues=[*event.issues, *build.issues],
-            )
-
-        co2e = round(
-            float(build.parameters["energy"]) * AU_ELECTRICITY_FALLBACK_KG_CO2E_PER_KWH,
-            3,
-        )
-        return EstimateDetail(
-            raw_text=event.raw_text,
-            category=event.category,
-            activity_type=event.activity_type,
-            status="fallback_estimated",
-            parameters=build.parameters,
-            co2e=co2e,
-            unit="kg",
-            source="fallback",
-            confidence=build.confidence,
-            assumptions=[*event.assumptions, *build.assumptions],
-            issues=[*event.issues, *build.issues],
-        )
+        return self._estimate_built_event(event, build)
 
     def _estimate_transport_event(self, event: CarbonEvent) -> EstimateDetail:
         build = self.transport_builder.build(event)
+        return self._estimate_built_event(event, build)
+
+    def _estimate_built_event(
+        self,
+        event: CarbonEvent,
+        build: ParameterBuildResult,
+    ) -> EstimateDetail:
+        assumptions = [*event.assumptions, *build.assumptions]
+        issues = [*event.issues, *build.issues]
+        if build.status == "not_estimated":
+            return EstimateDetail(
+                raw_text=event.raw_text,
+                category=event.category,
+                activity_type=event.activity_type,
+                status="not_estimated",
+                parameters=build.parameters,
+                co2e=0.0,
+                source="none",
+                confidence=build.confidence,
+                assumptions=assumptions,
+                issues=issues,
+            )
         if not build.can_estimate:
             return EstimateDetail(
                 raw_text=event.raw_text,
@@ -109,26 +108,35 @@ class CarbonPipelineV2:
                 parameters=build.parameters,
                 source="unresolved",
                 confidence=build.confidence,
-                assumptions=[*event.assumptions, *build.assumptions],
-                issues=[*event.issues, *build.issues],
+                assumptions=assumptions,
+                issues=issues,
             )
 
-        co2e = round(
-            float(build.parameters["distance"]) * float(build.fallback_factor or 0.0),
-            3,
-        )
+        estimate = self.emission_estimator.estimate(event, build.parameters)
+        if not estimate.ok or estimate.co2e is None:
+            return EstimateDetail(
+                raw_text=event.raw_text,
+                category=event.category,
+                activity_type=event.activity_type,
+                status="failed",
+                parameters=build.parameters,
+                source="climatiq",
+                confidence=build.confidence,
+                assumptions=assumptions,
+                issues=[*issues, *estimate.issues],
+            )
         return EstimateDetail(
             raw_text=event.raw_text,
             category=event.category,
             activity_type=event.activity_type,
-            status="fallback_estimated",
+            status="estimated",
             parameters=build.parameters,
-            co2e=co2e,
-            unit="kg",
-            source="fallback",
+            co2e=estimate.co2e,
+            unit=estimate.co2e_unit,
+            source="climatiq",
             confidence=build.confidence,
-            assumptions=[*event.assumptions, *build.assumptions],
-            issues=[*event.issues, *build.issues],
+            assumptions=assumptions,
+            issues=issues,
         )
 
 

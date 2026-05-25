@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 
+from app.domain.activity_taxonomy import TRANSPORT_TAXONOMY
 from app.domain.models import CarbonEvent, Quantity
 
 
@@ -11,7 +12,7 @@ QUANTITY_RE = re.compile(
 )
 COMPACT_K_RE = re.compile(r"\b(?P<value>\d+(?:\.\d+)?)\s*k\b", re.IGNORECASE)
 TRANSPORT_DISTANCE_CONTEXT_RE = re.compile(
-    r"\b(drive|drove|driving|ride|trip|commute|commuted|run|ran|walk|walking)\b",
+    rf"\b(?:{'|'.join(re.escape(term) for metadata in TRANSPORT_TAXONOMY.values() for term in metadata['mode_synonyms'])}|run|ran)\b",
     re.IGNORECASE,
 )
 

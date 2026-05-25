@@ -27,6 +27,7 @@ ActivityType = Literal[
     "rideshare",
     "bicycle_ride",
     "walking",
+    "generic_transport",
     "electricity_use",
     "space_heater_use",
     "air_conditioner_use",
@@ -167,4 +168,3 @@ class CarbonEstimateResponse(StrictBaseModel):
     version: Literal["v2"] = "v2"
     total: EstimateTotal
     details: list[EstimateDetail] = Field(default_factory=list)
-

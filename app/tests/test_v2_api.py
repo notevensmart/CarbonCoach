@@ -8,7 +8,7 @@ from app.pipeline import CarbonPipeline, pipeline
 client = TestClient(app)
 
 
-def test_estimate_v2_api_response_shape():
+def test_estimate_v2_api_response_shape(v2_api_pipeline):
     app_module.is_ready = True
     app_module.preload_error = None
     response = client.post(
@@ -24,12 +24,13 @@ def test_estimate_v2_api_response_shape():
     assert data["total"]["unit"] == "kg"
     assert data["total"]["confidence"] == {"score": 0.6, "level": "medium"}
     assert data["total"]["source_breakdown"] == {
-        "estimated": 0.0,
-        "fallback_estimated": 2.7,
+        "estimated": 2.7,
+        "fallback_estimated": 0.0,
         "not_estimated": 0.0,
     }
     assert detail["raw_text"] == "I turned on the heater for 3 hours."
-    assert detail["status"] == "fallback_estimated"
+    assert detail["status"] == "estimated"
+    assert detail["source"] == "climatiq"
     assert detail["parameters"]["energy"] == 4.5
     assert detail["assumptions"][0]["code"] == "space_heater.default_power"
     assert detail["issues"] == []
@@ -42,6 +43,21 @@ def test_estimate_v2_requires_journal_field():
 
     assert response.status_code == 400
     assert response.json()["error"] == "Missing 'journal' field"
+
+
+def test_v1_estimate_route_remains_available(monkeypatch):
+    app_module.is_ready = True
+    app_module.preload_error = None
+    monkeypatch.setattr(
+        app_module,
+        "pipeline",
+        lambda journal: {"result": {"co2e": 1.0, "unit": "kg", "details": []}},
+    )
+
+    response = client.post("/api/estimate", json={"journal": "legacy request"})
+
+    assert response.status_code == 200
+    assert response.json()["result"]["co2e"] == 1.0
 
 
 def test_root_serves_react_shell_not_legacy_inline_form():
