@@ -135,6 +135,7 @@ class FactorCandidate(StrictBaseModel):
     unit_type: str
     score: float = Field(..., ge=0.0, le=1.0)
     match_reasons: list[str] = Field(default_factory=list)
+    specificity_match: bool = False
 
 
 class EstimateDetail(StrictBaseModel):
@@ -149,6 +150,7 @@ class EstimateDetail(StrictBaseModel):
     confidence: Confidence
     assumptions: list[Assumption] = Field(default_factory=list)
     issues: list[Issue] = Field(default_factory=list)
+    factor: FactorCandidate | None = None
 
 
 class SourceBreakdown(StrictBaseModel):

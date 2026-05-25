@@ -1,6 +1,36 @@
 from __future__ import annotations
 
 
+VEHICLE_FACTOR_VALUE_ALIASES = {
+    "fuel_type": {
+        "petrol": ("petrol", "gasoline"),
+        "diesel": ("diesel",),
+        "electric": ("electric", "bev"),
+        "hybrid": ("hybrid", "hev"),
+    },
+    "vehicle_size": {
+        "small": ("small",),
+        "medium": ("medium",),
+        "large": ("large",),
+    },
+    "vehicle_class": {
+        "suv": ("suv", "sport utility"),
+        "ute": ("ute", "pickup"),
+        "van": ("van",),
+        "sedan": ("sedan",),
+        "hatchback": ("hatchback",),
+        "wagon": ("wagon",),
+        "coupe": ("coupe",),
+    },
+}
+
+VEHICLE_FACTOR_VALUE_CONFLICTS = {
+    "vehicle_size": {
+        "medium": ("lower medium", "upper medium"),
+    },
+}
+
+
 ENERGY_TAXONOMY = {
     "electricity_use": {
         "category": "energy",
@@ -15,6 +45,8 @@ ENERGY_TAXONOMY = {
         "compatible_unit_types": ("Energy",),
         "factor_match_terms": ("electricity", "grid", "residual mix"),
         "factor_preferred_terms": ("residual mix",),
+        "factor_identity_fields": (),
+        "factor_trait_fields": (),
         "default_assumptions": ("region.default_au_electricity",),
     },
     "space_heater_use": {
@@ -33,6 +65,8 @@ ENERGY_TAXONOMY = {
         "compatible_unit_types": ("Energy",),
         "factor_match_terms": ("electricity", "grid", "residual mix"),
         "factor_preferred_terms": ("residual mix",),
+        "factor_identity_fields": (),
+        "factor_trait_fields": (),
         "default_assumptions": (
             "space_heater.default_power",
             "region.default_au_electricity",
@@ -57,6 +91,11 @@ TRANSPORT_TAXONOMY = {
         "factor_match_terms": ("car",),
         "factor_preferred_terms": ("passenger vehicle", "business travel"),
         "factor_excluded_terms": ("managed assets", "taxi", "cab"),
+        "factor_identity_fields": ("vehicle_description",),
+        "factor_trait_fields": ("fuel_type", "vehicle_size", "vehicle_class"),
+        "factor_required_authoritative_traits": ("fuel_type",),
+        "factor_value_aliases": VEHICLE_FACTOR_VALUE_ALIASES,
+        "factor_value_conflicts": VEHICLE_FACTOR_VALUE_CONFLICTS,
         "default_assumptions": ("vehicle.generic_car.default_petrol_medium",),
     },
     "bus_ride": {
@@ -74,6 +113,8 @@ TRANSPORT_TAXONOMY = {
         "compatible_unit_types": ("PassengerOverDistance", "Distance"),
         "factor_match_terms": ("bus",),
         "factor_preferred_terms": ("passenger vehicle", "average", "fuel source na"),
+        "factor_identity_fields": (),
+        "factor_trait_fields": (),
         "default_assumptions": (),
     },
     "train_ride": {
@@ -91,6 +132,8 @@ TRANSPORT_TAXONOMY = {
         "compatible_unit_types": ("PassengerOverDistance",),
         "factor_match_terms": ("passenger", "train"),
         "factor_preferred_terms": ("fuel source na",),
+        "factor_identity_fields": (),
+        "factor_trait_fields": (),
         "default_assumptions": (),
     },
     "flight": {
@@ -108,6 +151,8 @@ TRANSPORT_TAXONOMY = {
         "compatible_unit_types": ("PassengerOverDistance", "Distance"),
         "factor_match_terms": ("flight", "aircraft"),
         "factor_preferred_terms": (),
+        "factor_identity_fields": (),
+        "factor_trait_fields": (),
         "default_assumptions": (),
     },
     "rideshare": {
@@ -125,6 +170,11 @@ TRANSPORT_TAXONOMY = {
         "compatible_unit_types": ("PassengerOverDistance", "Distance"),
         "factor_match_terms": ("taxi", "cab"),
         "factor_preferred_terms": ("passenger vehicle", "average", "fuel source na"),
+        "factor_identity_fields": ("vehicle_description",),
+        "factor_trait_fields": ("fuel_type", "vehicle_size", "vehicle_class"),
+        "factor_required_authoritative_traits": ("fuel_type",),
+        "factor_value_aliases": VEHICLE_FACTOR_VALUE_ALIASES,
+        "factor_value_conflicts": VEHICLE_FACTOR_VALUE_CONFLICTS,
         "default_assumptions": ("vehicle.generic_car.default_petrol_medium",),
     },
     "bicycle_ride": {

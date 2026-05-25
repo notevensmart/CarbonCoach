@@ -113,30 +113,42 @@ class CarbonPipelineV2:
             )
 
         estimate = self.emission_estimator.estimate(event, build.parameters)
+        parameters = dict(build.parameters)
+        confidence = build.confidence
+        if estimate.factor and estimate.factor.specificity_match:
+            assumptions, issues, parameters = _apply_specificity_match_visibility(
+                event,
+                assumptions,
+                issues,
+                parameters,
+            )
+            confidence = _specificity_match_confidence(event, confidence)
         if not estimate.ok or estimate.co2e is None:
             return EstimateDetail(
                 raw_text=event.raw_text,
                 category=event.category,
                 activity_type=event.activity_type,
                 status="failed",
-                parameters=build.parameters,
+                parameters=parameters,
                 source="climatiq",
-                confidence=build.confidence,
+                confidence=confidence,
                 assumptions=assumptions,
                 issues=[*issues, *estimate.issues],
+                factor=estimate.factor,
             )
         return EstimateDetail(
             raw_text=event.raw_text,
             category=event.category,
             activity_type=event.activity_type,
             status="estimated",
-            parameters=build.parameters,
+            parameters=parameters,
             co2e=estimate.co2e,
             unit=estimate.co2e_unit,
             source="climatiq",
-            confidence=build.confidence,
+            confidence=confidence,
             assumptions=assumptions,
-            issues=issues,
+            issues=[*issues, *estimate.issues],
+            factor=estimate.factor,
         )
 
 
@@ -171,3 +183,45 @@ def _build_total(details: list[EstimateDetail]) -> EstimateTotal:
         confidence=Confidence.from_score(score),
         source_breakdown=breakdown,
     )
+
+
+def _apply_specificity_match_visibility(
+    event: CarbonEvent,
+    assumptions: list,
+    issues: list,
+    parameters: dict,
+) -> tuple[list, list, dict]:
+    if event.activity_type not in {"car_ride", "rideshare"}:
+        return assumptions, issues, parameters
+    parameters = dict(parameters)
+    if event.entities.get("fuel_type_source") == "generic_default":
+        parameters.pop("fuel_type", None)
+    if event.entities.get("vehicle_size_source") == "generic_default":
+        parameters.pop("vehicle_size", None)
+    parameters["factor_specificity"] = "supplied_description"
+    assumptions = [
+        assumption
+        for assumption in assumptions
+        if assumption.code
+        not in {
+            "vehicle.named.default_petrol_medium",
+            "vehicle.named.default_petrol",
+            "vehicle.named.default_medium",
+        }
+    ]
+    issues = [
+        issue for issue in issues if issue.code != "vehicle.named_model.unmapped"
+    ]
+    return assumptions, issues, parameters
+
+
+def _specificity_match_confidence(event: CarbonEvent, existing: Confidence) -> Confidence:
+    if event.category != "transport":
+        return existing
+    distance = next(
+        (quantity for quantity in event.quantities if quantity.dimension == "distance"),
+        None,
+    )
+    if distance is None:
+        return existing
+    return Confidence.from_score(min(event.confidence.score, distance.confidence))

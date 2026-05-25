@@ -144,6 +144,25 @@ function EstimateDetail({ detail, version }) {
           </p>
         )}
 
+        {detail.factor && (
+          <div className="mt-2">
+            <strong>Climatiq factor:</strong> {detail.factor.name}
+            <p className="mt-1 break-all font-mono text-xs text-gray-600">
+              {detail.factor.activity_id}
+            </p>
+            <p className="mt-1">
+              <strong>Factor match score:</strong> {formatNumber(detail.factor.score)}
+            </p>
+            {detail.factor.match_reasons?.length > 0 && (
+              <ul className="mt-1 list-disc pl-5">
+                {detail.factor.match_reasons.map((reason) => (
+                  <li key={reason}>{reason}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+
         {detail.assumptions?.length > 0 && (
           <div className="mt-2">
             <strong>Assumptions:</strong>

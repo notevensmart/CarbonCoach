@@ -129,7 +129,9 @@ def _apply_metadata_record(
     typo_corrected: bool,
 ) -> None:
     entities["vehicle_type"] = record.vehicle_type
-    entities.setdefault("vehicle_size", record.vehicle_size)
+    if record.vehicle_size and not entities.get("vehicle_size"):
+        entities["vehicle_size"] = record.vehicle_size
+        entities["vehicle_size_source"] = "vehicle_metadata"
     entities["vehicle_make"] = record.vehicle_make
     entities["vehicle_model"] = record.vehicle_model
     entities["vehicle_name"] = record.display_name
@@ -202,6 +204,7 @@ def _apply_generic_defaults(
         entities["fuel_type_source"] = "user"
         if not vehicle_size:
             entities["vehicle_size"] = "medium"
+            entities["vehicle_size_source"] = "generic_default"
             assumptions.append(
                 named_vehicle_size_default_assumption(vehicle_description)
                 if vehicle_description
@@ -219,9 +222,11 @@ def _apply_generic_defaults(
             assumptions.append(named_vehicle_default_assumption(vehicle_description, vehicle_size))
         else:
             entities["vehicle_size"] = "medium"
+            entities["vehicle_size_source"] = "generic_default"
             assumptions.append(named_vehicle_default_assumption(vehicle_description))
     else:
         entities.setdefault("vehicle_size", "medium")
+        entities.setdefault("vehicle_size_source", "generic_default")
         assumptions.append(generic_car_default_assumption())
     entities["vehicle_confidence"] = 0.60
 

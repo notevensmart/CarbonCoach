@@ -224,6 +224,9 @@ def search_activity_ids(
             "category": hit.get("category"),
             "sector": hit.get("sector"),
             "source": hit.get("source"),
+            "description": hit.get("description"),
+            "region": hit.get("region"),
+            "year": hit.get("year"),
             "unit_type": hit.get("unit_type"),
             "unit": hit.get("unit"),
         }

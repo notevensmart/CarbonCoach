@@ -159,6 +159,8 @@ def _transport_entities(
         if pattern.search(clause):
             entities["vehicle_size"] = vehicle_size
             entities["vehicle_class"] = vehicle_class
+            entities["vehicle_size_source"] = "user"
+            entities["vehicle_class_source"] = "user"
             break
 
     if _has_vehicle_typo_correction(clause, corrections):

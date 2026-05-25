@@ -15,6 +15,7 @@ class EmissionEstimateResult:
     co2e: float | None = None
     co2e_unit: str = "kg"
     activity_id: str | None = None
+    factor: FactorCandidate | None = None
     issues: list[Issue] = field(default_factory=list)
 
 
@@ -64,6 +65,7 @@ class ClimatiqEmissionEstimator:
                     co2e=round(float(result.co2e), 3),
                     co2e_unit=result.co2e_unit or "kg",
                     activity_id=candidate.activity_id,
+                    factor=candidate,
                 )
             if result.error:
                 errors.append(result.error)
@@ -71,6 +73,7 @@ class ClimatiqEmissionEstimator:
         return EmissionEstimateResult(
             ok=False,
             activity_id=candidates[0].activity_id,
+            factor=candidates[0],
             issues=[
                 Issue(
                     code="climatiq.estimate_failed",
