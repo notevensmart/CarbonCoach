@@ -12,6 +12,9 @@ ENERGY_TAXONOMY = {
         "fallback_factor_key": None,
         "climatiq_factor_query": "electricity consumption Australia",
         "factor_source": "climatiq",
+        "compatible_unit_types": ("Energy",),
+        "factor_match_terms": ("electricity", "grid", "residual mix"),
+        "factor_preferred_terms": ("residual mix",),
         "default_assumptions": ("region.default_au_electricity",),
     },
     "space_heater_use": {
@@ -27,6 +30,9 @@ ENERGY_TAXONOMY = {
         "fallback_factor_key": None,
         "climatiq_factor_query": "electricity consumption Australia",
         "factor_source": "climatiq",
+        "compatible_unit_types": ("Energy",),
+        "factor_match_terms": ("electricity", "grid", "residual mix"),
+        "factor_preferred_terms": ("residual mix",),
         "default_assumptions": (
             "space_heater.default_power",
             "region.default_au_electricity",
@@ -47,6 +53,10 @@ TRANSPORT_TAXONOMY = {
         "climatiq_factor_query": "passenger car distance",
         "factor_source": "climatiq",
         "estimate_policy": "climatiq_vehicle_distance",
+        "compatible_unit_types": ("Distance",),
+        "factor_match_terms": ("car",),
+        "factor_preferred_terms": ("passenger vehicle", "business travel"),
+        "factor_excluded_terms": ("managed assets", "taxi", "cab"),
         "default_assumptions": ("vehicle.generic_car.default_petrol_medium",),
     },
     "bus_ride": {
@@ -61,6 +71,9 @@ TRANSPORT_TAXONOMY = {
         "climatiq_factor_query": "passenger bus distance",
         "factor_source": "climatiq",
         "estimate_policy": "climatiq_distance",
+        "compatible_unit_types": ("PassengerOverDistance", "Distance"),
+        "factor_match_terms": ("bus",),
+        "factor_preferred_terms": ("passenger vehicle", "average", "fuel source na"),
         "default_assumptions": (),
     },
     "train_ride": {
@@ -75,6 +88,9 @@ TRANSPORT_TAXONOMY = {
         "climatiq_factor_query": "passenger train distance",
         "factor_source": "climatiq",
         "estimate_policy": "climatiq_distance",
+        "compatible_unit_types": ("PassengerOverDistance",),
+        "factor_match_terms": ("passenger", "train"),
+        "factor_preferred_terms": ("fuel source na",),
         "default_assumptions": (),
     },
     "flight": {
@@ -89,6 +105,9 @@ TRANSPORT_TAXONOMY = {
         "climatiq_factor_query": "passenger flight distance",
         "factor_source": "climatiq",
         "estimate_policy": "unresolved",
+        "compatible_unit_types": ("PassengerOverDistance", "Distance"),
+        "factor_match_terms": ("flight", "aircraft"),
+        "factor_preferred_terms": (),
         "default_assumptions": (),
     },
     "rideshare": {
@@ -103,6 +122,9 @@ TRANSPORT_TAXONOMY = {
         "climatiq_factor_query": "taxi passenger car distance",
         "factor_source": "climatiq",
         "estimate_policy": "climatiq_vehicle_distance",
+        "compatible_unit_types": ("PassengerOverDistance", "Distance"),
+        "factor_match_terms": ("taxi", "cab"),
+        "factor_preferred_terms": ("passenger vehicle", "average", "fuel source na"),
         "default_assumptions": ("vehicle.generic_car.default_petrol_medium",),
     },
     "bicycle_ride": {

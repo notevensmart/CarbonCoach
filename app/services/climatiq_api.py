@@ -9,10 +9,23 @@ from dotenv import load_dotenv
 import requests
 
 
-load_dotenv(dotenv_path="climatiq.env")
+def _load_climatiq_environment() -> None:
+    candidates = [
+        Path.cwd() / "climatiq.env",
+        Path(__file__).resolve().parents[1] / "climatiq.env",
+        Path(__file__).resolve().parents[2] / "climatiq.env",
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            load_dotenv(dotenv_path=candidate)
+            return
+
+
+_load_climatiq_environment()
 
 CLIMATIQ_BASE_URL = "https://api.climatiq.io"
 CLIMATIQ_API_KEY = os.getenv("CLIMATIQ_API_KEY")
+CLIMATIQ_DATA_VERSION = os.getenv("CLIMATIQ_DATA_VERSION", "^22")
 
 _activity_lookup: dict[str, str] = {}
 _activity_metadata: dict[str, dict] = {}
@@ -32,7 +45,7 @@ class ClimatiqClient:
         self,
         api_key: str | None = None,
         base_url: str = CLIMATIQ_BASE_URL,
-        data_version: str = "^22",
+        data_version: str = CLIMATIQ_DATA_VERSION,
         timeout: int = 20,
     ) -> None:
         self.api_key = api_key if api_key is not None else CLIMATIQ_API_KEY
@@ -40,7 +53,12 @@ class ClimatiqClient:
         self.data_version = data_version
         self.timeout = timeout
 
-    def estimate(self, activity_id: str, parameters: dict) -> ClimatiqEstimate:
+    def estimate(
+        self,
+        activity_id: str,
+        parameters: dict,
+        selector_filters: dict | None = None,
+    ) -> ClimatiqEstimate:
         if not self.api_key:
             return ClimatiqEstimate(
                 co2e=None,
@@ -49,13 +67,12 @@ class ClimatiqClient:
                 error="Missing CLIMATIQ_API_KEY.",
             )
 
-        payload = {
-            "emission_factor": {
-                "activity_id": activity_id,
-                "data_version": self.data_version,
-            },
-            "parameters": parameters,
+        selector = {
+            "activity_id": activity_id,
+            "data_version": self.data_version,
         }
+        selector.update(selector_filters or {})
+        payload = {"emission_factor": selector, "parameters": parameters}
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
@@ -63,7 +80,7 @@ class ClimatiqClient:
 
         try:
             response = requests.post(
-                f"{self.base_url}/estimate",
+                f"{self.base_url}/data/v1/estimate",
                 headers=headers,
                 json=payload,
                 timeout=self.timeout,
@@ -146,6 +163,10 @@ def get_activity_metadata(activity_id: str) -> dict:
     return _activity_metadata.get(activity_id, {})
 
 
+def get_activity_metadata_records() -> list[dict]:
+    return [dict(metadata) for metadata in _activity_metadata.values()]
+
+
 def extract_unit_info(activity_id: str) -> tuple[str, str]:
     metadata = get_activity_metadata(activity_id)
     return metadata.get("unit_type", "unknown"), metadata.get("unit", "unknown")
@@ -160,15 +181,25 @@ def get_emissions(activity_id: str, parameters: dict) -> tuple[float | None, str
     return result.co2e, result.co2e_unit
 
 
-def search_activity_ids(query: str, limit: int = 3) -> list[dict]:
+def search_activity_ids(
+    query: str,
+    limit: int = 3,
+    *,
+    unit_type: str | None = None,
+    sector: str | None = None,
+) -> list[dict]:
     if not CLIMATIQ_API_KEY:
         return []
 
     payload = {
         "query": query,
         "results_per_page": limit,
-        "data_version": "^22",
+        "data_version": CLIMATIQ_DATA_VERSION,
     }
+    if unit_type:
+        payload["unit_type"] = unit_type
+    if sector:
+        payload["sector"] = sector
     headers = {
         "Authorization": f"Bearer {CLIMATIQ_API_KEY}",
         "Content-Type": "application/json",
@@ -191,6 +222,8 @@ def search_activity_ids(query: str, limit: int = 3) -> list[dict]:
             "activity_id": hit.get("activity_id"),
             "name": hit.get("name"),
             "category": hit.get("category"),
+            "sector": hit.get("sector"),
+            "source": hit.get("source"),
             "unit_type": hit.get("unit_type"),
             "unit": hit.get("unit"),
         }

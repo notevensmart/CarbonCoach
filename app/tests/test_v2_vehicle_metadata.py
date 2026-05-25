@@ -146,8 +146,18 @@ def test_climatiq_estimator_uses_only_compatible_remote_factor_and_dimensions():
     def fake_search(query, limit):
         search_queries.append((query, limit))
         return [
-            {"activity_id": "wrong", "unit_type": "energy"},
-            {"activity_id": "climatiq.transport.distance", "unit_type": "distance"},
+            {
+                "activity_id": "wrong",
+                "name": "Grid electricity",
+                "sector": "Energy",
+                "unit_type": "energy",
+            },
+            {
+                "activity_id": "climatiq.transport.distance",
+                "name": "Battery EV car (large) - Business travel",
+                "sector": "Transport",
+                "unit_type": "distance",
+            },
         ]
 
     estimator = ClimatiqEmissionEstimator(climatiq_client=client, activity_search=fake_search)
