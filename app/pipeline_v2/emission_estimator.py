@@ -6,6 +6,7 @@ from typing import Callable, Protocol
 from app.domain.assumptions import DEFAULT_ELECTRICITY_REGION
 from app.domain.models import CarbonEvent, FactorCandidate, Issue
 from app.pipeline_v2.factor_retriever import ClimatiqFactorRetriever, FactorRetriever
+from app.pipeline_v2.validator import FactorCompatibilityValidator
 from app.services.climatiq_api import ClimatiqClient
 
 
@@ -32,11 +33,14 @@ class ClimatiqEmissionEstimator:
         climatiq_client: ClimatiqClient | None = None,
         factor_retriever: FactorRetriever | None = None,
         activity_search: Callable[..., list[dict]] | None = None,
+        factor_validator: FactorCompatibilityValidator | None = None,
     ) -> None:
         self.climatiq_client = climatiq_client or ClimatiqClient()
+        self.factor_validator = factor_validator or FactorCompatibilityValidator()
         self.factor_retriever = factor_retriever or ClimatiqFactorRetriever(
             local_records_provider=(lambda: []) if activity_search is not None else None,
             remote_search=activity_search,
+            validator=self.factor_validator,
         )
 
     def estimate(self, event: CarbonEvent, parameters: dict) -> EmissionEstimateResult:
@@ -57,7 +61,13 @@ class ClimatiqEmissionEstimator:
             )
 
         errors: list[str] = []
+        attempted_estimate = False
         for candidate in candidates:
+            validation = self.factor_validator.validate_candidate(event, parameters, candidate)
+            if not validation.compatible:
+                errors.extend(validation.errors)
+                continue
+            attempted_estimate = True
             result = self._estimate_candidate(event, parameters, candidate)
             if result.ok and result.co2e is not None:
                 return EmissionEstimateResult(
@@ -76,7 +86,11 @@ class ClimatiqEmissionEstimator:
             factor=candidates[0],
             issues=[
                 Issue(
-                    code="climatiq.estimate_failed",
+                    code=(
+                        "climatiq.estimate_failed"
+                        if attempted_estimate
+                        else "climatiq.factor_incompatible"
+                    ),
                     message=errors[-1] if errors else "Climatiq could not estimate this activity.",
                     severity="warning",
                 )
