@@ -34,6 +34,14 @@ def test_quantity_normalization_for_power_duration_and_energy():
     assert by_dimension["energy"].unit == "kWh"
 
 
+def test_quantity_normalization_converts_minutes_to_hours():
+    quantities = QuantityNormalizer().normalize("I used the heater for 90 minutes.")
+
+    assert quantities[0].dimension == "duration"
+    assert quantities[0].unit == "hours"
+    assert quantities[0].value == 1.5
+
+
 def test_energy_builder_derives_kwh_from_explicit_power_and_duration():
     event = _energy_event("space_heater_use", "I used a 2 kW heater for 3 hours.")
     event = event.model_copy(
@@ -111,6 +119,34 @@ def test_pipeline_v2_duration_only_heater_response(v2_pipeline):
         "region.default_au_electricity",
     ]
     assert detail["issues"] == []
+
+
+def test_pipeline_v2_electric_heater_in_minutes_uses_duration_conversion(v2_pipeline):
+    detail = v2_pipeline.run("I used an electric heater for 90 minutes.").model_dump()["details"][0]
+
+    assert detail["activity_type"] == "space_heater_use"
+    assert detail["parameters"]["duration"] == 1.5
+    assert detail["parameters"]["energy"] == 2.25
+    assert detail["status"] == "estimated"
+
+
+def test_pipeline_v2_gas_heater_never_uses_electricity_factor(v2_pipeline):
+    detail = v2_pipeline.run("I ran my gas heater for 3 hours.").model_dump()["details"][0]
+
+    assert detail["activity_type"] == "space_heater_use"
+    assert detail["status"] == "unresolved"
+    assert detail["parameters"]["power_source"] == "natural_gas"
+    assert detail["issues"][0]["code"] == "energy.natural_gas_heater.unsupported_factor"
+    assert "region.default_au_electricity" not in _assumption_codes(detail["assumptions"])
+
+
+def test_pipeline_v2_air_conditioner_is_visible_without_invented_power(v2_pipeline):
+    detail = v2_pipeline.run("I used the air conditioner for 2 hours.").model_dump()["details"][0]
+
+    assert detail["activity_type"] == "air_conditioner_use"
+    assert detail["status"] == "unresolved"
+    assert detail["parameters"]["duration"] == 2
+    assert detail["issues"][0]["code"] == "energy.appliance.default_power_unavailable"
 
 
 def test_pipeline_v2_direct_electricity_response(v2_pipeline):

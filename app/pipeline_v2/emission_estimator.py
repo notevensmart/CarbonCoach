@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from typing import Callable, Protocol
 
 from app.domain.assumptions import DEFAULT_ELECTRICITY_REGION
-from app.domain.models import CarbonEvent, FactorCandidate, Issue
+from app.domain.models import CarbonEvent, EstimateStatus, FactorCandidate, Issue
 from app.pipeline_v2.factor_retriever import ClimatiqFactorRetriever, FactorRetriever
 from app.pipeline_v2.validator import FactorCompatibilityValidator
 from app.services.climatiq_api import ClimatiqClient
@@ -18,6 +18,7 @@ class EmissionEstimateResult:
     activity_id: str | None = None
     factor: FactorCandidate | None = None
     issues: list[Issue] = field(default_factory=list)
+    failure_status: EstimateStatus = "failed"
 
 
 class EmissionEstimator(Protocol):
@@ -44,10 +45,24 @@ class ClimatiqEmissionEstimator:
         )
 
     def estimate(self, event: CarbonEvent, parameters: dict) -> EmissionEstimateResult:
-        candidates = self.factor_retriever.retrieve(event, parameters, limit=5)
+        try:
+            candidates = self.factor_retriever.retrieve(event, parameters, limit=5)
+        except Exception as exc:
+            return EmissionEstimateResult(
+                ok=False,
+                failure_status="unresolved",
+                issues=[
+                    Issue(
+                        code="climatiq.factor_retrieval_failed",
+                        message=f"Could not retrieve a compatible Climatiq factor: {exc}",
+                        severity="warning",
+                    )
+                ],
+            )
         if not candidates:
             return EmissionEstimateResult(
                 ok=False,
+                failure_status="unresolved",
                 issues=[
                     Issue(
                         code="climatiq.factor_unavailable",
@@ -62,13 +77,19 @@ class ClimatiqEmissionEstimator:
 
         errors: list[str] = []
         attempted_estimate = False
+        attempted_factor: FactorCandidate | None = None
         for candidate in candidates:
             validation = self.factor_validator.validate_candidate(event, parameters, candidate)
             if not validation.compatible:
                 errors.extend(validation.errors)
                 continue
             attempted_estimate = True
-            result = self._estimate_candidate(event, parameters, candidate)
+            attempted_factor = candidate
+            try:
+                result = self._estimate_candidate(event, parameters, candidate)
+            except Exception as exc:
+                errors.append(f"Climatiq request failed: {exc}")
+                break
             if result.ok and result.co2e is not None:
                 return EmissionEstimateResult(
                     ok=True,
@@ -79,11 +100,13 @@ class ClimatiqEmissionEstimator:
                 )
             if result.error:
                 errors.append(result.error)
+            break
 
         return EmissionEstimateResult(
             ok=False,
-            activity_id=candidates[0].activity_id,
-            factor=candidates[0],
+            activity_id=attempted_factor.activity_id if attempted_factor else None,
+            factor=attempted_factor,
+            failure_status="failed" if attempted_estimate else "unresolved",
             issues=[
                 Issue(
                     code=(

@@ -88,6 +88,16 @@ def test_pipeline_v2_uses_toyota_camry_default(v2_pipeline):
     assert _assumption_codes(detail) == ["vehicle.toyota_camry.default_petrol_medium"]
 
 
+def test_pipeline_v2_recognizes_named_vehicle_before_trailing_distance(v2_pipeline):
+    detail = _single_detail(v2_pipeline, "I drove my Toyota Camry 7 km.")
+
+    assert detail["parameters"]["vehicle_make"] == "toyota"
+    assert detail["parameters"]["vehicle_model"] == "camry"
+    assert detail["parameters"]["vehicle_size"] == "medium"
+    assert detail["parameters"]["fuel_type"] == "petrol"
+    assert _assumption_codes(detail) == ["vehicle.toyota_camry.default_petrol_medium"]
+
+
 def test_pipeline_v2_records_typo_corrected_camry_with_lower_confidence(v2_pipeline):
     exact = _single_detail(v2_pipeline, "I took a 7 km ride in a Toyota Camry.")
     typo = _single_detail(v2_pipeline, "I took a 7 km ride in a toytoa camery.")

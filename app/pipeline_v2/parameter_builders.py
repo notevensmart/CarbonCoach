@@ -8,6 +8,7 @@ from app.domain.assumptions import (
     SPACE_HEATER_DEFAULT_POWER_KW,
     distance_compact_k_context_assumption,
     default_au_electricity_region_assumption,
+    flight_default_factor_assumption,
     space_heater_default_power_assumption,
 )
 from app.domain.models import Assumption, CarbonEvent, Confidence, EstimateStatus, Issue, Quantity
@@ -29,6 +30,34 @@ class EnergyParameterBuilder:
         power = _first_quantity(event.quantities, "power")
         duration = _first_quantity(event.quantities, "duration")
         assumptions = [default_au_electricity_region_assumption()]
+
+        if (
+            event.activity_type == "space_heater_use"
+            and event.entities.get("power_source") == "natural_gas"
+        ):
+            parameters = {}
+            if duration is not None:
+                parameters = {
+                    "duration": _round_quantity(duration.value),
+                    "duration_unit": "hours",
+                    "power_source": "natural_gas",
+                }
+            return ParameterBuildResult(
+                parameters=parameters,
+                confidence=Confidence.from_score(0.35),
+                assumptions=[],
+                issues=[
+                    Issue(
+                        code="energy.natural_gas_heater.unsupported_factor",
+                        message=(
+                            "Detected a gas heater, but no validated natural-gas "
+                            "heater factor pathway is configured in V2 yet."
+                        ),
+                        severity="warning",
+                    )
+                ],
+                can_estimate=False,
+            )
 
         if energy is not None:
             return ParameterBuildResult(
@@ -74,6 +103,27 @@ class EnergyParameterBuilder:
                 ],
             )
 
+        if duration is not None:
+            return ParameterBuildResult(
+                parameters={
+                    "duration": _round_quantity(duration.value),
+                    "duration_unit": "hours",
+                },
+                confidence=Confidence.from_score(0.30),
+                assumptions=[],
+                issues=[
+                    Issue(
+                        code="energy.appliance.default_power_unavailable",
+                        message=(
+                            "Detected appliance usage duration, but no validated "
+                            "default-power conversion is configured for this appliance."
+                        ),
+                        severity="warning",
+                    )
+                ],
+                can_estimate=False,
+            )
+
         return ParameterBuildResult(
             parameters={},
             confidence=Confidence.from_score(0.25),
@@ -116,6 +166,9 @@ class TransportParameterBuilder:
             "distance_unit": "km",
             "transport_mode": event.activity_type,
         }
+        _add_declared_transport_traits(parameters, event, metadata)
+        if event.activity_type == "flight":
+            _add_flight_factor_defaults(parameters, event, distance, assumptions)
 
         if policy == "operational_zero":
             parameters["emissions_boundary"] = metadata["emissions_boundary"]
@@ -152,7 +205,11 @@ class TransportParameterBuilder:
         if policy == "climatiq_distance":
             return ParameterBuildResult(
                 parameters=parameters,
-                confidence=Confidence.from_score(_distance_confidence(event, distance)),
+                confidence=Confidence.from_score(
+                    0.60
+                    if event.activity_type == "flight"
+                    else _distance_confidence(event, distance)
+                ),
                 assumptions=assumptions,
             )
 
@@ -220,3 +277,32 @@ def _entity_text(value: object) -> str:
     if isinstance(value, str):
         return value.strip().lower()
     return ""
+
+
+def _add_declared_transport_traits(parameters: dict, event: CarbonEvent, metadata: dict) -> None:
+    for field in metadata.get("factor_trait_fields", ()):
+        value = _entity_text(event.entities.get(str(field)))
+        if value:
+            parameters[str(field)] = value
+
+
+def _add_flight_factor_defaults(
+    parameters: dict,
+    event: CarbonEvent,
+    distance: Quantity,
+    assumptions: list[Assumption],
+) -> None:
+    route_type = _entity_text(event.entities.get("route_type"))
+    passenger_class = _entity_text(event.entities.get("passenger_class"))
+    parameters["route_type"] = route_type or "domestic"
+    parameters["passenger_class"] = passenger_class or "average"
+    parameters["rf_effect"] = "included"
+    parameters["distance_band"] = (
+        "short_haul" if float(distance.value) < 3700 else "long_haul"
+    )
+    assumptions.append(
+        flight_default_factor_assumption(
+            assumed_route=not bool(route_type),
+            assumed_passenger_class=not bool(passenger_class),
+        )
+    )

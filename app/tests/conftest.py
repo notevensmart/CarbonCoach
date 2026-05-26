@@ -27,6 +27,8 @@ class FakeClimatiqEmissionEstimator:
             co2e = float(parameters["distance"]) * 0.1
         elif event.activity_type == "train_ride":
             co2e = float(parameters["distance"]) * 0.04
+        elif event.activity_type == "flight":
+            co2e = float(parameters["distance"]) * 0.15
         else:
             rate = {
                 ("medium", "petrol"): 0.192,

@@ -7,7 +7,7 @@ from app.domain.models import CarbonEvent, Quantity
 
 
 QUANTITY_RE = re.compile(
-    r"(?P<value>\d+(?:\.\d+)?)\s*(?P<unit>kwh|kw|kms?|kilometers?|kilometres?|hrs?|hours?)\b",
+    r"(?P<value>\d+(?:\.\d+)?)\s*(?P<unit>kwh|kw|kms?|kilometers?|kilometres?|hrs?|hours?|mins?|minutes?)\b",
     re.IGNORECASE,
 )
 COMPACT_K_RE = re.compile(r"\b(?P<value>\d+(?:\.\d+)?)\s*k\b", re.IGNORECASE)
@@ -24,6 +24,8 @@ class QuantityNormalizer:
             raw_unit = match.group("unit")
             value = float(match.group("value"))
             dimension, unit = _dimension_and_unit(raw_unit)
+            if raw_unit.lower() in {"min", "mins", "minute", "minutes"}:
+                value /= 60
             quantities.append(
                 Quantity(
                     value=value,

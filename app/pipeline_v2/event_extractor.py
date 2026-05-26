@@ -13,19 +13,69 @@ from app.domain.models import (
 
 
 HEATER_RE = re.compile(r"\b(space\s+heater|heater|heating)\b", re.IGNORECASE)
+AIR_CONDITIONER_RE = re.compile(
+    r"\b(air\s+condition(?:er|ing)|a/c|ac)\b",
+    re.IGNORECASE,
+)
 ELECTRICITY_RE = re.compile(r"\b(electricity|kwh|kilowatt\s+hours?)\b", re.IGNORECASE)
+NATURAL_GAS_RE = re.compile(r"\b(natural\s+gas|gas)\b", re.IGNORECASE)
 PETROL_RE = re.compile(r"\b(petrol|gasoline)\b", re.IGNORECASE)
 DIESEL_RE = re.compile(r"\bdiesel\b", re.IGNORECASE)
 ELECTRIC_RE = re.compile(r"\b(electric|ev)\b", re.IGNORECASE)
 HYBRID_RE = re.compile(r"\bhybrid\b", re.IGNORECASE)
+FLIGHT_ROUTE_RE = re.compile(
+    r"\b(domestic(?:ally)?|international(?:ly)?|overseas)\b",
+    re.IGNORECASE,
+)
+FLIGHT_CLASS_RE = re.compile(
+    r"\b(premium\s+economy|business(?:\s+class)?|first(?:\s+class)?|economy)\b",
+    re.IGNORECASE,
+)
+POWERED_BICYCLE_RE = re.compile(
+    r"\b(?:e[- ]?bike|electric\s+bicycle|electric\s+bike|pedal[- ]?assist(?:ed)?\s+bike)\b",
+    re.IGNORECASE,
+)
+RECYCLING_RE = re.compile(
+    r"\b(?:recycle(?:d|ing)?|sorted)\b[^,.;]*\b(?:plastic|bottles?|cans?|glass|paper|cardboard|packaging)\b"
+    r"|\b(?:plastic|bottles?|cans?|glass|paper|cardboard|packaging)\b[^,.;]*\brecycl(?:e|ed|ing)\b",
+    re.IGNORECASE,
+)
+COMPOSTING_RE = re.compile(r"\b(?:compost(?:ed|ing)?|compost\s+bin)\b", re.IGNORECASE)
+LANDFILL_WASTE_RE = re.compile(
+    r"\b(?:threw|throw|discarded|disposed\s+of|put)\b[^,.;]*\b(?:trash|rubbish|garbage|landfill|general\s+waste)\b"
+    r"|\b(?:landfill|general\s+waste)\b",
+    re.IGNORECASE,
+)
+CLOTHING_PURCHASE_RE = re.compile(
+    r"\b(?:bought|purchased|ordered)\b[^,.;]*\b(?:shirts?|t-?shirts?|clothes|clothing|jeans|jackets?|dress(?:es)?|shoes)\b",
+    re.IGNORECASE,
+)
+ELECTRONICS_PURCHASE_RE = re.compile(
+    r"\b(?:bought|purchased|ordered)\b[^,.;]*\b(?:laptops?|phones?|smartphones?|computers?|monitors?|televisions?|tvs?|headphones?)\b",
+    re.IGNORECASE,
+)
+COFFEE_PURCHASE_RE = re.compile(
+    r"\b(?:bought|purchased|ordered|spent\b[^,.;]*\bon)\b[^,.;]*\bcoffee\b",
+    re.IGNORECASE,
+)
+RESTAURANT_MEAL_RE = re.compile(
+    r"\b(?:ate|dined|had|ordered)\b[^,.;]*\b(?:restaurant|takeaway|takeout)\b"
+    r"|\b(?:restaurant|takeaway|takeout)\b[^,.;]*\b(?:meal|dinner|lunch|order(?:ed)?)\b",
+    re.IGNORECASE,
+)
+FOOD_PURCHASE_RE = re.compile(
+    r"\b(?:bought|purchased)\b[^,.;]*\b(?:groceries|grocery|food)\b",
+    re.IGNORECASE,
+)
+VEHICLE_DISTANCE_SUFFIX = r"\s+\d+(?:\.\d+)?\s*(?:k|kms?|kilometers?|kilometres?)\b"
 VEHICLE_DESCRIPTION_IN_RE = re.compile(
     r"\bin\s+(?:(?:my|a|an|the)\s+)?(?P<description>[^,.;]+?)"
-    r"(?=\s+(?:for|using)\b|\s+to\b|[,.;]|$)",
+    rf"(?=\s+(?:for|using)\b|\s+to\b|{VEHICLE_DISTANCE_SUFFIX}|[,.;]|$)",
     re.IGNORECASE,
 )
 VEHICLE_DESCRIPTION_MY_RE = re.compile(
     r"\b(?:drive|drove|driving)\s+my\s+(?P<description>[^,.;]+?)"
-    r"(?=\s+(?:for|using|to)\b|[,.;]|$)",
+    rf"(?=\s+(?:for|using|to)\b|{VEHICLE_DISTANCE_SUFFIX}|[,.;]|$)",
     re.IGNORECASE,
 )
 VEHICLE_CLASSES = (
@@ -70,18 +120,29 @@ class JournalEventExtractor:
 
         for clause in _candidate_clauses(journal.cleaned_journal):
             if HEATER_RE.search(clause):
+                power_source = (
+                    "natural_gas" if NATURAL_GAS_RE.search(clause) else "electricity"
+                )
                 events.append(
                     CarbonEvent(
                         raw_text=clause,
                         category="energy",
                         activity_type="space_heater_use",
-                        entities={"device": "heater", "power_source": "electricity"},
+                        entities={"device": "heater", "power_source": power_source},
                         confidence=Confidence.from_score(0.80),
                     )
                 )
-                continue
-
-            if ELECTRICITY_RE.search(clause):
+            elif AIR_CONDITIONER_RE.search(clause):
+                events.append(
+                    CarbonEvent(
+                        raw_text=clause,
+                        category="energy",
+                        activity_type="air_conditioner_use",
+                        entities={"device": "air_conditioner", "power_source": "electricity"},
+                        confidence=Confidence.from_score(0.80),
+                    )
+                )
+            elif ELECTRICITY_RE.search(clause):
                 events.append(
                     CarbonEvent(
                         raw_text=clause,
@@ -91,11 +152,12 @@ class JournalEventExtractor:
                         confidence=Confidence.from_score(0.85),
                     )
                 )
-                continue
+            else:
+                transport_event = _transport_event(clause, journal.corrections)
+                if transport_event is not None:
+                    events.append(transport_event)
 
-            transport_event = _transport_event(clause, journal.corrections)
-            if transport_event is not None:
-                events.append(transport_event)
+            events.extend(_known_unsupported_events(clause))
 
         return events
 
@@ -109,16 +171,11 @@ def _transport_event(
     clause: str,
     corrections: list[PreprocessingCorrection],
 ) -> CarbonEvent | None:
-    activity_type = next(
-        (
-            candidate
-            for candidate in TRANSPORT_MATCH_PRIORITY
-            if TRANSPORT_MODE_PATTERNS[candidate].search(clause)
-        ),
-        None,
-    )
+    activity_type = _transport_activity_type(clause)
     if activity_type is None:
         return None
+    if activity_type == "bicycle_ride" and POWERED_BICYCLE_RE.search(clause):
+        activity_type = "generic_transport"
     entities = _transport_entities(clause, corrections, activity_type)
     issues = _vehicle_correction_issues(clause, corrections)
     confidence_score = 0.86 if activity_type != "generic_transport" else 0.50
@@ -134,6 +191,63 @@ def _transport_event(
     )
 
 
+def _transport_activity_type(clause: str) -> str | None:
+    description = _unknown_vehicle_description(clause)
+    mode_terms = {
+        term.lower()
+        for metadata in TRANSPORT_TAXONOMY.values()
+        for term in metadata["mode_synonyms"]
+    }
+    is_named_driven_vehicle = bool(
+        description
+        and description.lower() not in mode_terms
+        and re.search(r"\b(?:drive|drove|driving)\b", clause, re.IGNORECASE)
+    )
+    if is_named_driven_vehicle:
+        return "car_ride"
+    return next(
+        (
+            candidate
+            for candidate in TRANSPORT_MATCH_PRIORITY
+            if TRANSPORT_MODE_PATTERNS[candidate].search(clause)
+        ),
+        None,
+    )
+
+
+def _known_unsupported_events(clause: str) -> list[CarbonEvent]:
+    candidates = (
+        ("waste", "recycling", RECYCLING_RE),
+        ("waste", "composting", COMPOSTING_RE),
+        ("waste", "landfill_waste", LANDFILL_WASTE_RE),
+        ("goods_services", "clothing_purchase", CLOTHING_PURCHASE_RE),
+        ("goods_services", "electronics_purchase", ELECTRONICS_PURCHASE_RE),
+        ("goods_services", "coffee_purchase", COFFEE_PURCHASE_RE),
+        ("goods_services", "restaurant_meal", RESTAURANT_MEAL_RE),
+        ("goods_services", "food_purchase", FOOD_PURCHASE_RE),
+    )
+    return [
+        CarbonEvent(
+            raw_text=clause,
+            category=category,
+            activity_type=activity_type,
+            confidence=Confidence.from_score(0.60),
+            issues=[
+                Issue(
+                    code=f"{category}.estimation.not_implemented",
+                    message=(
+                        f"Detected {activity_type}, but no validated V2 emission "
+                        "factor pathway is configured for this activity yet."
+                    ),
+                    severity="warning",
+                )
+            ],
+        )
+        for category, activity_type, pattern in candidates
+        if pattern.search(clause)
+    ]
+
+
 def _transport_entities(
     clause: str,
     corrections: list[PreprocessingCorrection],
@@ -146,6 +260,33 @@ def _transport_entities(
     explicit_fuel = _explicit_fuel_type(clause)
     if explicit_fuel:
         entities["explicit_fuel_type"] = explicit_fuel
+        entities["fuel_type"] = explicit_fuel
+        entities["fuel_type_source"] = "user"
+    elif POWERED_BICYCLE_RE.search(clause):
+        entities["explicit_fuel_type"] = "electric"
+        entities["fuel_type"] = "electric"
+        entities["fuel_type_source"] = "user"
+        entities["transport_description"] = "electric_bicycle"
+
+    if activity_type == "flight":
+        route_match = FLIGHT_ROUTE_RE.search(clause)
+        if route_match:
+            entities["route_type"] = _normalized_flight_route(route_match.group(1))
+            entities["route_type_source"] = "user"
+        class_match = FLIGHT_CLASS_RE.search(clause)
+        if class_match:
+            entities["passenger_class"] = _normalized_flight_class(class_match.group(1))
+            entities["passenger_class_source"] = "user"
+
+    for field, values in TRANSPORT_TAXONOMY[activity_type].get(
+        "entity_value_synonyms",
+        {},
+    ).items():
+        for value, terms in values.items():
+            if any(re.search(rf"\b{re.escape(term)}\b", clause, re.IGNORECASE) for term in terms):
+                entities[field] = value
+                entities[f"{field}_source"] = "user"
+                break
 
     if activity_type in {"car_ride", "rideshare"}:
         vehicle_description = _unknown_vehicle_description(clause)
@@ -179,6 +320,16 @@ def _explicit_fuel_type(clause: str) -> str | None:
     if PETROL_RE.search(clause):
         return "petrol"
     return None
+
+
+def _normalized_flight_class(surface: str) -> str:
+    return surface.lower().replace(" class", "").replace(" ", "_")
+
+
+def _normalized_flight_route(surface: str) -> str:
+    if surface.lower() in {"international", "internationally", "overseas"}:
+        return "international"
+    return "domestic"
 
 
 def _unknown_vehicle_description(clause: str) -> str | None:

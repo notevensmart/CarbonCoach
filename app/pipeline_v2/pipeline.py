@@ -11,6 +11,7 @@ from app.domain.models import (
 from app.pipeline_v2.emission_estimator import ClimatiqEmissionEstimator, EmissionEstimator
 from app.pipeline_v2.event_extractor import JournalEventExtractor
 from app.pipeline_v2.entity_enricher import EntityEnricher
+from app.pipeline_v2.fallback_estimator import LocalFallbackEstimator
 from app.pipeline_v2.journal_preprocessor import JournalPreprocessor
 from app.pipeline_v2.parameter_builders import (
     EnergyParameterBuilder,
@@ -30,6 +31,7 @@ class CarbonPipelineV2:
         energy_builder: EnergyParameterBuilder | None = None,
         transport_builder: TransportParameterBuilder | None = None,
         emission_estimator: EmissionEstimator | None = None,
+        fallback_estimator: LocalFallbackEstimator | None = None,
     ) -> None:
         self.preprocessor = preprocessor or JournalPreprocessor()
         self.event_extractor = event_extractor or JournalEventExtractor()
@@ -38,6 +40,7 @@ class CarbonPipelineV2:
         self.energy_builder = energy_builder or EnergyParameterBuilder()
         self.transport_builder = transport_builder or TransportParameterBuilder()
         self.emission_estimator = emission_estimator or ClimatiqEmissionEstimator()
+        self.fallback_estimator = fallback_estimator or LocalFallbackEstimator()
 
     def run(self, journal_entry: str) -> CarbonEstimateResponse:
         preprocessed = self.preprocessor.preprocess(journal_entry)
@@ -115,6 +118,37 @@ class CarbonPipelineV2:
         estimate = self.emission_estimator.estimate(event, build.parameters)
         parameters = dict(build.parameters)
         confidence = build.confidence
+        if not estimate.ok or estimate.co2e is None:
+            fallback = self.fallback_estimator.estimate(event, parameters)
+            if fallback is not None:
+                return EstimateDetail(
+                    raw_text=event.raw_text,
+                    category=event.category,
+                    activity_type=event.activity_type,
+                    status="fallback_estimated",
+                    parameters=parameters,
+                    co2e=fallback.co2e,
+                    unit=fallback.co2e_unit,
+                    source="fallback",
+                    confidence=Confidence.from_score(
+                        min(confidence.score, fallback.confidence)
+                    ),
+                    assumptions=[*assumptions, *fallback.assumptions],
+                    issues=[*issues, *estimate.issues],
+                )
+            failure_status = getattr(estimate, "failure_status", "failed")
+            return EstimateDetail(
+                raw_text=event.raw_text,
+                category=event.category,
+                activity_type=event.activity_type,
+                status=failure_status,
+                parameters=parameters,
+                source="unresolved" if failure_status == "unresolved" else "climatiq",
+                confidence=confidence,
+                assumptions=assumptions,
+                issues=[*issues, *estimate.issues],
+                factor=estimate.factor,
+            )
         if estimate.factor and estimate.factor.specificity_match:
             assumptions, issues, parameters = _apply_specificity_match_visibility(
                 event,
@@ -123,19 +157,6 @@ class CarbonPipelineV2:
                 parameters,
             )
             confidence = _specificity_match_confidence(event, confidence)
-        if not estimate.ok or estimate.co2e is None:
-            return EstimateDetail(
-                raw_text=event.raw_text,
-                category=event.category,
-                activity_type=event.activity_type,
-                status="failed",
-                parameters=parameters,
-                source="climatiq",
-                confidence=confidence,
-                assumptions=assumptions,
-                issues=[*issues, *estimate.issues],
-                factor=estimate.factor,
-            )
         return EstimateDetail(
             raw_text=event.raw_text,
             category=event.category,

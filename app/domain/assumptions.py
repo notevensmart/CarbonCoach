@@ -35,6 +35,29 @@ def distance_compact_k_context_assumption(surface: str) -> Assumption:
     )
 
 
+def flight_default_factor_assumption(
+    *,
+    assumed_route: bool,
+    assumed_passenger_class: bool,
+) -> Assumption:
+    assumed_details = []
+    if assumed_route:
+        assumed_details.append("domestic route")
+    if assumed_passenger_class:
+        assumed_details.append("average passenger class")
+    assumed_details.append("radiative forcing effects included")
+    return Assumption(
+        code="flight.default_factor_parameters",
+        message=(
+            "Assumed "
+            + ", ".join(assumed_details)
+            + " because complete flight factor details were not provided."
+        ),
+        source="default",
+        confidence_impact=-0.25,
+    )
+
+
 def vehicle_model_default_assumption(code: str, display_name: str) -> Assumption:
     messages = {
         "vehicle.toyota_camry.default_petrol_medium": (

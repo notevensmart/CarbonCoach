@@ -116,9 +116,10 @@ def _rank_records(
 ) -> list[FactorCandidate]:
     metadata = ACTIVITY_TAXONOMY[event.activity_type]
     match_terms = tuple(str(term).lower() for term in metadata.get("factor_match_terms", ()))
-    preferred_terms = tuple(
-        str(term).lower() for term in metadata.get("factor_preferred_terms", ())
+    required_terms = tuple(
+        str(term).lower() for term in metadata.get("factor_required_terms", ())
     )
+    preferred_terms = _preferred_terms(event, metadata, parameters)
     excluded_terms = tuple(
         str(term).lower() for term in metadata.get("factor_excluded_terms", ())
     )
@@ -132,7 +133,11 @@ def _rank_records(
         validation = validator.validate_record(event, parameters, record)
         if not activity_id or not validation.compatible:
             continue
-        if any(term in text for term in excluded_terms):
+        if required_terms and not any(
+            _contains_phrase(text, term) for term in required_terms
+        ):
+            continue
+        if any(_contains_phrase(text, term) for term in excluded_terms):
             continue
         if _has_authoritative_trait_conflict(event, metadata, parameters, text):
             continue
@@ -256,13 +261,13 @@ def _keyword_score(
 ) -> tuple[float, list[str]]:
     reasons: list[str] = []
     score = 0.0
-    matched_terms = [term for term in match_terms if term in text]
+    matched_terms = [term for term in match_terms if _contains_phrase(text, term)]
     if match_terms:
         score += 0.45 * len(matched_terms) / len(match_terms)
     if matched_terms:
         reasons.append("activity metadata terms matched: " + ", ".join(matched_terms))
 
-    preferred_matches = [term for term in preferred_terms if term in text]
+    preferred_matches = [term for term in preferred_terms if _contains_phrase(text, term)]
     if preferred_terms:
         score += 0.20 * len(preferred_matches) / len(preferred_terms)
     if preferred_matches:
@@ -327,12 +332,12 @@ def _trait_evidence_score(metadata: dict, parameters: dict, text: str) -> tuple[
     for field in fields_with_values:
         value = _normalized_text(parameters.get(str(field)))
         aliases = tuple(aliases_by_field.get(field, {}).get(value, (value,)))
-        if not any(alias in text for alias in aliases):
+        if not any(_contains_phrase(text, str(alias)) for alias in aliases):
             continue
         score += 0.25 / len(fields_with_values)
         reasons.append(f"normalized {field} matched: {value}")
         conflicts = tuple(conflicts_by_field.get(field, {}).get(value, ()))
-        if any(conflict in text for conflict in conflicts):
+        if any(_contains_phrase(text, str(conflict)) for conflict in conflicts):
             score -= 0.05
             reasons.append(f"broader {field} variant matched less precisely: {value}")
     return max(score, 0.0), reasons
@@ -356,13 +361,13 @@ def _has_authoritative_trait_conflict(
         field_aliases = aliases_by_field.get(field, {})
         requested_aliases = field_aliases.get(requested_value, (requested_value,))
         if field in required_fields and not any(
-            str(alias) in text for alias in requested_aliases
+            _contains_phrase(text, str(alias)) for alias in requested_aliases
         ):
             return True
         declared_values = {
             value
             for value, aliases in field_aliases.items()
-            if any(str(alias) in text for alias in aliases)
+            if any(_contains_phrase(text, str(alias)) for alias in aliases)
         }
         if declared_values and requested_value not in declared_values:
             return True
@@ -417,7 +422,7 @@ def _factor_query(event: CarbonEvent, parameters: dict) -> str:
     query_terms = [
         str(metadata.get("climatiq_factor_query", event.activity_type)),
         *metadata.get("factor_match_terms", ()),
-        *metadata.get("factor_preferred_terms", ()),
+        *_preferred_terms(event, metadata, parameters),
         *values,
     ]
     return " ".join(dict.fromkeys(term.strip() for term in query_terms if term.strip()))
@@ -436,3 +441,25 @@ def _bounded_score(value: object) -> float:
         return min(max(float(value), 0.0), 1.0)
     except (TypeError, ValueError):
         return 0.0
+
+
+def _preferred_terms(event: CarbonEvent, metadata: dict, parameters: dict) -> tuple[str, ...]:
+    terms = tuple(str(term).lower() for term in metadata.get("factor_preferred_terms", ()))
+    authoritative_fields = {
+        str(field)
+        for field in metadata.get("factor_required_authoritative_traits", ())
+        if parameters.get(str(field))
+        and event.entities.get(f"{field}_source") in {"user", "vehicle_metadata"}
+    }
+    if not authoritative_fields:
+        return terms
+    if "fuel_type" not in authoritative_fields:
+        return terms
+    return tuple(term for term in terms if term not in {"average", "fuel source na"})
+
+
+def _contains_phrase(text: str, phrase: str) -> bool:
+    normalized_phrase = _normalized_text(phrase)
+    if not normalized_phrase:
+        return False
+    return f" {normalized_phrase} " in f" {text} "

@@ -54,6 +54,11 @@ class FactorCompatibilityValidator:
         parameters: dict,
         candidate: FactorCandidate,
     ) -> FactorValidation:
+        if not candidate.activity_id.strip():
+            return FactorValidation(
+                compatible=False,
+                errors=("Factor activity_id is required before a Climatiq request.",),
+            )
         if candidate.score < MIN_ACCEPTED_FACTOR_SCORE:
             return FactorValidation(
                 compatible=False,

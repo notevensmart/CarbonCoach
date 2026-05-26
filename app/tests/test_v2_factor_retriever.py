@@ -83,6 +83,298 @@ def test_passenger_distance_factor_sends_default_single_passenger_to_climatiq():
     ]
 
 
+def test_explicit_electric_bus_selects_matching_fuel_factor_not_average_bus():
+    class FakeClient:
+        def estimate(self, activity_id, parameters):
+            return ClimatiqEstimate(co2e=0.08, co2e_unit="kg", ok=True)
+
+    retriever = ClimatiqFactorRetriever(
+        local_records_provider=lambda: [
+            _record(
+                "passenger_vehicle-vehicle_type_bus-fuel_source_na",
+                "Average bus",
+                "PassengerOverDistance",
+            ),
+            _record(
+                "passenger_vehicle-vehicle_type_bus-fuel_source_electricity",
+                "Electric bus",
+                "PassengerOverDistance",
+            ),
+        ],
+        remote_search=lambda *args, **kwargs: [],
+    )
+    pipeline = CarbonPipelineV2(
+        emission_estimator=ClimatiqEmissionEstimator(
+            climatiq_client=FakeClient(),
+            factor_retriever=retriever,
+        )
+    )
+
+    detail = pipeline.run("6km ride in electric bus").model_dump()["details"][0]
+
+    assert detail["parameters"]["fuel_type"] == "electric"
+    assert detail["factor"]["activity_id"].endswith("fuel_source_electricity")
+    assert any(
+        reason == "normalized fuel_type matched: electric"
+        for reason in detail["factor"]["match_reasons"]
+    )
+
+
+def test_explicit_electric_bus_does_not_fall_back_to_unspecified_bus_factor():
+    retriever = ClimatiqFactorRetriever(
+        local_records_provider=lambda: [
+            _record(
+                "passenger_vehicle-vehicle_type_bus-fuel_source_na",
+                "Average bus",
+                "PassengerOverDistance",
+            )
+        ],
+        remote_search=lambda *args, **kwargs: [],
+    )
+    event = CarbonEvent(
+        raw_text="electric bus",
+        category="transport",
+        activity_type="bus_ride",
+        entities={"fuel_type_source": "user"},
+        confidence=Confidence.from_score(0.86),
+    )
+
+    candidates = retriever.retrieve(
+        event,
+        {"distance": 6, "distance_unit": "km", "fuel_type": "electric"},
+    )
+
+    assert candidates == []
+
+
+def test_bus_never_uses_electric_car_factor_even_when_fuel_matches():
+    retriever = ClimatiqFactorRetriever(
+        local_records_provider=lambda: [
+            _record(
+                "passenger_vehicle-vehicle_type_business_travel_medium_car-fuel_source_bev",
+                "Battery EV car (medium) - Business travel",
+                "Distance",
+            )
+        ],
+        remote_search=lambda *args, **kwargs: [],
+    )
+    event = CarbonEvent(
+        raw_text="electric bus",
+        category="transport",
+        activity_type="bus_ride",
+        entities={"fuel_type_source": "user"},
+        confidence=Confidence.from_score(0.86),
+    )
+
+    candidates = retriever.retrieve(
+        event,
+        {"distance": 6, "distance_unit": "km", "fuel_type": "electric"},
+    )
+
+    assert candidates == []
+
+
+def test_rideshare_requires_taxi_mode_factor_instead_of_generic_car():
+    retriever = ClimatiqFactorRetriever(
+        local_records_provider=lambda: [
+            _record(
+                "passenger_vehicle-vehicle_type_business_travel_medium_car-fuel_source_petrol",
+                "Petrol car (medium) - Business travel",
+                "Distance",
+            ),
+            _record(
+                "passenger_vehicle-vehicle_type_taxi-fuel_source_na",
+                "Taxi Travel - default factor",
+                "PassengerOverDistance",
+            ),
+        ],
+        remote_search=lambda *args, **kwargs: [],
+    )
+
+    candidates = retriever.retrieve(
+        _event("rideshare"),
+        {
+            "distance": 9,
+            "distance_unit": "km",
+            "fuel_type": "petrol",
+            "vehicle_size": "medium",
+        },
+    )
+
+    assert candidates[0].activity_id == "passenger_vehicle-vehicle_type_taxi-fuel_source_na"
+
+
+def test_unspecified_electric_train_prefers_generic_route_over_long_distance():
+    event = CarbonEvent(
+        raw_text="electric train",
+        category="transport",
+        activity_type="train_ride",
+        entities={"fuel_type_source": "user"},
+        confidence=Confidence.from_score(0.86),
+    )
+    retriever = ClimatiqFactorRetriever(
+        local_records_provider=lambda: [
+            _record(
+                "passenger_train-route_type_long_distance-fuel_source_electricity",
+                "Electric long-distance passenger train",
+                "PassengerOverDistance",
+            ),
+            _record(
+                "passenger_train-route_type_na-fuel_source_electricity",
+                "Electric passenger train",
+                "PassengerOverDistance",
+            ),
+        ],
+        remote_search=lambda *args, **kwargs: [],
+    )
+
+    candidates = retriever.retrieve(
+        event,
+        {"distance": 14, "distance_unit": "km", "fuel_type": "electric"},
+    )
+
+    assert "route_type_na" in candidates[0].activity_id
+
+
+def test_subway_input_selects_metro_rail_factor_not_generic_train():
+    event = CarbonEvent(
+        raw_text="subway",
+        category="transport",
+        activity_type="train_ride",
+        entities={"route_type_source": "user"},
+        confidence=Confidence.from_score(0.86),
+    )
+    retriever = ClimatiqFactorRetriever(
+        local_records_provider=lambda: [
+            _record(
+                "passenger_train-route_type_na-fuel_source_na",
+                "Train",
+                "PassengerOverDistance",
+            ),
+            _record(
+                "passenger_train-route_type_subway-fuel_source_electricity",
+                "Subway Electric Green power",
+                "PassengerOverDistance",
+            ),
+        ],
+        remote_search=lambda *args, **kwargs: [],
+    )
+
+    candidates = retriever.retrieve(
+        event,
+        {"distance": 7, "distance_unit": "km", "route_type": "subway"},
+    )
+
+    assert "route_type_subway" in candidates[0].activity_id
+
+
+def test_plane_trip_selects_compatible_flight_distance_factor():
+    retriever = ClimatiqFactorRetriever(
+        local_records_provider=lambda: [
+            _record(
+                "passenger_vehicle-vehicle_type_bus-fuel_source_na",
+                "Average bus",
+                "PassengerOverDistance",
+            ),
+            _record(
+                "passenger_flight-route_type_domestic-class_economy",
+                "Passenger domestic flight economy",
+                "PassengerOverDistance",
+                description="Aircraft passenger air travel.",
+            ),
+        ],
+        remote_search=lambda *args, **kwargs: [],
+    )
+
+    candidates = retriever.retrieve(
+        _event("flight"),
+        {"distance": 100, "distance_unit": "km", "transport_mode": "flight"},
+    )
+
+    assert candidates[0].activity_id.startswith("passenger_flight")
+    assert candidates[0].unit_type == "PassengerOverDistance"
+
+
+def test_international_flight_distance_band_prefers_short_haul_factor():
+    retriever = ClimatiqFactorRetriever(
+        local_records_provider=lambda: [
+            _record(
+                "passenger_flight-route_type_international-distance_long_haul-class_economy-rf_included",
+                "International long-haul flight economy class - with RF effect",
+                "PassengerOverDistance",
+            ),
+            _record(
+                "passenger_flight-route_type_international-distance_short_haul-class_economy-rf_included",
+                "International short-haul flight economy class - with RF effect",
+                "PassengerOverDistance",
+            ),
+        ],
+        remote_search=lambda *args, **kwargs: [],
+    )
+
+    candidates = retriever.retrieve(
+        _event("flight"),
+        {
+            "distance": 900,
+            "distance_unit": "km",
+            "transport_mode": "flight",
+            "route_type": "international",
+            "passenger_class": "economy",
+            "rf_effect": "included",
+            "distance_band": "short_haul",
+        },
+    )
+
+    assert "short_haul" in candidates[0].activity_id
+
+
+def test_explicit_international_flight_rejects_domestic_factor_even_if_high_scoring():
+    event = CarbonEvent(
+        raw_text="international economy flight",
+        category="transport",
+        activity_type="flight",
+        entities={
+            "route_type_source": "user",
+            "passenger_class_source": "user",
+        },
+        confidence=Confidence.from_score(0.86),
+    )
+    retriever = ClimatiqFactorRetriever(
+        local_records_provider=lambda: [
+            {
+                **_record(
+                    "passenger_flight-route_type_domestic-class_economy-rf_included",
+                    "Domestic flight economy - with RF effect",
+                    "PassengerOverDistance",
+                ),
+                "semantic_score": 1.0,
+            },
+            _record(
+                "passenger_flight-route_type_international-distance_short_haul-class_economy-rf_included",
+                "International short-haul flight economy - with RF effect",
+                "PassengerOverDistance",
+            ),
+        ],
+        remote_search=lambda *args, **kwargs: [],
+    )
+
+    candidates = retriever.retrieve(
+        event,
+        {
+            "distance": 900,
+            "distance_unit": "km",
+            "transport_mode": "flight",
+            "route_type": "international",
+            "passenger_class": "economy",
+            "rf_effect": "included",
+            "distance_band": "short_haul",
+        },
+    )
+
+    assert all("domestic" not in candidate.activity_id for candidate in candidates)
+    assert "international" in candidates[0].activity_id
+
+
 def test_energy_factor_ranking_filters_distance_metadata_and_reports_evidence():
     retriever = ClimatiqFactorRetriever(
         local_records_provider=lambda: [
