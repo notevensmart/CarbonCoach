@@ -66,11 +66,23 @@ export default function EmissionResult({ response }) {
       )}
 
       {secondaryDetails.length > 0 && (
-        <DetailGroup
-          title="Activities needing attention"
-          description="These activities were kept visible but were not included as regular estimates."
-          details={secondaryDetails}
-        />
+        <section className="mt-6">
+          <details className="rounded-md border border-gray-200 bg-gray-50 p-4">
+            <summary className="cursor-pointer text-lg font-semibold text-gray-900">
+              Activities needing attention
+            </summary>
+            <p className="mt-2 text-sm text-gray-600">
+              These activities were kept visible but were not included as regular estimates.
+            </p>
+            <ul className="mt-3 space-y-3">
+              {secondaryDetails.map((detail, index) => (
+                <li key={`${detail.raw_text || detail.activity_type || index}-${index}`}>
+                  <V2Detail detail={detail} />
+                </li>
+              ))}
+            </ul>
+          </details>
+        </section>
       )}
 
       {estimate.details.length === 0 && (
@@ -153,10 +165,35 @@ function V2Detail({ detail }) {
         </p>
         {detail.confidence && (
           <p>
-            <strong>Confidence:</strong> {formatConfidence(detail.confidence)}
+            <strong>Overall confidence:</strong> {formatConfidence(detail.confidence)}
           </p>
         )}
       </div>
+
+      {(detail.parameter_confidence ||
+        detail.factor_confidence ||
+        detail.source_confidence) && (
+        <dl className="mt-3 grid gap-2 rounded-md bg-gray-50 p-3 sm:grid-cols-3">
+          {detail.parameter_confidence && (
+            <ConfidenceBreakdownItem
+              label="Parameter confidence"
+              confidence={detail.parameter_confidence}
+            />
+          )}
+          {detail.factor_confidence && (
+            <ConfidenceBreakdownItem
+              label="Factor confidence"
+              confidence={detail.factor_confidence}
+            />
+          )}
+          {detail.source_confidence && (
+            <ConfidenceBreakdownItem
+              label="Source confidence"
+              confidence={detail.source_confidence}
+            />
+          )}
+        </dl>
+      )}
 
       {detail.parameters && Object.keys(detail.parameters).length > 0 && (
         <div className="mt-4">
@@ -180,7 +217,7 @@ function V2Detail({ detail }) {
             {detail.factor.activity_id}
           </p>
           <p className="mt-1">
-            <strong>Score:</strong> {formatNumber(detail.factor.score)}
+            <strong>Factor fit:</strong> {formatNumber(detail.factor.score)}
           </p>
           {detail.factor.match_reasons?.length > 0 && (
             <ul aria-label="Factor match reasons" className="mt-2 list-disc pl-5">
@@ -200,6 +237,15 @@ function V2Detail({ detail }) {
         <VisibilityList title="Issues" records={detail.issues} warning />
       )}
     </article>
+  );
+}
+
+function ConfidenceBreakdownItem({ label, confidence }) {
+  return (
+    <div>
+      <dt className="text-xs uppercase tracking-wide text-gray-500">{label}</dt>
+      <dd className="mt-1 font-semibold text-gray-800">{formatConfidence(confidence)}</dd>
+    </div>
   );
 }
 

@@ -837,7 +837,10 @@ def test_specific_factor_is_visible_and_replaces_named_vehicle_generic_fallback(
     assert detail["parameters"]["factor_specificity"] == "supplied_description"
     assert "fuel_type" not in detail["parameters"]
     assert "vehicle_size" not in detail["parameters"]
-    assert detail["confidence"]["level"] == "high"
+    assert detail["parameter_confidence"]["level"] == "high"
+    assert detail["factor_confidence"]["score"] == detail["factor"]["score"]
+    assert detail["factor_confidence"]["level"] == "medium"
+    assert detail["confidence"] == detail["factor_confidence"]
     assert "vehicle.named.default_petrol_medium" not in [
         assumption["code"] for assumption in detail["assumptions"]
     ]

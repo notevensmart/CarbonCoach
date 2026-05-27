@@ -31,6 +31,62 @@ class EnergyParameterBuilder:
         duration = _first_quantity(event.quantities, "duration")
         assumptions = [default_au_electricity_region_assumption()]
 
+        if event.activity_type in {
+            "natural_gas_use",
+            "cooking_appliance_use",
+            "hot_water_use",
+        }:
+            parameters = {}
+            if duration is not None:
+                parameters.update(
+                    {
+                        "duration": _round_quantity(duration.value),
+                        "duration_unit": "hours",
+                    }
+                )
+            return ParameterBuildResult(
+                parameters=parameters,
+                confidence=Confidence.from_score(0.30),
+                assumptions=[],
+                issues=[
+                    Issue(
+                        code=f"energy.{event.activity_type}.unsupported_factor",
+                        message=(
+                            f"Detected {event.activity_type}, but no validated V2 "
+                            "parameter and factor pathway is configured for it yet."
+                        ),
+                        severity="warning",
+                    )
+                ],
+                can_estimate=False,
+            )
+
+        if event.activity_type == "generic_energy_use":
+            parameters = {"device": "unknown"}
+            if duration is not None:
+                parameters.update(
+                    {
+                        "duration": _round_quantity(duration.value),
+                        "duration_unit": "hours",
+                    }
+                )
+            return ParameterBuildResult(
+                parameters=parameters,
+                confidence=Confidence.from_score(0.20),
+                assumptions=[],
+                issues=[
+                    Issue(
+                        code="energy.activity.unspecified",
+                        message=(
+                            "Detected possible device use, but the device and required "
+                            "energy information are too ambiguous to estimate safely."
+                        ),
+                        severity="warning",
+                    )
+                ],
+                can_estimate=False,
+            )
+
         if (
             event.activity_type == "space_heater_use"
             and event.entities.get("power_source") == "natural_gas"

@@ -1,0 +1,9 @@
+{"input":"I used a 2 kW heater for 3 hours.","expected_category":"energy","expected_activity_type":"space_heater_use","expected_energy_kwh":6}
+{"input":"I turned on the heater for 3 hours.","expected_category":"energy","expected_activity_type":"space_heater_use","expected_assumption_code":"space_heater.default_power"}
+{"input":"I used 5 kWh of electricity.","expected_category":"energy","expected_activity_type":"electricity_use","expected_energy_kwh":5}
+{"input":"I took a 7k ride.","expected_category":"transport","expected_activity_type":"car_ride","expected_distance_km":7,"expected_assumption_code":"distance.compact_k_context_km"}
+{"input":"I took a 7 km ride in a Toyota Camry.","expected_category":"transport","expected_activity_type":"car_ride","expected_distance_km":7,"expected_assumption_code":"vehicle.toyota_camry.default_petrol_medium"}
+{"input":"I drove 7 km in my electric Toyota Camry.","expected_category":"transport","expected_activity_type":"car_ride","expected_fuel_type":"electric"}
+{"input":"I took a 5km bus ride.","expected_category":"transport","expected_activity_type":"bus_ride","expected_status":"fallback_estimated"}
+{"input":"I took a 5 km ride in a BMW X5.","expected_category":"transport","expected_activity_type":"car_ride","expected_issue_code":"vehicle.named_model.unmapped"}
+{"input":"I read a book for 2 hours.","expected_status":"not_estimated"}

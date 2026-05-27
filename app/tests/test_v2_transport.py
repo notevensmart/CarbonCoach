@@ -205,11 +205,13 @@ def test_pipeline_v2_handles_transport_with_surrounding_text_and_compact_spacing
     ).model_dump()
     detail = result["details"][0]
 
-    assert len(result["details"]) == 1
+    assert len(result["details"]) == 2
     assert detail["activity_type"] == "car_ride"
     assert detail["parameters"]["distance"] == 12
     assert detail["parameters"]["fuel_type"] == "diesel"
     assert detail["parameters"]["vehicle_size"] == "large"
+    assert result["details"][1]["activity_type"] == "generic_energy_use"
+    assert result["details"][1]["status"] == "unresolved"
 
 
 def test_estimate_v2_api_returns_transport_response_shape(v2_api_pipeline):

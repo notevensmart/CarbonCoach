@@ -107,6 +107,75 @@ ENERGY_TAXONOMY = {
             "region.default_au_electricity",
         ),
     },
+    "natural_gas_use": {
+        "category": "energy",
+        "keywords": ("natural gas", "gas stove", "gas cooktop"),
+        "required_quantity_dimensions": (),
+        "supporting_quantity_dimensions": ("duration",),
+        "derivation_rules": (),
+        "parameter_builder": "energy",
+        "fallback_factor_key": None,
+        "estimate_policy": "unresolved",
+        "detection_patterns": (
+            r"\b(?:used?|cooked|cooking|heated?)\b[^,.;]{0,60}\b(?:natural\s+gas|gas\s+(?:stove|cooktop|oven))\b",
+            r"\bnatural\s+gas\b[^,.;]{0,60}\b(?:cook|cooking|heating)\b",
+        ),
+        "default_assumptions": (),
+    },
+    "cooking_appliance_use": {
+        "category": "energy",
+        "keywords": ("oven", "stove", "cooktop", "stovetop"),
+        "required_quantity_dimensions": (),
+        "supporting_quantity_dimensions": ("duration",),
+        "derivation_rules": (),
+        "parameter_builder": "energy",
+        "fallback_factor_key": None,
+        "estimate_policy": "unresolved",
+        "detection_patterns": (
+            r"\b(?:cook(?:ed|ing)?|used?|ran|turned\s+on)\b[^,.;]{0,60}\b(?:oven|cooktop|stove|stovetop)\b",
+        ),
+        "default_assumptions": (),
+    },
+    "hot_water_use": {
+        "category": "energy",
+        "keywords": ("hot shower", "hot bath", "hot water"),
+        "required_quantity_dimensions": (),
+        "supporting_quantity_dimensions": ("duration",),
+        "derivation_rules": (),
+        "parameter_builder": "energy",
+        "fallback_factor_key": None,
+        "estimate_policy": "unresolved",
+        "detection_patterns": (
+            r"\b(?:hot\s+(?:shower|bath|water)|shower(?:ed|ing)?\b[^,.;]{0,40}\bhot\s+water)\b",
+        ),
+        "default_assumptions": (),
+    },
+    "generic_energy_use": {
+        "category": "energy",
+        "keywords": (
+            "thing",
+            "device",
+            "appliance",
+            "equipment",
+            "phone",
+            "laptop",
+            "tablet",
+            "battery",
+            "charger",
+        ),
+        "required_quantity_dimensions": (),
+        "supporting_quantity_dimensions": ("duration",),
+        "derivation_rules": (),
+        "parameter_builder": "energy",
+        "fallback_factor_key": None,
+        "estimate_policy": "unresolved",
+        "detection_patterns": (
+            r"\b(?:used?|ran|operated|turned\s+on)\b[^,.;]{0,40}\b(?:thing|device|appliance|equipment)\b",
+            r"\b(?:charged?|charging|plugged\s+in)\b[^,.;]{0,40}\b(?:phone|laptop|tablet|battery|device)\b",
+            r"\b(?:watched?|used?|ran|turned\s+on)\b[^,.;]{0,40}\b(?:tv|television|monitor|computer)\b",
+        ),
+        "default_assumptions": (),
+    },
 }
 
 TRANSPORT_TAXONOMY = {
@@ -291,7 +360,30 @@ TRANSPORT_TAXONOMY = {
     },
 }
 
+NON_ESTIMATED_TAXONOMY = {
+    "personal_activity": {
+        "category": "goods_services",
+        "keywords": ("read", "reading", "study", "studied", "studying"),
+        "required_quantity_dimensions": (),
+        "supporting_quantity_dimensions": ("duration",),
+        "derivation_rules": (),
+        "parameter_builder": None,
+        "fallback_factor_key": None,
+        "estimate_policy": "not_estimated",
+        "emissions_boundary": (
+            "No direct operational emissions estimated for reading or studying "
+            "without a specified energy or purchased-goods activity."
+        ),
+        "detection_patterns": (
+            r"\b(?:read|reading)\b[^,.;]{0,40}\b(?:book|novel)\b",
+            r"\bstud(?:y|ied|ying)\b",
+        ),
+        "default_assumptions": (),
+    },
+}
+
 ACTIVITY_TAXONOMY = {
     **ENERGY_TAXONOMY,
     **TRANSPORT_TAXONOMY,
+    **NON_ESTIMATED_TAXONOMY,
 }

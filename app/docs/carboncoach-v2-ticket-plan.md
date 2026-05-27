@@ -859,6 +859,11 @@ score < 0.55:
   reject and use fallback or unresolved
 ```
 
+`score` is the candidate factor-fit signal used for retrieval and selection,
+not a probability of emissions accuracy. Ticket 6 must derive factor
+confidence from the selected compatible factor and apply it to overall
+estimate confidence without changing CO2e calculations.
+
 ### Candidate Shape
 
 Candidates must include:
@@ -895,6 +900,8 @@ Show factor match reasons in expanded/details view if available.
 - Energy and transport V2 slices still pass.
 - New fixture candidates can be selected correctly without code changes.
 - Match reasons identify structured evidence, not merely that a literal name matched.
+- The selected score remains factor-fit metadata, not a multiplier applied to
+  emissions amounts.
 
 ### Tests
 
@@ -987,6 +994,8 @@ Show fallback assumptions and API/factor issues when present.
 - Source breakdown is correct.
 - A newly introduced compatible candidate/fallback fixture follows the same
   validation path without a new code branch.
+- Fallback source/factor confidence is available to cap overall estimate
+  confidence in Ticket 6.
 
 ### Tests
 
@@ -1034,6 +1043,7 @@ Render V2 responses with:
 - source breakdown
 - per-event status
 - per-event confidence
+- factor fit or factor confidence if available
 - parameters used
 - assumptions
 - issues
@@ -1092,11 +1102,12 @@ If browser tooling is available, manually verify:
 - Do not remove V1 endpoint.
 - Do not create per-entity presentation branches for inputs such as individual vehicle models.
 
-## Ticket 6: V2 Regression, Not Estimated, And Hardening
+## Ticket 6: V2 Regression, Not Estimated, Confidence, And Hardening
 
 ### Goal
 
-Harden V2 with golden regressions, `not_estimated` behavior, unresolved behavior, and edge cases.
+Harden V2 with golden regressions, `not_estimated` behavior, unresolved
+behavior, factor-aware confidence, and edge cases.
 
 ### Dependencies
 
@@ -1111,6 +1122,37 @@ not_estimated
 unresolved
 failed
 ```
+
+Add factor-aware confidence handling:
+
+```text
+factor match score / factor fit:
+  keep as retrieval diagnostics and display metadata
+
+factor confidence:
+  derive from the selected compatible factor fit and source quality
+
+overall confidence:
+  min(parameter confidence, factor confidence, source confidence)
+```
+
+For the initial deterministic implementation:
+
+```text
+selected compatible factor score -> numeric factor-confidence score
+confidence levels continue to use the existing thresholds:
+  score >= 0.80 -> high
+  0.50 <= score < 0.80 -> medium
+  score < 0.50 -> low
+successful validated Climatiq estimate -> source confidence 1.00 unless
+  maintained source-quality metadata explicitly supplies a lower cap
+fallback factor -> use maintained fallback source/factor confidence
+```
+
+A factor may be accepted normally for estimation at `0.75` while still
+contributing medium factor confidence. Confidence is a transparency/trust
+calculation only: never multiply or otherwise rescale `co2e` by factor fit or
+confidence.
 
 `not_estimated` examples:
 
@@ -1132,6 +1174,10 @@ Do not force fake precision.
 Display `not_estimated` events in a secondary/collapsed section.
 
 Do not include `not_estimated` events in totals.
+
+Render overall confidence and, when added to the response, `factor_confidence`
+and factor fit generically. The established overall `confidence` field must
+remain available; the new confidence detail fields are additive.
 
 ### Golden Regression Suite
 
@@ -1168,6 +1214,14 @@ exercise the same structured pathway.
 - `unresolved` events include visible issues.
 - Mixed journals with multiple activities produce multiple details instead of only the first recognized event.
 - Edge cases do not crash the API.
+- Selected medium-confidence factors cap otherwise high parameter confidence.
+- Strong factor matches do not raise overall confidence above uncertainty from
+  assumed parameters or contradictory evidence.
+- Fallback-estimated events expose source/factor uncertainty and their overall
+  confidence is capped accordingly.
+- Total confidence aggregates event confidence after factor/source caps.
+- Factor-confidence changes do not alter calculated `co2e` for identical
+  activity parameters and selected factors.
 - Visible V1-to-V2 parity regressions for common supported behavior pass while
   the frontend targets V2.
 - Generalization matrices pass without requiring example-specific branches.
@@ -1187,6 +1241,14 @@ Add tests for:
 - common V1 estimated inputs submitted through V2 do not unexpectedly return zero
 - equivalent phrasing/spacing variants normalize to equivalent parameter sets
 - explicit property changes produce justified output changes
+- high parameter confidence plus medium factor fit yields medium overall confidence
+- medium parameter confidence plus high factor fit remains medium overall confidence
+- fallback factor confidence caps overall confidence
+- total confidence reflects factor-capped event confidences
+- identical calculation parameters and selected factor produce identical
+  `co2e` before and after factor-confidence scoring
+- API/frontend tolerate additive `parameter_confidence` and
+  `factor_confidence` fields while preserving overall `confidence`
 
 ### Do Not Do
 
@@ -1194,6 +1256,7 @@ Add tests for:
 - Do not add external vehicle APIs.
 - Do not make tests depend on live services.
 - Do not mistake a growing golden fixture list for robust implementation.
+- Do not multiply CO2e values by factor match or confidence scores.
 
 ## Final Ticket Order
 
@@ -1208,7 +1271,7 @@ Implement in this order:
 3. V2 Local-First Scored Factor Retrieval
 4. V2 Climatiq Validation And Fallback Integration
 5. V2 Frontend Transparency And UX Pass
-6. V2 Regression, Not Estimated, And Hardening
+6. V2 Regression, Not Estimated, Confidence, And Hardening
 ```
 
 ## Overall Definition Of Done
@@ -1225,6 +1288,8 @@ V2 is complete when:
 - Supported families generalize across variation matrices rather than only
   passing their named regression examples.
 - V2 responses include confidence, assumptions, statuses, issues, totals, and source breakdown.
+- V2 overall confidence is constrained by selected factor/source uncertainty,
+  while raw factor fit remains visible as explanatory retrieval metadata.
 - V2 handles multi-activity journal entries without dropping later supported events.
 - Each slice adds robustness coverage beyond the happy-path examples.
 - Factor retrieval is scored, local-first, and validates unit compatibility.

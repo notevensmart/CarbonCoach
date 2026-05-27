@@ -30,6 +30,7 @@ ActivityType = Literal[
     "generic_transport",
     "electricity_use",
     "space_heater_use",
+    "generic_energy_use",
     "air_conditioner_use",
     "cooking_appliance_use",
     "hot_water_use",
@@ -43,6 +44,7 @@ ActivityType = Literal[
     "coffee_purchase",
     "restaurant_meal",
     "generic_purchase",
+    "personal_activity",
 ]
 EstimateStatus = Literal[
     "estimated",
@@ -148,6 +150,9 @@ class EstimateDetail(StrictBaseModel):
     unit: str = "kg"
     source: EstimateSource = "none"
     confidence: Confidence
+    parameter_confidence: Confidence | None = None
+    factor_confidence: Confidence | None = None
+    source_confidence: Confidence | None = None
     assumptions: list[Assumption] = Field(default_factory=list)
     issues: list[Issue] = Field(default_factory=list)
     factor: FactorCandidate | None = None

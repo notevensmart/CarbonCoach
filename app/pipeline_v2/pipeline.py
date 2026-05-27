@@ -8,6 +8,7 @@ from app.domain.models import (
     EstimateTotal,
     SourceBreakdown,
 )
+from app.domain.activity_taxonomy import ACTIVITY_TAXONOMY
 from app.pipeline_v2.emission_estimator import ClimatiqEmissionEstimator, EmissionEstimator
 from app.pipeline_v2.event_extractor import JournalEventExtractor
 from app.pipeline_v2.entity_enricher import EntityEnricher
@@ -51,6 +52,21 @@ class CarbonPipelineV2:
         return CarbonEstimateResponse(total=total, details=details)
 
     def _estimate_event(self, event: CarbonEvent) -> EstimateDetail:
+        metadata = ACTIVITY_TAXONOMY.get(event.activity_type, {})
+        if metadata.get("estimate_policy") == "not_estimated":
+            return EstimateDetail(
+                raw_text=event.raw_text,
+                category=event.category,
+                activity_type=event.activity_type,
+                status="not_estimated",
+                parameters={"emissions_boundary": metadata["emissions_boundary"]},
+                co2e=0.0,
+                source="none",
+                confidence=event.confidence,
+                parameter_confidence=event.confidence,
+                assumptions=event.assumptions,
+                issues=event.issues,
+            )
         if event.category == "energy":
             return self._estimate_energy_event(event)
         if event.category == "transport":
@@ -99,6 +115,7 @@ class CarbonPipelineV2:
                 co2e=0.0,
                 source="none",
                 confidence=build.confidence,
+                parameter_confidence=build.confidence,
                 assumptions=assumptions,
                 issues=issues,
             )
@@ -111,16 +128,18 @@ class CarbonPipelineV2:
                 parameters=build.parameters,
                 source="unresolved",
                 confidence=build.confidence,
+                parameter_confidence=build.confidence,
                 assumptions=assumptions,
                 issues=issues,
             )
 
         estimate = self.emission_estimator.estimate(event, build.parameters)
         parameters = dict(build.parameters)
-        confidence = build.confidence
+        parameter_confidence = build.confidence
         if not estimate.ok or estimate.co2e is None:
             fallback = self.fallback_estimator.estimate(event, parameters)
             if fallback is not None:
+                factor_confidence = Confidence.from_score(fallback.confidence)
                 return EstimateDetail(
                     raw_text=event.raw_text,
                     category=event.category,
@@ -130,9 +149,14 @@ class CarbonPipelineV2:
                     co2e=fallback.co2e,
                     unit=fallback.co2e_unit,
                     source="fallback",
-                    confidence=Confidence.from_score(
-                        min(confidence.score, fallback.confidence)
+                    confidence=_overall_confidence(
+                        parameter_confidence,
+                        factor_confidence,
+                        factor_confidence,
                     ),
+                    parameter_confidence=parameter_confidence,
+                    factor_confidence=factor_confidence,
+                    source_confidence=factor_confidence,
                     assumptions=[*assumptions, *fallback.assumptions],
                     issues=[*issues, *estimate.issues],
                 )
@@ -144,7 +168,9 @@ class CarbonPipelineV2:
                 status=failure_status,
                 parameters=parameters,
                 source="unresolved" if failure_status == "unresolved" else "climatiq",
-                confidence=confidence,
+                confidence=parameter_confidence,
+                parameter_confidence=parameter_confidence,
+                factor_confidence=_factor_confidence(estimate.factor),
                 assumptions=assumptions,
                 issues=[*issues, *estimate.issues],
                 factor=estimate.factor,
@@ -156,7 +182,9 @@ class CarbonPipelineV2:
                 issues,
                 parameters,
             )
-            confidence = _specificity_match_confidence(event, confidence)
+            parameter_confidence = _specificity_match_confidence(event, parameter_confidence)
+        factor_confidence = _factor_confidence(estimate.factor)
+        source_confidence = Confidence.from_score(1.0)
         return EstimateDetail(
             raw_text=event.raw_text,
             category=event.category,
@@ -166,7 +194,14 @@ class CarbonPipelineV2:
             co2e=estimate.co2e,
             unit=estimate.co2e_unit,
             source="climatiq",
-            confidence=confidence,
+            confidence=_overall_confidence(
+                parameter_confidence,
+                factor_confidence,
+                source_confidence,
+            ),
+            parameter_confidence=parameter_confidence,
+            factor_confidence=factor_confidence,
+            source_confidence=source_confidence,
             assumptions=assumptions,
             issues=[*issues, *estimate.issues],
             factor=estimate.factor,
@@ -246,3 +281,14 @@ def _specificity_match_confidence(event: CarbonEvent, existing: Confidence) -> C
     if distance is None:
         return existing
     return Confidence.from_score(min(event.confidence.score, distance.confidence))
+
+
+def _factor_confidence(factor) -> Confidence | None:
+    if factor is None:
+        return None
+    return Confidence.from_score(factor.score)
+
+
+def _overall_confidence(*confidence_parts: Confidence | None) -> Confidence:
+    scores = [part.score for part in confidence_parts if part is not None]
+    return Confidence.from_score(min(scores) if scores else 0.0)

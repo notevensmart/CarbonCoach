@@ -368,6 +368,22 @@ Use separate confidence fields where useful:
 - factor confidence
 - total confidence
 
+Keep `factor match score` and `factor confidence` conceptually distinct:
+
+```text
+factor match score / factor fit:
+  retrieval evidence that a candidate factor fits the normalized event
+
+factor confidence:
+  the selected factor's contribution to overall estimate confidence,
+  derived from its validated fit and source quality
+```
+
+The match score is not a calibrated probability that an emissions value is
+accurate. It is still evidence about uncertainty: a weak-but-accepted factor
+must constrain displayed estimate confidence. Neither factor fit nor
+confidence may multiply or otherwise rescale the CO2e amount.
+
 ## Confidence Scoring
 
 Confidence must be rule/evidence-based, not blindly copied from the LLM.
@@ -392,6 +408,52 @@ heuristic fallback -> cap confidence around 0.60
 generic/unknown activity -> cap confidence around 0.55
 contradiction -> lower confidence
 ```
+
+For an `estimated` or `fallback_estimated` event, calculate overall displayed
+confidence conservatively:
+
+```text
+overall estimate confidence =
+  min(parameter confidence, factor confidence, source confidence)
+```
+
+For the initial deterministic implementation, an accepted selected candidate's
+numeric factor match score may be used as its factor-confidence score, while
+still being labelled as fit/relevance rather than probability. Use the normal
+confidence-level mapping above: for example, a selected factor fit of `0.75`
+is usable but still displays medium factor confidence, because high confidence
+begins at `0.80`.
+
+Examples:
+
+```text
+heater for 3 hours:
+  parameter confidence = 0.60 because heater power is assumed
+  factor confidence = high for a strongly matched electricity factor
+  overall confidence remains 0.60
+
+5 kWh electricity with a selected factor fit of 0.62:
+  parameter confidence = 0.95
+  factor confidence = 0.62
+  overall confidence is capped at 0.62
+
+named vehicle with local fallback:
+  overall confidence is capped by visible vehicle defaults and fallback source quality
+```
+
+Initial source-confidence behavior:
+
+```text
+successful validated Climatiq estimate:
+  source confidence = 1.00 unless explicit maintained source-quality metadata
+  establishes a lower cap
+
+local fallback estimate:
+  source confidence = maintained fallback factor confidence
+```
+
+This avoids adding an unexplained penalty to a successful provider response
+while still making fallback uncertainty visible and enforceable.
 
 ## Assumptions
 
@@ -693,6 +755,12 @@ Candidate results should include match reasons:
 }
 ```
 
+Treat candidate `score` as `factor match score` or `factor fit` in
+user-facing language. Once a candidate is selected and validated, derive
+`factor confidence` from that fit and its source. The selected factor's
+confidence must constrain event confidence even when the Climatiq estimate
+call succeeds.
+
 Retrieval implementation must score structured candidate metadata generically.
 It must not assign winners by literal activity ID, journal sentence, or named
 entity introduced for a regression test. A compatible new local record should
@@ -713,6 +781,23 @@ score < 0.55:
   do not call Climatiq with that factor
   use fallback or unresolved
 ```
+
+Acceptance and confidence are related but not identical:
+
+```text
+score >= 0.75:
+  factor is acceptable without weak-match fallback handling;
+  apply the normal confidence-level mapping to its numeric factor confidence
+
+0.55 <= score < 0.75:
+  factor is acceptable only with medium factor confidence
+
+fallback factor:
+  use maintained fallback source/factor confidence
+```
+
+An accepted factor with medium factor confidence must not yield an overall
+high-confidence estimate.
 
 Hard filters:
 
@@ -787,6 +872,10 @@ The total response should include source breakdown:
   }
 }
 ```
+
+Total confidence must aggregate event confidences after factor/source caps
+have been applied. It must not ignore low or medium factor confidence on an
+otherwise well-specified event.
 
 ## Implementation Strategy
 
@@ -925,7 +1014,7 @@ Examples:
 
 ```text
 POST /api/estimate-v2 with "heater for 3 hours"
-assert activity_type, parameters, assumptions, confidence, status, and total
+assert activity_type, parameters, assumptions, confidence, factor_confidence, status, and total
 ```
 
 ### 3. Frontend Verification
@@ -964,6 +1053,7 @@ frontend build passes if frontend changed
 production-like UI path is verified if frontend changed
 existing V1 behavior is not broken
 assumptions/confidence/status are visible where relevant
+successful factor selection cannot leave overall confidence above factor confidence
 extractors do not drop later supported events in multi-activity journals
 tests include robustness cases beyond the listed happy path
 no live external service is required for tests

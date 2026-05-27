@@ -17,11 +17,14 @@ test("renders V2 totals, event transparency, and unknown entity details generica
     .closest("article");
   expect(within(fallbackCard).getByText("Fallback Estimated")).toBeInTheDocument();
   expect(within(fallbackCard).getByText("Local fallback")).toBeInTheDocument();
+  expect(within(fallbackCard).getByText("Factor confidence")).toBeInTheDocument();
+  expect(within(fallbackCard).getAllByText("Medium (0.55)").length).toBeGreaterThanOrEqual(2);
   expect(within(fallbackCard).getByText("BMW X5")).toBeInTheDocument();
   expect(within(fallbackCard).getByText(/vehicle.named.default_petrol_medium/)).toBeInTheDocument();
   expect(within(fallbackCard).getByText(/vehicle.named_model.unmapped/)).toBeInTheDocument();
 
   expect(screen.getByText("Climatiq")).toBeInTheDocument();
+  expect(screen.getByText("Factor fit:")).toBeInTheDocument();
   expect(screen.getByText("normalized fuel_type matched: electric")).toBeInTheDocument();
 });
 
@@ -80,6 +83,9 @@ const v2Response = {
       unit: "kg",
       source: "fallback",
       confidence: { score: 0.55, level: "medium" },
+      parameter_confidence: { score: 0.6, level: "medium" },
+      factor_confidence: { score: 0.55, level: "medium" },
+      source_confidence: { score: 0.55, level: "medium" },
       parameters: { vehicle_description: "BMW X5", distance: 5, distance_unit: "km" },
       assumptions: [
         {
@@ -103,6 +109,9 @@ const v2Response = {
       unit: "kg",
       source: "climatiq",
       confidence: { score: 0.92, level: "high" },
+      parameter_confidence: { score: 0.95, level: "high" },
+      factor_confidence: { score: 0.92, level: "high" },
+      source_confidence: { score: 1, level: "high" },
       parameters: { distance: 10, distance_unit: "km", fuel_type: "electric" },
       assumptions: [],
       issues: [],

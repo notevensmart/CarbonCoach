@@ -45,6 +45,15 @@ def test_estimate_v2_requires_journal_field():
     assert response.json()["error"] == "Missing 'journal' field"
 
 
+def test_estimate_v2_rejects_malformed_journal_type_without_crashing():
+    app_module.is_ready = True
+    app_module.preload_error = None
+    response = client.post("/api/estimate-v2", json={"journal": ["not", "text"]})
+
+    assert response.status_code == 400
+    assert response.json()["error"] == "'journal' must be a string"
+
+
 def test_v1_estimate_route_remains_available(monkeypatch):
     app_module.is_ready = True
     app_module.preload_error = None

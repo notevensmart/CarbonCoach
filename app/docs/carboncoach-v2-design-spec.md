@@ -457,6 +457,41 @@ electricity grid mix residential energy kWh
 
 This module should return multiple candidates with scores and reasons, not only one winner.
 
+The candidate score is a factor-fit retrieval signal, not a calibrated
+probability that the resulting emissions value is correct. However, factor
+fit is part of estimate uncertainty. After selecting and validating a factor,
+the pipeline must derive factor confidence from the selected factor fit and
+source quality, then use it to constrain overall event confidence.
+
+```text
+CO2e = normalized activity amount x selected emission factor
+
+overall estimate confidence =
+  min(parameter confidence, factor confidence, source confidence)
+```
+
+For the initial deterministic implementation, the accepted selected factor's
+numeric match score may be reused as its numeric factor-confidence score.
+It must still be described as factor fit/relevance rather than statistical
+accuracy, and it must use the normal confidence-level thresholds. Thus a
+factor accepted normally at `0.75` remains medium factor confidence until its
+score reaches the `0.80` high-confidence threshold.
+
+Factor fit/confidence must never multiply or otherwise rescale the CO2e
+amount. A strong factor match does not erase uncertain assumptions, and a
+weak-but-accepted factor must not produce an overall high-confidence estimate.
+
+Initial source-confidence behavior should be deterministic:
+
+```text
+successful validated Climatiq estimate:
+  source confidence = 1.00 unless maintained source-quality metadata
+  explicitly supplies a lower cap
+
+local fallback estimate:
+  source confidence = maintained fallback factor confidence
+```
+
 #### EstimateValidator
 
 Validates that a selected factor and parameter set are compatible.
@@ -530,7 +565,9 @@ Builds user-facing structured response:
         "co2e": 2.1,
         "unit": "kg",
         "source": "climatiq",
-        "confidence": "medium",
+        "parameter_confidence": {"score": 0.60, "level": "medium"},
+        "factor_confidence": {"score": 0.90, "level": "high"},
+        "confidence": {"score": 0.60, "level": "medium"},
         "assumptions": [
           "Assumed heater power of 1.5 kW because wattage was not provided."
         ]
@@ -594,10 +631,17 @@ class EstimateDetail(BaseModel):
     co2e: float | None = None
     unit: str = "kg"
     source: Literal["climatiq", "fallback", "unresolved"]
-    confidence: Literal["high", "medium", "low"]
+    parameter_confidence: Confidence | None = None
+    factor_confidence: Confidence | None = None
+    confidence: Confidence
     assumptions: list[str] = []
     errors: list[str] = []
 ```
+
+The established `confidence` field remains the user-facing overall
+confidence. Adding `parameter_confidence` and `factor_confidence` is an
+additive response extension for transparency; clients must remain tolerant of
+responses that only expose overall `confidence` during rollout.
 
 ## Example Flows
 
@@ -762,12 +806,15 @@ Factor retrieval:
 - retrieves distance-compatible factor for car ride
 - retrieves energy-compatible factor for heater/electricity
 - rejects wrong unit type
+- accepted medium-fit factor caps otherwise high parameter confidence
+- high-fit factor does not raise confidence above assumed parameters
 
 Pipeline regressions:
 
 - no quantity -> explicit low-confidence default
 - API fails -> fallback with assumptions
 - ambiguous input -> unresolved or low confidence, not silent nonsense
+- overall confidence is conservative across parameter, factor, and source confidence
 
 ### Golden Test Set
 
@@ -822,6 +869,7 @@ This slice should introduce only the shared foundation needed for that behavior:
 - energy parameter builder
 - V2 response shape
 - frontend display for confidence/assumptions/status
+- additive factor-confidence fields and display when confidence hardening is implemented
 
 ### Phase 1A: Deployment Visibility
 
@@ -874,7 +922,20 @@ Add further vertical slices for:
   - parameters used
   - assumptions
   - confidence
+  - factor fit/factor confidence when present
   - source: Climatiq or fallback
+
+### Phase 4A: Confidence Hardening
+
+- Convert selected factor-fit scores into explicit factor confidence.
+- Preserve raw factor fit for diagnostics and match-reason visibility.
+- Calculate overall estimate confidence conservatively as the minimum of
+  parameter, factor, and source confidence.
+- Apply factor-confidence caps before total confidence aggregation.
+- Treat a successful validated Climatiq source as uncapped (`1.00`) unless
+  maintained source-quality metadata explicitly supplies a lower cap; use
+  maintained factor confidence for local fallbacks.
+- Keep CO2e calculations independent of confidence values.
 
 ### Phase 5: Further External Enrichment
 

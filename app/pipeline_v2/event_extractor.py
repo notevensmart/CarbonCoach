@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 
-from app.domain.activity_taxonomy import TRANSPORT_TAXONOMY
+from app.domain.activity_taxonomy import ACTIVITY_TAXONOMY, TRANSPORT_TAXONOMY
 from app.domain.models import (
     CarbonEvent,
     Confidence,
@@ -94,7 +94,21 @@ VEHICLE_TRAIT_RE = re.compile(
     re.IGNORECASE,
 )
 VEHICLE_YEAR_RE = re.compile(r"\b(?P<year>(?:19|20)\d{2})\b")
-CLAUSE_SPLIT_RE = re.compile(r"\s*(?:[.;]|\bthen\b|\band\b)\s+", re.IGNORECASE)
+CLAUSE_SPLIT_RE = re.compile(r"\s*(?:[,.;!?]|\bthen\b|\band\b)\s+", re.IGNORECASE)
+ROAD_MOVEMENT_RE = re.compile(
+    r"\b(?:drive|drove|driving|went|travelled|traveled|commuted?)\b",
+    re.IGNORECASE,
+)
+DIRECT_DRIVING_RE = re.compile(r"\b(?:drive|drove|driving)\b", re.IGNORECASE)
+EXPLICIT_DISTANCE_RE = re.compile(
+    r"\b\d+(?:\.\d+)?\s*(?:k|kms?|kilometers?|kilometres?)\b",
+    re.IGNORECASE,
+)
+ROAD_VEHICLE_RE = re.compile(
+    r"\b(?:car|suv|4wd|four[- ]wheel[- ]drive|crossover|ute|pickup|pick-up|"
+    r"van|sedan|hatchback|wagon|coupe)\b",
+    re.IGNORECASE,
+)
 TRANSPORT_MATCH_PRIORITY = (
     "walking",
     "bicycle_ride",
@@ -118,46 +132,56 @@ class JournalEventExtractor:
     def extract(self, journal: PreprocessedJournal) -> list[CarbonEvent]:
         events: list[CarbonEvent] = []
 
-        for clause in _candidate_clauses(journal.cleaned_journal):
+        for raw_clause, clause in _candidate_clause_pairs(journal):
+            recognized_event = None
             if HEATER_RE.search(clause):
                 power_source = (
                     "natural_gas" if NATURAL_GAS_RE.search(clause) else "electricity"
                 )
-                events.append(
-                    CarbonEvent(
-                        raw_text=clause,
-                        category="energy",
-                        activity_type="space_heater_use",
-                        entities={"device": "heater", "power_source": power_source},
-                        confidence=Confidence.from_score(0.80),
-                    )
+                recognized_event = CarbonEvent(
+                    raw_text=clause,
+                    category="energy",
+                    activity_type="space_heater_use",
+                    entities={"device": "heater", "power_source": power_source},
+                    confidence=Confidence.from_score(0.80),
                 )
             elif AIR_CONDITIONER_RE.search(clause):
-                events.append(
-                    CarbonEvent(
-                        raw_text=clause,
-                        category="energy",
-                        activity_type="air_conditioner_use",
-                        entities={"device": "air_conditioner", "power_source": "electricity"},
-                        confidence=Confidence.from_score(0.80),
-                    )
+                recognized_event = CarbonEvent(
+                    raw_text=clause,
+                    category="energy",
+                    activity_type="air_conditioner_use",
+                    entities={"device": "air_conditioner", "power_source": "electricity"},
+                    confidence=Confidence.from_score(0.80),
                 )
             elif ELECTRICITY_RE.search(clause):
-                events.append(
-                    CarbonEvent(
-                        raw_text=clause,
-                        category="energy",
-                        activity_type="electricity_use",
-                        entities={"power_source": "electricity"},
-                        confidence=Confidence.from_score(0.85),
-                    )
+                recognized_event = CarbonEvent(
+                    raw_text=clause,
+                    category="energy",
+                    activity_type="electricity_use",
+                    entities={"power_source": "electricity"},
+                    confidence=Confidence.from_score(0.85),
                 )
             else:
-                transport_event = _transport_event(clause, journal.corrections)
-                if transport_event is not None:
-                    events.append(transport_event)
+                recognized_event = _policy_event(clause, "unresolved")
+                if recognized_event is None:
+                    recognized_event = _transport_event(clause, journal.corrections)
 
-            events.extend(_known_unsupported_events(clause))
+            if recognized_event is not None:
+                events.append(recognized_event.model_copy(update={"raw_text": raw_clause}))
+
+            events.extend(
+                event.model_copy(update={"raw_text": raw_clause})
+                for event in _policy_events(clause, "unresolved")
+                if recognized_event is None or event.activity_type != recognized_event.activity_type
+            )
+            events.extend(
+                event.model_copy(update={"raw_text": raw_clause})
+                for event in _policy_events(clause, "not_estimated")
+            )
+            events.extend(
+                event.model_copy(update={"raw_text": raw_clause})
+                for event in _known_unsupported_events(clause)
+            )
 
         return events
 
@@ -165,6 +189,14 @@ class JournalEventExtractor:
 def _candidate_clauses(text: str) -> list[str]:
     clauses = [clause.strip(" ,") for clause in CLAUSE_SPLIT_RE.split(text)]
     return [clause for clause in clauses if clause]
+
+
+def _candidate_clause_pairs(journal: PreprocessedJournal) -> list[tuple[str, str]]:
+    raw_clauses = _candidate_clauses(journal.raw_journal)
+    cleaned_clauses = _candidate_clauses(journal.cleaned_journal)
+    if len(raw_clauses) == len(cleaned_clauses):
+        return list(zip(raw_clauses, cleaned_clauses))
+    return [(clause, clause) for clause in cleaned_clauses]
 
 
 def _transport_event(
@@ -191,6 +223,30 @@ def _transport_event(
     )
 
 
+def _policy_event(clause: str, policy: str) -> CarbonEvent | None:
+    return next(iter(_policy_events(clause, policy)), None)
+
+
+def _policy_events(clause: str, policy: str) -> list[CarbonEvent]:
+    events = []
+    for activity_type, metadata in ACTIVITY_TAXONOMY.items():
+        if metadata.get("estimate_policy") != policy:
+            continue
+        patterns = metadata.get("detection_patterns", ())
+        if not any(re.search(pattern, clause, re.IGNORECASE) for pattern in patterns):
+            continue
+        events.append(
+            CarbonEvent(
+                raw_text=clause,
+                category=metadata["category"],
+                activity_type=activity_type,
+                entities={"detection_policy": policy},
+                confidence=Confidence.from_score(0.90 if policy == "not_estimated" else 0.30),
+            )
+        )
+    return events
+
+
 def _transport_activity_type(clause: str) -> str | None:
     description = _unknown_vehicle_description(clause)
     mode_terms = {
@@ -198,14 +254,7 @@ def _transport_activity_type(clause: str) -> str | None:
         for metadata in TRANSPORT_TAXONOMY.values()
         for term in metadata["mode_synonyms"]
     }
-    is_named_driven_vehicle = bool(
-        description
-        and description.lower() not in mode_terms
-        and re.search(r"\b(?:drive|drove|driving)\b", clause, re.IGNORECASE)
-    )
-    if is_named_driven_vehicle:
-        return "car_ride"
-    return next(
+    explicit_mode = next(
         (
             candidate
             for candidate in TRANSPORT_MATCH_PRIORITY
@@ -213,6 +262,32 @@ def _transport_activity_type(clause: str) -> str | None:
         ),
         None,
     )
+    has_road_vehicle_context = bool(
+        description and description.lower() not in mode_terms or ROAD_VEHICLE_RE.search(clause)
+    )
+    if (
+        has_road_vehicle_context
+        and DIRECT_DRIVING_RE.search(clause)
+        and EXPLICIT_DISTANCE_RE.search(clause)
+    ):
+        return "car_ride"
+    if explicit_mode in {
+        "walking",
+        "bicycle_ride",
+        "bus_ride",
+        "train_ride",
+        "rideshare",
+        "flight",
+    }:
+        return explicit_mode
+    is_named_driven_vehicle = bool(
+        has_road_vehicle_context
+        and ROAD_MOVEMENT_RE.search(clause)
+        and EXPLICIT_DISTANCE_RE.search(clause)
+    )
+    if is_named_driven_vehicle:
+        return "car_ride"
+    return explicit_mode
 
 
 def _known_unsupported_events(clause: str) -> list[CarbonEvent]:

@@ -121,12 +121,24 @@ async def estimate_emissions_v2(request: Request):
 
     try:
         data = await request.json()
+        if not isinstance(data, dict):
+            return JSONResponse(
+                status_code=400,
+                content={"error": "Request body must be a JSON object"},
+            )
         journal = data.get("journal", "")
-        if not journal:
+        if not isinstance(journal, str):
+            return JSONResponse(
+                status_code=400,
+                content={"error": "'journal' must be a string"},
+            )
+        if not journal.strip():
             return JSONResponse(status_code=400, content={"error": "Missing 'journal' field"})
 
         return pipeline_v2(journal)
 
+    except ValueError:
+        return JSONResponse(status_code=400, content={"error": "Request body must be valid JSON"})
     except Exception as exc:
         return JSONResponse(status_code=500, content={"error": str(exc)})
 

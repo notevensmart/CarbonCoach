@@ -165,11 +165,14 @@ def test_pipeline_v2_estimates_heater_with_unrelated_surrounding_text(v2_pipelin
         "I worked from home today, then I turned on the heater for 3 hours and read a book."
     ).model_dump()
 
-    assert len(result["details"]) == 1
-    detail = result["details"][0]
-    assert detail["activity_type"] == "space_heater_use"
-    assert detail["parameters"]["energy"] == 4.5
-    assert detail["status"] == "estimated"
+    assert [detail["activity_type"] for detail in result["details"]] == [
+        "space_heater_use",
+        "personal_activity",
+    ]
+    heater = result["details"][0]
+    assert heater["parameters"]["energy"] == 4.5
+    assert heater["status"] == "estimated"
+    assert result["details"][1]["status"] == "not_estimated"
 
 
 def test_pipeline_v2_returns_multiple_energy_events_without_quantity_bleed(v2_pipeline):
