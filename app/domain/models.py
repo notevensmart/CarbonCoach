@@ -171,7 +171,21 @@ class EstimateTotal(StrictBaseModel):
     source_breakdown: SourceBreakdown
 
 
+class ImpactComparison(StrictBaseModel):
+    key: str
+    message: str
+    amount: float = Field(..., gt=0.0)
+    unit: str
+    reference_label: str
+    kg_co2e_per_unit: float = Field(..., gt=0.0)
+    input_total_kg_co2e: float = Field(..., gt=0.0)
+    applicability: str
+    source_note: str
+    approximate: Literal[True] = True
+
+
 class CarbonEstimateResponse(StrictBaseModel):
     version: Literal["v2"] = "v2"
     total: EstimateTotal
     details: list[EstimateDetail] = Field(default_factory=list)
+    comparison: ImpactComparison | None = None

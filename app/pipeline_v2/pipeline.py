@@ -9,6 +9,7 @@ from app.domain.models import (
     SourceBreakdown,
 )
 from app.domain.activity_taxonomy import ACTIVITY_TAXONOMY
+from app.domain.impact_comparisons import build_impact_comparison
 from app.pipeline_v2.emission_estimator import ClimatiqEmissionEstimator, EmissionEstimator
 from app.pipeline_v2.event_extractor import JournalEventExtractor
 from app.pipeline_v2.entity_enricher import EntityEnricher
@@ -49,7 +50,8 @@ class CarbonPipelineV2:
         details = [self._estimate_event(self._normalize_event(event)) for event in extracted_events]
 
         total = _build_total(details)
-        return CarbonEstimateResponse(total=total, details=details)
+        comparison = build_impact_comparison(total)
+        return CarbonEstimateResponse(total=total, details=details, comparison=comparison)
 
     def _estimate_event(self, event: CarbonEvent) -> EstimateDetail:
         metadata = ACTIVITY_TAXONOMY.get(event.activity_type, {})

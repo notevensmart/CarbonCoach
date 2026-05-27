@@ -8,7 +8,7 @@ import {
   technicalConfidence,
 } from "./resultPresentation";
 
-export default function DeveloperDetailsAccordion({ estimate, details }) {
+export default function DeveloperDetailsAccordion({ estimate, details, comparison }) {
   return (
     <details
       className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
@@ -24,6 +24,7 @@ export default function DeveloperDetailsAccordion({ estimate, details }) {
             {technicalConfidence(estimate.total.confidence)}
           </p>
         )}
+        {comparison && <ComparisonTechnicalDetail comparison={comparison} />}
         {details.length === 0 && <p>No activity calculation details are available.</p>}
         {details.map((detail, index) => (
           <TechnicalDetail
@@ -33,6 +34,36 @@ export default function DeveloperDetailsAccordion({ estimate, details }) {
         ))}
       </div>
     </details>
+  );
+}
+
+function ComparisonTechnicalDetail({ comparison }) {
+  return (
+    <section className="rounded-lg border border-gray-200 p-4">
+      <h3 className="font-semibold text-gray-900">Impact comparison calculation</h3>
+      <dl className="mt-3 grid gap-2 sm:grid-cols-2">
+        <TechnicalField label="Comparison key" value={comparison.key} />
+        <TechnicalField label="Reference label" value={comparison.reference_label} />
+        <TechnicalField
+          label="Input total kg CO2e"
+          value={`${comparison.input_total_kg_co2e} kg CO2e`}
+        />
+        <TechnicalField
+          label="Conversion factor used"
+          value={`${comparison.kg_co2e_per_unit} kg CO2e/${comparison.unit}`}
+        />
+        <TechnicalField
+          label="Calculated comparison amount"
+          value={`${comparison.amount} ${comparison.unit}`}
+        />
+      </dl>
+      <p className="mt-3">
+        <strong>Applicability:</strong> {comparison.applicability}
+      </p>
+      <p className="mt-2">
+        <strong>Source/provenance:</strong> {comparison.source_note}
+      </p>
+    </section>
   );
 }
 

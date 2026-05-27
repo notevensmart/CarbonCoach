@@ -3,6 +3,7 @@ import ActivityCard from "./ActivityCard";
 import CategoryBreakdown from "./CategoryBreakdown";
 import DeveloperDetailsAccordion from "./DeveloperDetailsAccordion";
 import HeroSummaryCard from "./HeroSummaryCard";
+import ImpactComparisonCard from "./ImpactComparisonCard";
 import InsightSummary from "./InsightSummary";
 import NeedsAttention from "./NeedsAttention";
 import NotIncludedActivities from "./NotIncludedActivities";
@@ -15,6 +16,7 @@ export default function ConsumerDashboard({ estimate }) {
     <section aria-label="Emission estimate results" className="mt-6 space-y-5">
       <HeroSummaryCard dashboard={dashboard} />
       <InsightSummary insight={dashboard.insight} />
+      <ImpactComparisonCard comparison={dashboard.comparison} />
       <CategoryBreakdown dashboard={dashboard} />
 
       {dashboard.estimatedDetails.length > 0 && (
@@ -42,7 +44,11 @@ export default function ConsumerDashboard({ estimate }) {
         </p>
       )}
 
-      <DeveloperDetailsAccordion estimate={estimate} details={dashboard.details} />
+      <DeveloperDetailsAccordion
+        estimate={estimate}
+        details={dashboard.details}
+        comparison={dashboard.comparison}
+      />
     </section>
   );
 }

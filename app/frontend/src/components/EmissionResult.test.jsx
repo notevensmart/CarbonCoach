@@ -113,6 +113,82 @@ test("uses stable tie messaging instead of implying a single category is larger"
   ).toBeInTheDocument();
 });
 
+test("renders one backend-supplied approximate impact comparison for an eligible estimate", () => {
+  render(
+    <EmissionResult
+      response={v2Response(
+        [
+          includedDetail({
+            category: "transport",
+            activity_type: "car_ride",
+            co2e: 3.072,
+          }),
+        ],
+        { score: 0.86, level: "high" },
+        comparisonFixture()
+      )}
+    />
+  );
+
+  const comparison = screen.getByLabelText("Impact comparison");
+  expect(
+    within(comparison).getByText(
+      "Roughly equivalent to driving an average petrol car for 16 km."
+    )
+  ).toBeInTheDocument();
+  expect(screen.getAllByLabelText("Impact comparison")).toHaveLength(1);
+  expect(within(comparison).queryByText(/0\.192|provenance/i)).not.toBeInTheDocument();
+});
+
+test("hides comparison output for low-confidence and zero-total result states", () => {
+  const { rerender } = render(
+    <EmissionResult
+      response={v2Response(
+        [includedDetail({ co2e: 2, confidence: { score: 0.4, level: "low" } })],
+        { score: 0.4, level: "low" },
+        comparisonFixture()
+      )}
+    />
+  );
+
+  expect(screen.queryByLabelText("Impact comparison")).not.toBeInTheDocument();
+
+  rerender(
+    <EmissionResult
+      response={v2Response([unresolvedDetail()], { score: 0.2, level: "low" }, comparisonFixture())}
+    />
+  );
+  expect(screen.queryByLabelText("Impact comparison")).not.toBeInTheDocument();
+
+  rerender(
+    <EmissionResult response={v2Response([], { score: 0.2, level: "low" }, comparisonFixture())} />
+  );
+  expect(screen.queryByLabelText("Impact comparison")).not.toBeInTheDocument();
+});
+
+test("exposes comparison calculation and provenance only in developer details", () => {
+  render(
+    <EmissionResult
+      response={v2Response(
+        [includedDetail({ category: "transport", activity_type: "car_ride", co2e: 3.072 })],
+        { score: 0.86, level: "high" },
+        comparisonFixture()
+      )}
+    />
+  );
+
+  const accordion = screen.getByTestId("developer-details");
+  expect(within(accordion).queryByText("Impact comparison calculation")).not.toBeVisible();
+  fireEvent.click(within(accordion).getByText("How this estimate was calculated"));
+
+  expect(within(accordion).getByText("Impact comparison calculation")).toBeVisible();
+  expect(within(accordion).getByText("average_petrol_car_distance")).toBeVisible();
+  expect(within(accordion).getByText("3.072 kg CO2e")).toBeVisible();
+  expect(within(accordion).getByText("0.192 kg CO2e/km")).toBeVisible();
+  expect(within(accordion).getByText("16 km")).toBeVisible();
+  expect(within(accordion).getByText(/National Greenhouse Accounts Factors 2025/)).toBeVisible();
+});
+
 test("shows a named-vehicle fallback assumption as an approximate estimate without codes", () => {
   render(
     <EmissionResult
@@ -302,7 +378,7 @@ test("continues to render a V1 response when the configured endpoint targets V1"
   expect(screen.getByText("Legacy result")).toBeInTheDocument();
 });
 
-function v2Response(details, confidence = { score: 0.7, level: "medium" }) {
+function v2Response(details, confidence = { score: 0.7, level: "medium" }, comparison = null) {
   const included = details.filter((detail) =>
     ["estimated", "fallback_estimated"].includes(detail.status)
   );
@@ -314,7 +390,24 @@ function v2Response(details, confidence = { score: 0.7, level: "medium" }) {
       confidence,
       source_breakdown: {},
     },
+    comparison,
     details,
+  };
+}
+
+function comparisonFixture(overrides = {}) {
+  return {
+    key: "average_petrol_car_distance",
+    message: "Roughly equivalent to driving an average petrol car for 16 km.",
+    amount: 16,
+    unit: "km",
+    reference_label: "average petrol passenger car",
+    kg_co2e_per_unit: 0.192,
+    input_total_kg_co2e: 3.072,
+    applicability: "Australia; representative petrol passenger-car operational travel emissions only.",
+    source_note: "Maintained Australian approximate reference from National Greenhouse Accounts Factors 2025.",
+    approximate: true,
+    ...overrides,
   };
 }
 

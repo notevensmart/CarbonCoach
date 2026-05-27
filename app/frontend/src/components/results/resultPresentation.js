@@ -74,6 +74,11 @@ export function buildDashboardModel(estimate) {
     details,
     breakdown,
     mainDriver,
+    comparison: displayableComparison(
+      estimate.comparison,
+      contributingTotal,
+      estimate.total?.confidence
+    ),
     insight: buildInsight({
       mainDriver,
       hasContributingCategory: breakdown.length > 0,
@@ -82,6 +87,18 @@ export function buildDashboardModel(estimate) {
       estimatedCount: estimatedDetails.length,
     }),
   };
+}
+
+export function displayableComparison(comparison, total, confidence) {
+  if (
+    !comparison?.message ||
+    comparison.approximate !== true ||
+    total <= 0 ||
+    !["medium", "high"].includes(confidence?.level)
+  ) {
+    return null;
+  }
+  return comparison;
 }
 
 export function buildInsight({
