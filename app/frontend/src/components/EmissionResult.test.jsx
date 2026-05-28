@@ -89,6 +89,15 @@ test("shows category command center in stable category order with included total
   expect(within(command).getByText("2.00 kg")).toBeInTheDocument();
   expect(within(command).getByText("1.00 kg")).toBeInTheDocument();
   expect(within(command).getAllByText("0.00 kg")).toHaveLength(2);
+
+  const chartSegments = [...command.querySelectorAll("svg rect")].map((rect) =>
+    rect.getAttribute("fill")
+  );
+  const cardAccents = [...command.querySelectorAll("[data-category-color]")]
+    .slice(0, 2)
+    .map((accent) => accent.style.backgroundColor);
+  expect(chartSegments).toEqual(["#0f766e", "#b45309"]);
+  expect(cardAccents).toEqual(["rgb(15, 118, 110)", "rgb(180, 83, 9)"]);
 });
 
 test("handles zero-total and unresolved-only responses without implying completeness", () => {
@@ -167,6 +176,41 @@ test("Activities tab preserves estimated, needs-attention, and not-included acti
   expect(
     within(activities).getByText(
       "This activity was recognised but is not included in estimated emissions."
+    )
+  ).toBeInTheDocument();
+});
+
+test("activity card explains how to improve a medium-confidence estimate with no assumptions", () => {
+  render(
+    <EmissionResult
+      response={v2Response([
+        includedDetail({
+          raw_text: "I used 5 kWh of electricity.",
+          category: "energy",
+          activity_type: "electricity_use",
+          co2e: 4.05,
+          confidence: { score: 0.77, level: "medium" },
+          parameter_confidence: { score: 0.95, level: "high" },
+          factor_confidence: { score: 0.77, level: "medium" },
+          source_confidence: { score: 1, level: "high" },
+          parameters: { energy: 5, energy_unit: "kWh" },
+          assumptions: [],
+        }),
+      ])}
+    />
+  );
+
+  fireEvent.click(screen.getByRole("tab", { name: "Activities" }));
+  const activities = screen.getByRole("tabpanel", { name: "Activities" });
+  const card = within(activities)
+    .getByRole("heading", { name: "Electricity Use" })
+    .closest("article");
+
+  expect(within(card).queryByText("What we assumed")).not.toBeInTheDocument();
+  expect(within(card).getByText("What would improve this estimate")).toBeInTheDocument();
+  expect(
+    within(card).getByText(
+      "A more specific emissions factor would improve this estimate. Your activity details were understood, but the available factor was broad."
     )
   ).toBeInTheDocument();
 });

@@ -64,9 +64,23 @@ export default function CategoryCommandCenter({ dashboard }) {
             className={`rounded-2xl border p-4 ${category.softClass}`}
             key={category.key}
           >
+            <div
+              aria-hidden="true"
+              aria-label={`${category.label} category color`}
+              className="mb-4 h-2 rounded-full"
+              data-category-color={category.key}
+              style={{ backgroundColor: category.color }}
+            />
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h3 className="font-semibold">{category.label}</h3>
+                <h3 className="flex items-center gap-2 font-semibold">
+                  <span
+                    aria-hidden="true"
+                    className="inline-block h-3 w-3 rounded-full"
+                    style={{ backgroundColor: category.color }}
+                  />
+                  {category.label}
+                </h3>
                 <p className="mt-1 text-2xl font-semibold">
                   {formatNumber(category.amount)} {dashboard.unit}
                 </p>

@@ -6,12 +6,14 @@ import {
   confidenceLabel,
   consumerAssumptionMessage,
   formatNumber,
+  improvementGuidance,
   parameterSummary,
 } from "./resultPresentation";
 
 export default function ActivityCard({ detail }) {
   const assumptions = detail.assumptions || [];
   const summary = parameterSummary(detail.parameters);
+  const guidance = improvementGuidance(detail);
 
   return (
     <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm shadow-stone-900/5">
@@ -53,6 +55,13 @@ export default function ActivityCard({ detail }) {
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {guidance && (
+        <div className="mt-4 rounded-lg border border-teal-100 bg-teal-50 p-3 text-sm text-teal-950">
+          <h4 className="font-semibold">What would improve this estimate</h4>
+          <p className="mt-1">{guidance}</p>
         </div>
       )}
     </article>

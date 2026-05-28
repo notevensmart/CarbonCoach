@@ -411,6 +411,44 @@ export function consumerAssumptionMessage(assumption) {
     .replace(/\bClimatiq\b/gi, "an emissions data source");
 }
 
+export function improvementGuidance(detail) {
+  if (!detail?.confidence || detail.confidence.level === "high") {
+    return null;
+  }
+
+  const confidenceParts = [
+    ["parameter", detail.parameter_confidence?.score],
+    ["factor", detail.factor_confidence?.score],
+    ["source", detail.source_confidence?.score],
+  ].filter(([, score]) => typeof score === "number");
+
+  if (detail.status === "fallback_estimated" || detail.source === "fallback") {
+    return "This uses an approximate local factor because a verified provider estimate was not available.";
+  }
+
+  if (confidenceParts.length > 0) {
+    const [weakestPart] = confidenceParts.reduce((weakest, current) =>
+      current[1] < weakest[1] ? current : weakest
+    );
+
+    if (weakestPart === "parameter") {
+      return "Adding a clearer quantity, unit, distance, weight, or duration would improve this estimate.";
+    }
+    if (weakestPart === "factor") {
+      return "A more specific emissions factor would improve this estimate. Your activity details were understood, but the available factor was broad.";
+    }
+    if (weakestPart === "source") {
+      return "A stronger emissions data source would improve this estimate.";
+    }
+  }
+
+  if (detail.factor?.score !== undefined && detail.factor?.score !== null) {
+    return "A more specific emissions factor would improve this estimate. Your activity details were understood, but the available factor was broad.";
+  }
+
+  return "More specific activity details would improve this estimate.";
+}
+
 export function formatLabel(value) {
   return String(value || "")
     .replaceAll("_", " ")
