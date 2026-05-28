@@ -276,6 +276,7 @@ def _rank_records(
                 score=score,
                 match_reasons=reasons,
                 specificity_match=specificity_match,
+                metadata_text=text,
             )
         )
 
@@ -376,7 +377,8 @@ def _source_quality_score(record: dict) -> tuple[float, list[str]]:
     for key in ("source_quality_score", "data_quality_score"):
         if key in record:
             score = _bounded_score(record[key])
-            return score, [f"{key} from factor metadata: {score:.2f}"]
+            source = "enriched factor metadata" if record.get("source_note") else "factor metadata"
+            return score, [f"{key} from {source}: {score:.2f}"]
     return 0.50, ["source quality unavailable; applied neutral score: 0.50"]
 
 
@@ -634,14 +636,30 @@ def _record_rejection(rejections: list[dict] | None, record: dict, reason: str) 
 
 
 def _record_scalar_values(record: dict):
-    for value in record.values():
-        if isinstance(value, (str, int, float)):
-            yield value
-        elif isinstance(value, (list, tuple, set)):
-            for item in value:
-                if isinstance(item, (str, int, float)):
-                    yield item
-        elif isinstance(value, dict):
-            for item in value.values():
-                if isinstance(item, (str, int, float)):
-                    yield item
+    for key, value in record.items():
+        if key in {
+            "excluded_terms",
+            "source_urls",
+            "calculation_boundary",
+            "source_note",
+        }:
+            continue
+        yield from _flatten_record_value(value)
+
+
+def _flatten_record_value(value):
+    if isinstance(value, (str, int, float)):
+        yield value
+    elif isinstance(value, (list, tuple, set)):
+        for item in value:
+            yield from _flatten_record_value(item)
+    elif isinstance(value, dict):
+        for item_key, item in value.items():
+            if item_key in {
+                "excluded_terms",
+                "source_urls",
+                "calculation_boundary",
+                "source_note",
+            }:
+                continue
+            yield from _flatten_record_value(item)

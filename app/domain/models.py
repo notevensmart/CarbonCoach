@@ -138,6 +138,7 @@ class FactorCandidate(StrictBaseModel):
     score: float = Field(..., ge=0.0, le=1.0)
     match_reasons: list[str] = Field(default_factory=list)
     specificity_match: bool = False
+    metadata_text: str | None = Field(default=None, exclude=True)
 
 
 class EstimateDetail(StrictBaseModel):

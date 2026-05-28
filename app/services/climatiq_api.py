@@ -8,6 +8,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 import requests
 
+from app.domain.factor_metadata_overlay import merge_enriched_factor_metadata
+
 
 def _load_climatiq_environment() -> None:
     candidates = [
@@ -136,7 +138,7 @@ def load_activity_data(data_dir: str | Path | None = None) -> tuple[dict[str, st
                     "unit_type": row.get("unit_type", "").strip().lower(),
                 }
 
-    return lookup, metadata
+    return lookup, merge_enriched_factor_metadata(metadata)
 
 
 def set_activity_lookup(

@@ -110,7 +110,7 @@ class FactorCompatibilityValidator:
             sector=candidate.sector,
             category=candidate.category,
             intent=intent,
-            semantic_text=_record_text(
+            semantic_text=candidate.metadata_text or _record_text(
                 {
                     "activity_id": candidate.activity_id,
                     "name": candidate.name,
@@ -346,14 +346,30 @@ def _detected_products(text: str) -> set[str]:
 
 
 def _record_scalar_values(record: dict):
-    for value in record.values():
-        if isinstance(value, (str, int, float)):
-            yield value
-        elif isinstance(value, (list, tuple, set)):
-            for item in value:
-                if isinstance(item, (str, int, float)):
-                    yield item
-        elif isinstance(value, dict):
-            for item in value.values():
-                if isinstance(item, (str, int, float)):
-                    yield item
+    for key, value in record.items():
+        if key in {
+            "excluded_terms",
+            "source_urls",
+            "calculation_boundary",
+            "source_note",
+        }:
+            continue
+        yield from _flatten_record_value(value)
+
+
+def _flatten_record_value(value):
+    if isinstance(value, (str, int, float)):
+        yield value
+    elif isinstance(value, (list, tuple, set)):
+        for item in value:
+            yield from _flatten_record_value(item)
+    elif isinstance(value, dict):
+        for item_key, item in value.items():
+            if item_key in {
+                "excluded_terms",
+                "source_urls",
+                "calculation_boundary",
+                "source_note",
+            }:
+                continue
+            yield from _flatten_record_value(item)
