@@ -153,7 +153,7 @@ def test_known_unsupported_carbon_events_remain_visible_in_mixed_journals(v2_pip
 
     assert [detail["activity_type"] for detail in waste] == ["car_ride", "recycling"]
     assert waste[1]["status"] == "unresolved"
-    assert waste[1]["issues"][0]["code"] == "waste.estimation.not_implemented"
+    assert waste[1]["issues"][0]["code"] == "waste.missing_weight"
     assert [detail["activity_type"] for detail in goods] == [
         "clothing_purchase",
         "bus_ride",
@@ -163,31 +163,36 @@ def test_known_unsupported_carbon_events_remain_visible_in_mixed_journals(v2_pip
 
 
 @pytest.mark.parametrize(
-    ("journal", "category", "activity_type"),
+    ("journal", "category", "activity_type", "status", "issue_code"),
     [
-        ("I recycled 500 g of plastic.", "waste", "recycling"),
-        ("I put food scraps in the compost bin.", "waste", "composting"),
-        ("I put rubbish in the general waste bin.", "waste", "landfill_waste"),
-        ("I bought two shirts.", "goods_services", "clothing_purchase"),
-        ("I ordered a laptop online.", "goods_services", "electronics_purchase"),
-        ("I spent $6 on coffee.", "goods_services", "coffee_purchase"),
-        ("I bought groceries today.", "goods_services", "food_purchase"),
-        ("I had dinner at a restaurant.", "goods_services", "restaurant_meal"),
+        ("I recycled 500 g of plastic.", "waste", "recycling", "estimated", None),
+        ("I put food scraps in the compost bin.", "waste", "composting", "unresolved", "waste.missing_weight"),
+        ("I put rubbish in the general waste bin.", "waste", "landfill_waste", "unresolved", "waste.missing_weight"),
+        ("I bought two shirts.", "goods_services", "clothing_purchase", "unresolved", "goods_services.estimation.not_implemented"),
+        ("I ordered a laptop online.", "goods_services", "electronics_purchase", "unresolved", "goods_services.estimation.not_implemented"),
+        ("I spent $6 on coffee.", "goods_services", "coffee_purchase", "unresolved", "goods_services.money_factor_unavailable"),
+        ("I bought groceries today.", "goods_services", "food_purchase", "unresolved", "goods_services.product.unsupported_pathway"),
+        ("I had dinner at a restaurant.", "goods_services", "restaurant_meal", "unresolved", "goods_services.product.unsupported_pathway"),
     ],
 )
-def test_known_waste_and_goods_events_are_visible_until_factors_are_supported(
+def test_known_waste_and_goods_events_follow_bounded_factor_pathways(
     v2_pipeline,
     journal,
     category,
     activity_type,
+    status,
+    issue_code,
 ):
     detail = v2_pipeline.run(journal).model_dump()["details"][0]
 
     assert detail["category"] == category
     assert detail["activity_type"] == activity_type
-    assert detail["status"] == "unresolved"
-    assert detail["source"] == "unresolved"
-    assert detail["issues"][0]["code"] == f"{category}.estimation.not_implemented"
+    assert detail["status"] == status
+    if issue_code:
+        assert detail["source"] == "unresolved"
+        assert detail["issues"][0]["code"] == issue_code
+    else:
+        assert detail["source"] == "climatiq"
 
 
 def test_missing_climatiq_factor_uses_declared_local_fallback():

@@ -4,8 +4,10 @@ from app.domain.models import (
     CarbonEstimateResponse,
     CarbonEvent,
     Confidence,
+    EstimateCoverage,
     EstimateDetail,
     EstimateTotal,
+    Issue,
     SourceBreakdown,
 )
 from app.domain.activity_taxonomy import ACTIVITY_TAXONOMY
@@ -17,8 +19,10 @@ from app.pipeline_v2.fallback_estimator import LocalFallbackEstimator
 from app.pipeline_v2.journal_preprocessor import JournalPreprocessor
 from app.pipeline_v2.parameter_builders import (
     EnergyParameterBuilder,
+    GoodsServicesParameterBuilder,
     ParameterBuildResult,
     TransportParameterBuilder,
+    WasteParameterBuilder,
 )
 from app.pipeline_v2.quantity_normalizer import QuantityNormalizer
 
@@ -32,6 +36,8 @@ class CarbonPipelineV2:
         entity_enricher: EntityEnricher | None = None,
         energy_builder: EnergyParameterBuilder | None = None,
         transport_builder: TransportParameterBuilder | None = None,
+        goods_services_builder: GoodsServicesParameterBuilder | None = None,
+        waste_builder: WasteParameterBuilder | None = None,
         emission_estimator: EmissionEstimator | None = None,
         fallback_estimator: LocalFallbackEstimator | None = None,
     ) -> None:
@@ -41,17 +47,47 @@ class CarbonPipelineV2:
         self.entity_enricher = entity_enricher or EntityEnricher()
         self.energy_builder = energy_builder or EnergyParameterBuilder()
         self.transport_builder = transport_builder or TransportParameterBuilder()
+        self.goods_services_builder = goods_services_builder or GoodsServicesParameterBuilder()
+        self.waste_builder = waste_builder or WasteParameterBuilder()
         self.emission_estimator = emission_estimator or ClimatiqEmissionEstimator()
         self.fallback_estimator = fallback_estimator or LocalFallbackEstimator()
 
     def run(self, journal_entry: str) -> CarbonEstimateResponse:
         preprocessed = self.preprocessor.preprocess(journal_entry)
         extracted_events = self.event_extractor.extract(preprocessed)
-        details = [self._estimate_event(self._normalize_event(event)) for event in extracted_events]
+        details = [self._process_event(event) for event in extracted_events]
 
         total = _build_total(details)
-        comparison = build_impact_comparison(total)
-        return CarbonEstimateResponse(total=total, details=details, comparison=comparison)
+        coverage = _build_coverage(details)
+        comparison = build_impact_comparison(total, coverage=coverage)
+        return CarbonEstimateResponse(
+            total=total,
+            details=details,
+            coverage=coverage,
+            comparison=comparison,
+        )
+
+    def _process_event(self, event: CarbonEvent) -> EstimateDetail:
+        try:
+            return self._estimate_event(self._normalize_event(event))
+        except Exception as exc:
+            return EstimateDetail(
+                raw_text=event.raw_text,
+                category=event.category,
+                activity_type=event.activity_type,
+                status="failed",
+                source="none",
+                confidence=Confidence.from_score(0.0),
+                assumptions=event.assumptions,
+                issues=[
+                    *event.issues,
+                    Issue(
+                        code="event.processing.failed",
+                        message=f"Could not process this activity: {exc}",
+                        severity="error",
+                    ),
+                ],
+            )
 
     def _estimate_event(self, event: CarbonEvent) -> EstimateDetail:
         metadata = ACTIVITY_TAXONOMY.get(event.activity_type, {})
@@ -73,6 +109,10 @@ class CarbonPipelineV2:
             return self._estimate_energy_event(event)
         if event.category == "transport":
             return self._estimate_transport_event(event)
+        if event.category == "goods_services":
+            return self._estimate_built_event(event, self.goods_services_builder.build(event))
+        if event.category == "waste":
+            return self._estimate_built_event(event, self.waste_builder.build(event))
 
         return EstimateDetail(
             raw_text=event.raw_text,
@@ -240,6 +280,20 @@ def _build_total(details: list[EstimateDetail]) -> EstimateTotal:
         unit="kg",
         confidence=Confidence.from_score(score),
         source_breakdown=breakdown,
+    )
+
+
+def _build_coverage(details: list[EstimateDetail]) -> EstimateCoverage:
+    included_statuses = {"estimated", "fallback_estimated"}
+    unresolved_count = sum(detail.status == "unresolved" for detail in details)
+    failed_count = sum(detail.status == "failed" for detail in details)
+    return EstimateCoverage(
+        represented_activity_count=len(details),
+        included_in_total_count=sum(detail.status in included_statuses for detail in details),
+        unresolved_count=unresolved_count,
+        not_estimated_count=sum(detail.status == "not_estimated" for detail in details),
+        failed_count=failed_count,
+        estimate_is_partial=bool(unresolved_count or failed_count),
     )
 
 

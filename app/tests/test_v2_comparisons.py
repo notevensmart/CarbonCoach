@@ -10,7 +10,7 @@ from app.domain.impact_comparisons import (
     ImpactComparisonDefinition,
     build_impact_comparison,
 )
-from app.domain.models import Confidence, EstimateTotal, FactorCandidate, SourceBreakdown
+from app.domain.models import Confidence, EstimateCoverage, EstimateTotal, FactorCandidate, SourceBreakdown
 from app.pipeline_v2.emission_estimator import EmissionEstimateResult
 from app.pipeline_v2.pipeline import CarbonPipelineV2, _build_total
 
@@ -73,6 +73,19 @@ def test_zero_or_low_confidence_total_produces_no_comparison():
     assert build_impact_comparison(_total(2, 0.49)) is None
 
 
+def test_partial_coverage_suppresses_otherwise_eligible_comparison():
+    coverage = EstimateCoverage(
+        represented_activity_count=2,
+        included_in_total_count=1,
+        unresolved_count=1,
+        not_estimated_count=0,
+        failed_count=0,
+        estimate_is_partial=True,
+    )
+
+    assert build_impact_comparison(_total(2, 0.75), coverage=coverage) is None
+
+
 def test_missing_invalid_or_incompatible_metadata_produces_no_comparison():
     total = _total(2, 0.75)
     invalid = {
@@ -97,7 +110,10 @@ def test_missing_invalid_or_incompatible_metadata_produces_no_comparison():
 def test_comparison_generation_does_not_change_estimate_calculations(v2_pipeline, monkeypatch):
     result = v2_pipeline.run("I drove 16 km in a petrol car.")
     total_from_details = _build_total(result.details)
-    monkeypatch.setattr("app.pipeline_v2.pipeline.build_impact_comparison", lambda total: None)
+    monkeypatch.setattr(
+        "app.pipeline_v2.pipeline.build_impact_comparison",
+        lambda total, **kwargs: None,
+    )
     without_comparison = v2_pipeline.run("I drove 16 km in a petrol car.")
 
     assert result.comparison is not None

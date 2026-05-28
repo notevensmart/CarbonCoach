@@ -13,6 +13,8 @@ _UNIT_PARAMETER_REQUIREMENTS = {
     "energy": ("energy", "energy_unit", "kwh"),
     "distance": ("distance", "distance_unit", "km"),
     "passengeroverdistance": ("distance", "distance_unit", "km"),
+    "number": ("number", "number_unit", "item"),
+    "weight": ("weight", "weight_unit", "kg"),
 }
 
 _CATEGORY_MARKERS = {
@@ -151,9 +153,9 @@ class FactorCompatibilityValidator:
                 ),
             )
 
-        expected_sector = event.category
         normalized_sector = _normalized_text(sector)
-        if normalized_sector and normalized_sector != expected_sector:
+        sector_family = _category_family(sector)
+        if normalized_sector and sector_family != event.category:
             return FactorValidation(
                 compatible=False,
                 errors=(
@@ -173,7 +175,7 @@ class FactorCompatibilityValidator:
         reasons = [
             f"unit_type matched required {required_dimensions[0]} parameters: {selected_unit}"
         ]
-        if normalized_sector:
+        if sector_family == event.category:
             reasons.append(f"sector matched category: {event.category}")
         if category_family == event.category:
             reasons.append(f"factor category supports {event.category}")

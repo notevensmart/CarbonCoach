@@ -2,7 +2,12 @@ from __future__ import annotations
 
 import re
 
-from app.domain.activity_taxonomy import ACTIVITY_TAXONOMY, TRANSPORT_TAXONOMY
+from app.domain.activity_taxonomy import (
+    ACTIVITY_TAXONOMY,
+    GOODS_SERVICES_TAXONOMY,
+    TRANSPORT_TAXONOMY,
+    WASTE_TAXONOMY,
+)
 from app.domain.models import (
     CarbonEvent,
     Confidence,
@@ -35,36 +40,12 @@ POWERED_BICYCLE_RE = re.compile(
     r"\b(?:e[- ]?bike|electric\s+bicycle|electric\s+bike|pedal[- ]?assist(?:ed)?\s+bike)\b",
     re.IGNORECASE,
 )
-RECYCLING_RE = re.compile(
-    r"\b(?:recycle(?:d|ing)?|sorted)\b[^,.;]*\b(?:plastic|bottles?|cans?|glass|paper|cardboard|packaging)\b"
-    r"|\b(?:plastic|bottles?|cans?|glass|paper|cardboard|packaging)\b[^,.;]*\brecycl(?:e|ed|ing)\b",
-    re.IGNORECASE,
-)
-COMPOSTING_RE = re.compile(r"\b(?:compost(?:ed|ing)?|compost\s+bin)\b", re.IGNORECASE)
-LANDFILL_WASTE_RE = re.compile(
-    r"\b(?:threw|throw|discarded|disposed\s+of|put)\b[^,.;]*\b(?:trash|rubbish|garbage|landfill|general\s+waste)\b"
-    r"|\b(?:landfill|general\s+waste)\b",
-    re.IGNORECASE,
-)
 CLOTHING_PURCHASE_RE = re.compile(
     r"\b(?:bought|purchased|ordered)\b[^,.;]*\b(?:shirts?|t-?shirts?|clothes|clothing|jeans|jackets?|dress(?:es)?|shoes)\b",
     re.IGNORECASE,
 )
 ELECTRONICS_PURCHASE_RE = re.compile(
     r"\b(?:bought|purchased|ordered)\b[^,.;]*\b(?:laptops?|phones?|smartphones?|computers?|monitors?|televisions?|tvs?|headphones?)\b",
-    re.IGNORECASE,
-)
-COFFEE_PURCHASE_RE = re.compile(
-    r"\b(?:bought|purchased|ordered|spent\b[^,.;]*\bon)\b[^,.;]*\bcoffee\b",
-    re.IGNORECASE,
-)
-RESTAURANT_MEAL_RE = re.compile(
-    r"\b(?:ate|dined|had|ordered)\b[^,.;]*\b(?:restaurant|takeaway|takeout)\b"
-    r"|\b(?:restaurant|takeaway|takeout)\b[^,.;]*\b(?:meal|dinner|lunch|order(?:ed)?)\b",
-    re.IGNORECASE,
-)
-FOOD_PURCHASE_RE = re.compile(
-    r"\b(?:bought|purchased)\b[^,.;]*\b(?:groceries|grocery|food)\b",
     re.IGNORECASE,
 )
 VEHICLE_DISTANCE_SUFFIX = r"\s+\d+(?:\.\d+)?\s*(?:k|kms?|kilometers?|kilometres?)\b"
@@ -94,7 +75,13 @@ VEHICLE_TRAIT_RE = re.compile(
     re.IGNORECASE,
 )
 VEHICLE_YEAR_RE = re.compile(r"\b(?P<year>(?:19|20)\d{2})\b")
-CLAUSE_SPLIT_RE = re.compile(r"\s*(?:[,.;!?]|\bthen\b|\band\b)\s+", re.IGNORECASE)
+CLAUSE_SPLIT_RE = re.compile(
+    r"\s*(?:[,.;!?]|\bthen\b|\bwhile\b|"
+    r"\band\b(?=\s+(?:i\s+)?(?:grabbed|bought|purchased|ordered|spent|drove|"
+    r"travelled|traveled|commuted|caught|took|used|ran|turned|recycled|"
+    r"composted|put|threw|walked|read|studied|gaming|played)))\s+",
+    re.IGNORECASE,
+)
 ROAD_MOVEMENT_RE = re.compile(
     r"\b(?:drive|drove|driving|went|travelled|traveled|commuted?)\b",
     re.IGNORECASE,
@@ -178,10 +165,7 @@ class JournalEventExtractor:
                 event.model_copy(update={"raw_text": raw_clause})
                 for event in _policy_events(clause, "not_estimated")
             )
-            events.extend(
-                event.model_copy(update={"raw_text": raw_clause})
-                for event in _known_unsupported_events(clause)
-            )
+            events.extend(_everyday_events(raw_clause))
 
         return events
 
@@ -235,12 +219,17 @@ def _policy_events(clause: str, policy: str) -> list[CarbonEvent]:
         patterns = metadata.get("detection_patterns", ())
         if not any(re.search(pattern, clause, re.IGNORECASE) for pattern in patterns):
             continue
+        entities = {"detection_policy": policy}
+        if activity_type == "generic_energy_use" and re.search(
+            r"\b(?:pc|computer|desktop)\b", clause, re.IGNORECASE
+        ):
+            entities["device"] = "personal_computer"
         events.append(
             CarbonEvent(
                 raw_text=clause,
                 category=metadata["category"],
                 activity_type=activity_type,
-                entities={"detection_policy": policy},
+                entities=entities,
                 confidence=Confidence.from_score(0.90 if policy == "not_estimated" else 0.30),
             )
         )
@@ -290,37 +279,186 @@ def _transport_activity_type(clause: str) -> str | None:
     return explicit_mode
 
 
-def _known_unsupported_events(clause: str) -> list[CarbonEvent]:
+def _everyday_events(clause: str) -> list[CarbonEvent]:
+    positioned = [
+        *_goods_events(clause),
+        *_waste_events(clause),
+        *_unsupported_goods_events(clause),
+    ]
+    after = re.search(r"\bafter\b", clause, re.IGNORECASE)
+    if after and any(position < after.start() for position, _ in positioned) and any(
+        position > after.end() for position, _ in positioned
+    ):
+        positioned.sort(key=lambda candidate: (candidate[0] < after.start(), candidate[0]))
+    else:
+        positioned.sort(key=lambda candidate: candidate[0])
+    return [event for _, event in positioned]
+
+
+def _goods_events(clause: str) -> list[tuple[int, CarbonEvent]]:
+    if not _goods_purchase_context(clause):
+        return []
+    delivery_context = bool(re.search(r"\bdelivery\s+app\b", clause, re.IGNORECASE))
+    positioned: list[tuple[int, CarbonEvent]] = []
+    occupied: list[tuple[int, int]] = []
+    for activity_type in ("coffee_purchase", "restaurant_meal", "food_purchase"):
+        metadata = GOODS_SERVICES_TAXONOMY[activity_type]
+        for product_class, synonyms in metadata.get("product_synonyms", {}).items():
+            for synonym in sorted(synonyms, key=len, reverse=True):
+                for match in re.finditer(rf"\b{re.escape(synonym)}\b", clause, re.IGNORECASE):
+                    if any(_spans_overlap(match.span(), span) for span in occupied):
+                        continue
+                    if product_class == "unspecified_takeaway" and any(
+                        event.activity_type in {"coffee_purchase", "restaurant_meal"}
+                        for _, event in positioned
+                    ):
+                        continue
+                    selected_class = product_class
+                    if activity_type == "coffee_purchase" and any(
+                        re.search(rf"\b{re.escape(term)}\b", clause, re.IGNORECASE)
+                        for term in metadata.get("unsupported_variant_terms", ())
+                    ):
+                        selected_class = "unsupported_coffee_variant"
+                    positioned.append(
+                        (
+                            match.start(),
+                            CarbonEvent(
+                                raw_text=_component_fragment(clause, match.span()),
+                                category="goods_services",
+                                activity_type=activity_type,
+                                entities={
+                                    "product_class": selected_class,
+                                    "product_description": match.group(0),
+                                    "delivery_context": delivery_context,
+                                },
+                                confidence=Confidence.from_score(0.78),
+                            ),
+                        )
+                    )
+                    occupied.append(match.span())
+    return positioned
+
+
+def _unsupported_goods_events(clause: str) -> list[tuple[int, CarbonEvent]]:
     candidates = (
-        ("waste", "recycling", RECYCLING_RE),
-        ("waste", "composting", COMPOSTING_RE),
-        ("waste", "landfill_waste", LANDFILL_WASTE_RE),
-        ("goods_services", "clothing_purchase", CLOTHING_PURCHASE_RE),
-        ("goods_services", "electronics_purchase", ELECTRONICS_PURCHASE_RE),
-        ("goods_services", "coffee_purchase", COFFEE_PURCHASE_RE),
-        ("goods_services", "restaurant_meal", RESTAURANT_MEAL_RE),
-        ("goods_services", "food_purchase", FOOD_PURCHASE_RE),
+        (
+            "clothing_purchase",
+            CLOTHING_PURCHASE_RE,
+            re.compile(r"\b(?:shirts?|t-?shirts?|clothes|clothing|jeans|jackets?|dress(?:es)?|shoes)\b", re.I),
+        ),
+        (
+            "electronics_purchase",
+            ELECTRONICS_PURCHASE_RE,
+            re.compile(r"\b(?:laptops?|phones?|smartphones?|computers?|monitors?|televisions?|tvs?|headphones?)\b", re.I),
+        ),
+    )
+    events = []
+    for activity_type, pattern, item_pattern in candidates:
+        match = pattern.search(clause)
+        if match is None:
+            continue
+        item_match = item_pattern.search(clause, match.start(), match.end())
+        item_span = item_match.span() if item_match is not None else match.span()
+        events.append(
+            (
+                item_span[0],
+                CarbonEvent(
+                    raw_text=_component_fragment(clause, item_span),
+                    category="goods_services",
+                    activity_type=activity_type,
+                    confidence=Confidence.from_score(0.60),
+                    issues=[
+                        Issue(
+                            code="goods_services.estimation.not_implemented",
+                            message=(
+                                f"Detected {activity_type}, but no validated V2 "
+                                "factor pathway is configured for it yet."
+                            ),
+                            severity="warning",
+                        )
+                    ],
+                ),
+            )
+        )
+    return events
+
+
+def _waste_events(clause: str) -> list[tuple[int, CarbonEvent]]:
+    matched_method = _waste_method(clause)
+    if matched_method is None:
+        if not re.search(
+            r"\b(?:took\s+out|disposed\s+of)\b[^,.;]*\b(?:bag\s+of\s+)?(?:rubbish|trash|garbage|waste)\b",
+            clause,
+            re.IGNORECASE,
+        ):
+            return []
+        activity_type, disposal_method, position = "landfill_waste", "unknown", 0
+    else:
+        activity_type, disposal_method, position = matched_method
+    material_classes = _material_classes(clause, activity_type)
+    material_class = (
+        next(iter(material_classes))
+        if len(material_classes) == 1
+        else "mixed" if material_classes else "unknown"
     )
     return [
-        CarbonEvent(
-            raw_text=clause,
-            category=category,
-            activity_type=activity_type,
-            confidence=Confidence.from_score(0.60),
-            issues=[
-                Issue(
-                    code=f"{category}.estimation.not_implemented",
-                    message=(
-                        f"Detected {activity_type}, but no validated V2 emission "
-                        "factor pathway is configured for this activity yet."
-                    ),
-                    severity="warning",
-                )
-            ],
+        (
+            position,
+            CarbonEvent(
+                raw_text=clause,
+                category="waste",
+                activity_type=activity_type,
+                entities={
+                    "disposal_method": disposal_method,
+                    "material_class": material_class,
+                    "material_description": clause,
+                },
+                confidence=Confidence.from_score(0.78 if disposal_method != "unknown" else 0.45),
+            ),
         )
-        for category, activity_type, pattern in candidates
-        if pattern.search(clause)
     ]
+
+
+def _waste_method(clause: str) -> tuple[str, str, int] | None:
+    for activity_type in ("recycling", "composting", "landfill_waste"):
+        metadata = WASTE_TAXONOMY[activity_type]
+        for term in metadata["disposal_synonyms"]:
+            match = re.search(rf"\b{re.escape(term)}\b", clause, re.IGNORECASE)
+            if match:
+                return activity_type, str(metadata["disposal_method"]), match.start()
+    return None
+
+
+def _material_classes(clause: str, activity_type: str) -> set[str]:
+    metadata = WASTE_TAXONOMY[activity_type]
+    return {
+        material_class
+        for material_class, synonyms in metadata.get("material_synonyms", {}).items()
+        if any(re.search(rf"\b{re.escape(term)}\b", clause, re.IGNORECASE) for term in synonyms)
+    }
+
+
+def _goods_purchase_context(clause: str) -> bool:
+    verbs = {
+        verb
+        for metadata in GOODS_SERVICES_TAXONOMY.values()
+        for verb in metadata.get("purchase_verbs", ())
+    }
+    has_verb = any(re.search(rf"\b{re.escape(verb)}\b", clause, re.IGNORECASE) for verb in verbs)
+    spent_on = bool(re.search(r"\bspent\b[^,.;]*\bon\b", clause, re.IGNORECASE))
+    return has_verb or spent_on
+
+
+def _component_fragment(clause: str, span: tuple[int, int]) -> str:
+    left = list(re.finditer(r"\s+\band\b\s+|,\s+", clause[: span[0]], re.IGNORECASE))
+    start = left[-1].end() if left else 0
+    right = re.search(r"\s+\band\b\s+|,\s+", clause[span[1] :], re.IGNORECASE)
+    end = span[1] + right.start() if right else len(clause)
+    return clause[start:end].strip(" ,")
+
+
+def _spans_overlap(first: tuple[int, int], second: tuple[int, int]) -> bool:
+    return first[0] < second[1] and second[0] < first[1]
 
 
 def _transport_entities(

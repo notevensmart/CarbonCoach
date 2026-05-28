@@ -23,6 +23,23 @@ class FakeClimatiqEmissionEstimator:
         self.calls.append((event.activity_type, dict(parameters)))
         if event.category == "energy":
             co2e = float(parameters["energy"]) * 0.6
+        elif event.category == "goods_services":
+            rate = {
+                "coffee": 0.25,
+                "beef_burrito": 2.0,
+                "beef": 27.0,
+            }[parameters["product_class"]]
+            amount = float(parameters.get("number", parameters.get("weight", 0)))
+            co2e = amount * rate
+        elif event.category == "waste":
+            rate = {
+                ("recycling", "plastic"): 0.021,
+                ("recycling", "cardboard"): 0.05,
+                ("composting", "food_waste"): 0.1,
+                ("landfill", "general_waste"): 0.5,
+                ("landfill", "mixed_packaging"): 0.5,
+            }[(parameters["disposal_method"], parameters["material_class"])]
+            co2e = float(parameters["weight"]) * rate
         elif event.activity_type == "bus_ride":
             co2e = float(parameters["distance"]) * 0.1
         elif event.activity_type == "train_ride":

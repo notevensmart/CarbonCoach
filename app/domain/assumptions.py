@@ -151,3 +151,12 @@ def explicit_fuel_override_assumption(
         source="user",
         confidence_impact=0.0,
     )
+
+
+def singular_item_count_assumption(activity_type: str, product_label: str) -> Assumption:
+    return Assumption(
+        code=f"{activity_type}.inferred_single_serving",
+        message=f"Assumed one {product_label} serving because a singular item was described.",
+        source="inference",
+        confidence_impact=-0.25,
+    )

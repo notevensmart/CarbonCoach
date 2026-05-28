@@ -42,11 +42,17 @@ Implement in this order:
 
 ```text
 UI-1. Consumer Dashboard Core
-UI-2. Deterministic Impact Comparison
+UI-2. Deterministic Impact Comparison (already implemented)
+Backend Ticket 7. Everyday Journal Coverage And Completeness and UI-2 hardening
 UI-3. Structured Clarification Workflow
 ```
 
 `UI-1` is the recommended immediate next ticket after V2 Ticket 6.
+`UI-2` has already been implemented. Backend Ticket 7 must now make mixed
+everyday journals, especially goods/services and waste activities, visible and
+honestly estimable where supported, and must suppress the existing impact
+comparison when a represented result is partial due to unresolved or failed
+activities.
 
 ## Shared Rules
 
@@ -675,9 +681,14 @@ Verify through the production-like FastAPI-served React path:
 Add one understandable emissions equivalence only after its methodology is
 defined centrally and tested.
 
-### Dependencies
+### Current Status And Hardening Dependency
 
-UI-1.
+UI-2 has already been implemented. Its eligibility rules must be hardened by
+Backend Ticket 7, as specified in:
+
+```text
+docs/carboncoach-v2-everyday-coverage-ticket.md
+```
 
 ### Scope
 
@@ -721,6 +732,8 @@ Only show it when:
 - total emissions are greater than zero
 - total confidence is not low
 - the maintained comparison is available and compatible
+- the result is not partial because a represented activity is `unresolved` or
+  `failed`
 
 Use approximate language:
 
@@ -741,6 +754,8 @@ Do not imply:
 - Comparison content is generated deterministically from maintained metadata.
 - Its source and calculation are visible in developer details.
 - It is hidden for low-confidence or zero-total results.
+- It is hidden when coverage marks a represented result as partial due to
+  unresolved or failed activities.
 - It does not alter estimate totals or confidence.
 - No comparison constants are embedded in presentation-only components.
 
@@ -749,6 +764,7 @@ Do not imply:
 - positive total plus eligible confidence shows one comparison
 - low confidence hides comparison
 - zero total hides comparison
+- positive-total partial mixed result hides comparison
 - comparison wording is approximate
 - comparison conversion is deterministic
 - calculation metadata is visible in developer details

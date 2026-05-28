@@ -55,6 +55,7 @@ export function normalizeEstimateResponse(data) {
         confidence: data.total?.confidence,
         source_breakdown: data.total?.source_breakdown || {},
       },
+      coverage: data.coverage || null,
       comparison: data.comparison || null,
       details: data.details || [],
     };

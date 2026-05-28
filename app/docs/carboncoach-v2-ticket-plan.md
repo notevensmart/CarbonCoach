@@ -1272,7 +1272,21 @@ Implement in this order:
 4. V2 Climatiq Validation And Fallback Integration
 5. V2 Frontend Transparency And UX Pass
 6. V2 Regression, Not Estimated, Confidence, And Hardening
+7. Everyday Journal Coverage And Completeness
 ```
+
+Ticket 7 is specified in:
+
+```text
+docs/carboncoach-v2-everyday-coverage-ticket.md
+```
+
+It addresses the mixed-journal gap exposed by the consumer dashboard:
+activity segmentation, independent multi-activity processing, bounded
+goods/services and waste coverage, and explicit partial-estimate coverage
+metadata. Because the deterministic impact comparison has already been
+implemented, Ticket 7 must suppress that comparison for partial results rather
+than treating its implementation as future work.
 
 ## Overall Definition Of Done
 
@@ -1296,6 +1310,14 @@ V2 is complete when:
 - Climatiq calls are made only with valid parameters.
 - Fallback estimates count toward totals with transparent source breakdown.
 - `not_estimated` and `unresolved` statuses are handled.
+- Mixed everyday journals preserve detected goods/services, waste, and
+  adjacent energy-device activities even when some remain unresolved.
+- Bounded goods/services and waste pathways estimate only from compatible,
+  maintained factor metadata and sufficient activity data.
+- Responses distinguish partial activity coverage from confidence in included
+  calculations.
+- Existing impact comparisons are not shown for represented results that are
+  partial because one or more activities remain unresolved or failed.
 - Frontend can display V2 outputs clearly.
 - Frontend changes are visible through the deployed production path.
 - The production deployment serves the intended UI instead of the legacy inline FastAPI form.

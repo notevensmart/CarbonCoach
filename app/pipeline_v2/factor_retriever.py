@@ -406,7 +406,12 @@ def _normalized_text(value: object) -> str:
 
 
 def _expected_sector(event: CarbonEvent) -> str:
-    return "Energy" if event.category == "energy" else "Transport"
+    return {
+        "energy": "Energy",
+        "transport": "Transport",
+        "goods_services": "Goods",
+        "waste": "Waste",
+    }[event.category]
 
 
 def _factor_query(event: CarbonEvent, parameters: dict) -> str:
@@ -432,6 +437,8 @@ def _category_mentions_event(category: str, event_category: str) -> bool:
     markers = {
         "energy": ("energy", "electricity", "power"),
         "transport": ("transport", "vehicle", "travel", "passenger"),
+        "goods_services": ("goods", "services", "purchase", "food"),
+        "waste": ("waste", "recycling", "landfill", "compost"),
     }
     return any(marker in category for marker in markers.get(event_category, (event_category,)))
 

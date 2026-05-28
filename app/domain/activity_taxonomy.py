@@ -173,6 +173,7 @@ ENERGY_TAXONOMY = {
             r"\b(?:used?|ran|operated|turned\s+on)\b[^,.;]{0,40}\b(?:thing|device|appliance|equipment)\b",
             r"\b(?:charged?|charging|plugged\s+in)\b[^,.;]{0,40}\b(?:phone|laptop|tablet|battery|device)\b",
             r"\b(?:watched?|used?|ran|turned\s+on)\b[^,.;]{0,40}\b(?:tv|television|monitor|computer)\b",
+            r"\b(?:gaming|played?|playing)\b[^,.;]{0,50}\b(?:on\s+)?(?:my\s+)?(?:pc|computer|desktop)\b",
         ),
         "default_assumptions": (),
     },
@@ -360,6 +361,169 @@ TRANSPORT_TAXONOMY = {
     },
 }
 
+GOODS_SERVICES_TAXONOMY = {
+    "coffee_purchase": {
+        "category": "goods_services",
+        "keywords": ("coffee", "coffees", "flat white", "latte", "cappuccino"),
+        "purchase_verbs": ("grabbed", "bought", "purchased", "ordered", "had"),
+        "product_synonyms": {
+            "coffee": ("coffee", "coffees", "flat white", "flat whites"),
+        },
+        "unsupported_variant_terms": ("oat milk",),
+        "required_quantity_dimensions": ("number",),
+        "supporting_quantity_dimensions": ("money",),
+        "parameter_builder": "goods_services",
+        "fallback_factor_key": "goods.coffee_serving",
+        "compatible_unit_types": ("Number",),
+        "factor_match_terms": ("coffee", "beverage"),
+        "factor_preferred_terms": ("serving", "cup"),
+        "factor_identity_fields": ("product_class",),
+        "factor_trait_fields": (),
+        "default_assumptions": (),
+        "pathways": {
+            "coffee": {
+                "required_dimension": "number",
+                "calculation_unit": "item",
+                "infer_singular_item": True,
+                "boundary_note": "One prepared coffee beverage serving; add-ons are not separately modelled.",
+            },
+        },
+    },
+    "restaurant_meal": {
+        "category": "goods_services",
+        "keywords": ("burrito", "meal", "takeaway", "takeout", "delivery app"),
+        "purchase_verbs": ("ordered", "bought", "had", "ate", "grabbed"),
+        "product_synonyms": {
+            "beef_burrito": ("beef burrito",),
+            "unspecified_takeaway": ("takeaway", "takeout", "delivery app", "restaurant", "restaurant meal"),
+        },
+        "required_quantity_dimensions": ("number",),
+        "supporting_quantity_dimensions": (),
+        "parameter_builder": "goods_services",
+        "fallback_factor_key": "goods.beef_burrito_serving",
+        "compatible_unit_types": ("Number",),
+        "factor_match_terms": ("meal", "burrito", "beef"),
+        "factor_preferred_terms": ("serving",),
+        "factor_identity_fields": ("product_class",),
+        "factor_trait_fields": (),
+        "default_assumptions": (),
+        "pathways": {
+            "beef_burrito": {
+                "required_dimension": "number",
+                "calculation_unit": "item",
+                "infer_singular_item": True,
+                "boundary_note": "One beef burrito serving; delivery travel and separate drinks are excluded.",
+            },
+        },
+    },
+    "food_purchase": {
+        "category": "goods_services",
+        "keywords": ("beef", "groceries", "grocery", "soft drink", "food"),
+        "purchase_verbs": ("bought", "purchased", "ordered", "grabbed"),
+        "product_synonyms": {
+            "beef": ("beef",),
+            "groceries": ("groceries", "grocery"),
+            "soft_drink": ("soft drink", "soft drinks", "soda"),
+        },
+        "required_quantity_dimensions": ("weight",),
+        "supporting_quantity_dimensions": ("money", "number"),
+        "parameter_builder": "goods_services",
+        "fallback_factor_key": "goods.beef_weight",
+        "compatible_unit_types": ("Weight",),
+        "factor_match_terms": ("food", "beef"),
+        "factor_preferred_terms": ("weight",),
+        "factor_identity_fields": ("product_class",),
+        "factor_trait_fields": (),
+        "default_assumptions": (),
+        "pathways": {
+            "beef": {
+                "required_dimension": "weight",
+                "calculation_unit": "kg",
+                "infer_singular_item": False,
+                "boundary_note": "Purchased beef mass only.",
+            },
+        },
+    },
+    "clothing_purchase": {
+        "category": "goods_services",
+        "keywords": ("shirt", "clothing", "shoes"),
+        "parameter_builder": "goods_services",
+        "estimate_policy": "unresolved",
+        "default_assumptions": (),
+    },
+    "electronics_purchase": {
+        "category": "goods_services",
+        "keywords": ("laptop", "phone", "computer"),
+        "parameter_builder": "goods_services",
+        "estimate_policy": "unresolved",
+        "default_assumptions": (),
+    },
+}
+
+WASTE_TAXONOMY = {
+    "recycling": {
+        "category": "waste",
+        "disposal_method": "recycling",
+        "disposal_synonyms": ("recycled", "recycle", "recycling bin"),
+        "material_synonyms": {
+            "plastic": ("plastic", "plastic bottles"),
+            "cardboard": ("cardboard",),
+            "glass": ("glass",),
+            "metal": ("cans", "aluminium cans"),
+        },
+        "required_quantity_dimensions": ("weight",),
+        "parameter_builder": "waste",
+        "compatible_unit_types": ("Weight",),
+        "factor_match_terms": ("recycling",),
+        "factor_identity_fields": ("material_class", "disposal_method"),
+        "factor_trait_fields": (),
+        "pathways": {
+            "plastic": {"fallback_factor_key": "waste.recycling_plastic"},
+            "cardboard": {"fallback_factor_key": "waste.recycling_cardboard"},
+        },
+    },
+    "composting": {
+        "category": "waste",
+        "disposal_method": "composting",
+        "disposal_synonyms": ("composted", "compost", "compost bin"),
+        "material_synonyms": {"food_waste": ("food scraps", "food waste")},
+        "required_quantity_dimensions": ("weight",),
+        "parameter_builder": "waste",
+        "compatible_unit_types": ("Weight",),
+        "factor_match_terms": ("compost", "food waste"),
+        "factor_identity_fields": ("material_class", "disposal_method"),
+        "factor_trait_fields": (),
+        "pathways": {
+            "food_waste": {"fallback_factor_key": "waste.composting_food"},
+        },
+    },
+    "landfill_waste": {
+        "category": "waste",
+        "disposal_method": "landfill",
+        "disposal_synonyms": (
+            "landfill bin",
+            "general rubbish",
+            "general waste",
+            "threw away",
+            "discarded",
+        ),
+        "material_synonyms": {
+            "general_waste": ("general rubbish", "general waste", "rubbish", "garbage", "trash"),
+            "mixed_packaging": ("mixed packaging", "packaging"),
+        },
+        "required_quantity_dimensions": ("weight",),
+        "parameter_builder": "waste",
+        "compatible_unit_types": ("Weight",),
+        "factor_match_terms": ("landfill", "waste"),
+        "factor_identity_fields": ("material_class", "disposal_method"),
+        "factor_trait_fields": (),
+        "pathways": {
+            "general_waste": {"fallback_factor_key": "waste.landfill_general"},
+            "mixed_packaging": {"fallback_factor_key": "waste.landfill_general"},
+        },
+    },
+}
+
 NON_ESTIMATED_TAXONOMY = {
     "personal_activity": {
         "category": "goods_services",
@@ -385,5 +549,7 @@ NON_ESTIMATED_TAXONOMY = {
 ACTIVITY_TAXONOMY = {
     **ENERGY_TAXONOMY,
     **TRANSPORT_TAXONOMY,
+    **GOODS_SERVICES_TAXONOMY,
+    **WASTE_TAXONOMY,
     **NON_ESTIMATED_TAXONOMY,
 }

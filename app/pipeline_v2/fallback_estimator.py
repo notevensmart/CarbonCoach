@@ -34,7 +34,9 @@ class LocalFallbackEstimator:
         parameters: dict,
     ) -> FallbackEstimateResult | None:
         taxonomy = ACTIVITY_TAXONOMY.get(event.activity_type, {})
-        factor_key = taxonomy.get("fallback_factor_key")
+        factor_key = parameters.get("fallback_factor_key") or taxonomy.get("fallback_factor_key")
+        if factor_key not in _declared_fallback_keys(taxonomy):
+            return None
         factor = self.factor_catalog.get(str(factor_key)) if factor_key else None
         if factor is None or not _compatible(event, parameters, factor):
             return None
@@ -61,3 +63,13 @@ def _compatible(event: CarbonEvent, parameters: dict, factor: FallbackFactor) ->
 
 def _normalized_unit(value: object) -> str:
     return re.sub(r"[^a-z0-9]+", "", str(value or "").lower())
+
+
+def _declared_fallback_keys(taxonomy: dict) -> set[str]:
+    keys = {str(taxonomy["fallback_factor_key"])} if taxonomy.get("fallback_factor_key") else set()
+    keys.update(
+        str(pathway["fallback_factor_key"])
+        for pathway in taxonomy.get("pathways", {}).values()
+        if pathway.get("fallback_factor_key")
+    )
+    return keys

@@ -171,6 +171,15 @@ class EstimateTotal(StrictBaseModel):
     source_breakdown: SourceBreakdown
 
 
+class EstimateCoverage(StrictBaseModel):
+    represented_activity_count: int = Field(..., ge=0)
+    included_in_total_count: int = Field(..., ge=0)
+    unresolved_count: int = Field(..., ge=0)
+    not_estimated_count: int = Field(..., ge=0)
+    failed_count: int = Field(..., ge=0)
+    estimate_is_partial: bool
+
+
 class ImpactComparison(StrictBaseModel):
     key: str
     message: str
@@ -188,4 +197,5 @@ class CarbonEstimateResponse(StrictBaseModel):
     version: Literal["v2"] = "v2"
     total: EstimateTotal
     details: list[EstimateDetail] = Field(default_factory=list)
+    coverage: EstimateCoverage | None = None
     comparison: ImpactComparison | None = None

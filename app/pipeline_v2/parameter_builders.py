@@ -3,12 +3,13 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
-from app.domain.activity_taxonomy import TRANSPORT_TAXONOMY
+from app.domain.activity_taxonomy import GOODS_SERVICES_TAXONOMY, TRANSPORT_TAXONOMY, WASTE_TAXONOMY
 from app.domain.assumptions import (
     SPACE_HEATER_DEFAULT_POWER_KW,
     distance_compact_k_context_assumption,
     default_au_electricity_region_assumption,
     flight_default_factor_assumption,
+    singular_item_count_assumption,
     space_heater_default_power_assumption,
 )
 from app.domain.models import Assumption, CarbonEvent, Confidence, EstimateStatus, Issue, Quantity
@@ -62,7 +63,7 @@ class EnergyParameterBuilder:
             )
 
         if event.activity_type == "generic_energy_use":
-            parameters = {"device": "unknown"}
+            parameters = {"device": _entity_text(event.entities.get("device")) or "unknown"}
             if duration is not None:
                 parameters.update(
                     {
@@ -300,6 +301,173 @@ class TransportParameterBuilder:
         )
 
 
+class GoodsServicesParameterBuilder:
+    def build(self, event: CarbonEvent) -> ParameterBuildResult:
+        metadata = GOODS_SERVICES_TAXONOMY.get(event.activity_type, {})
+        product_class = _entity_text(event.entities.get("product_class"))
+        pathway = metadata.get("pathways", {}).get(product_class)
+        parameters = {"product_class": product_class} if product_class else {}
+        issues = _delivery_context_issues(event)
+        if event.entities.get("delivery_context"):
+            parameters["delivery_context"] = "delivery_app"
+
+        if pathway is None:
+            parameters.update(_preserved_quantity_parameters(event.quantities))
+            return ParameterBuildResult(
+                parameters=parameters,
+                confidence=Confidence.from_score(0.25),
+                issues=[
+                    *issues,
+                    Issue(
+                        code="goods_services.product.unsupported_pathway",
+                        message=(
+                            "Detected a purchased food or drink component, but it does not "
+                            "map to a maintained product-and-unit factor pathway."
+                        ),
+                        severity="warning",
+                    ),
+                ],
+                can_estimate=False,
+            )
+
+        required_dimension = str(pathway["required_dimension"])
+        quantity = _first_quantity(event.quantities, required_dimension)
+        assumptions: list[Assumption] = []
+        if (
+            quantity is None
+            and required_dimension == "number"
+            and pathway.get("infer_singular_item")
+            and _first_quantity(event.quantities, "money") is None
+        ):
+            parameters.update({"number": 1.0, "number_unit": "item"})
+            assumptions.append(
+                singular_item_count_assumption(
+                    event.activity_type,
+                    product_class.replace("_", " "),
+                )
+            )
+            confidence = Confidence.from_score(0.62)
+        elif quantity is None:
+            parameters.update(_preserved_quantity_parameters(event.quantities))
+            missing_code = (
+                "goods_services.money_factor_unavailable"
+                if _first_quantity(event.quantities, "money") is not None
+                else "goods_services.missing_quantity"
+            )
+            return ParameterBuildResult(
+                parameters=parameters,
+                confidence=Confidence.from_score(0.25),
+                issues=[
+                    *issues,
+                    Issue(
+                        code=missing_code,
+                        message=(
+                            "This product pathway needs an explicit compatible quantity; "
+                            "purchase price is not converted into item count."
+                        ),
+                        severity="warning",
+                    ),
+                ],
+                can_estimate=False,
+            )
+        else:
+            parameters.update(
+                {
+                    required_dimension: _round_quantity(quantity.value),
+                    f"{required_dimension}_unit": str(pathway["calculation_unit"]),
+                }
+            )
+            confidence = Confidence.from_score(0.93)
+
+        parameters["calculation_boundary"] = str(pathway["boundary_note"])
+        return ParameterBuildResult(
+            parameters=parameters,
+            confidence=confidence,
+            assumptions=assumptions,
+            issues=issues,
+        )
+
+
+class WasteParameterBuilder:
+    def build(self, event: CarbonEvent) -> ParameterBuildResult:
+        metadata = WASTE_TAXONOMY.get(event.activity_type, {})
+        disposal_method = _entity_text(event.entities.get("disposal_method"))
+        material_class = _entity_text(event.entities.get("material_class"))
+        parameters = {
+            "disposal_method": disposal_method or "unknown",
+            "material_class": material_class or "unknown",
+        }
+        material_description = event.entities.get("material_description")
+        if material_description:
+            parameters["material_description"] = material_description
+
+        if disposal_method in {"", "unknown"}:
+            return ParameterBuildResult(
+                parameters=parameters,
+                confidence=Confidence.from_score(0.20),
+                issues=[
+                    Issue(
+                        code="waste.disposal_method.ambiguous",
+                        message=(
+                            "Detected discarded materials, but the disposal method "
+                            "was not stated clearly enough to estimate."
+                        ),
+                        severity="warning",
+                    )
+                ],
+                can_estimate=False,
+            )
+
+        weight = _first_quantity(event.quantities, "weight")
+        if weight is None:
+            return ParameterBuildResult(
+                parameters=parameters,
+                confidence=Confidence.from_score(0.25),
+                issues=[
+                    Issue(
+                        code="waste.missing_weight",
+                        message=(
+                            "A disposal method was detected, but an explicit waste mass "
+                            "is required; no mass is assumed for bags or containers."
+                        ),
+                        severity="warning",
+                    )
+                ],
+                can_estimate=False,
+            )
+
+        pathway = metadata.get("pathways", {}).get(material_class)
+        if pathway is None:
+            parameters.update({"weight": _round_quantity(weight.value), "weight_unit": "kg"})
+            return ParameterBuildResult(
+                parameters=parameters,
+                confidence=Confidence.from_score(0.25),
+                issues=[
+                    Issue(
+                        code="waste.material.unsupported_or_mixed",
+                        message=(
+                            "The stated material mix is not represented by one maintained "
+                            "factor pathway, so no material-specific estimate was made."
+                        ),
+                        severity="warning",
+                    )
+                ],
+                can_estimate=False,
+            )
+
+        parameters.update(
+            {
+                "weight": _round_quantity(weight.value),
+                "weight_unit": "kg",
+                "fallback_factor_key": str(pathway["fallback_factor_key"]),
+            }
+        )
+        return ParameterBuildResult(
+            parameters=parameters,
+            confidence=Confidence.from_score(0.93),
+        )
+
+
 def _first_quantity(quantities: list[Quantity], dimension: str) -> Quantity | None:
     return next((quantity for quantity in quantities if quantity.dimension == dimension), None)
 
@@ -362,3 +530,28 @@ def _add_flight_factor_defaults(
             assumed_passenger_class=not bool(passenger_class),
         )
     )
+
+
+def _preserved_quantity_parameters(quantities: list[Quantity]) -> dict:
+    parameters = {}
+    for dimension in ("number", "weight", "money"):
+        quantity = _first_quantity(quantities, dimension)
+        if quantity is not None:
+            parameters[dimension] = _round_quantity(quantity.value)
+            parameters[f"{dimension}_unit"] = quantity.unit
+    return parameters
+
+
+def _delivery_context_issues(event: CarbonEvent) -> list[Issue]:
+    if not event.entities.get("delivery_context"):
+        return []
+    return [
+        Issue(
+            code="goods_services.delivery_transport.not_included",
+            message=(
+                "Delivery-app context was preserved, but no delivery travel emissions "
+                "are included because no distance or transport method was supplied."
+            ),
+            severity="info",
+        )
+    ]

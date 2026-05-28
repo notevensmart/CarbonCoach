@@ -152,6 +152,15 @@ def _climatiq_parameters(parameters: dict, unit_type: str) -> dict:
             "energy": parameters["energy"],
             "energy_unit": parameters["energy_unit"],
         }
+    if unit_type.lower() == "number":
+        return {
+            "number": parameters["number"],
+        }
+    if unit_type.lower() == "weight":
+        return {
+            "weight": parameters["weight"],
+            "weight_unit": parameters["weight_unit"],
+        }
     api_parameters = {
         "distance": parameters["distance"],
         "distance_unit": parameters["distance_unit"],

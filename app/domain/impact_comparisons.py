@@ -7,7 +7,7 @@ from pydantic import Field, ValidationError
 
 from app.domain.assumptions import DEFAULT_REGION
 from app.domain.confidence import ConfidenceLevel
-from app.domain.models import EstimateTotal, ImpactComparison, StrictBaseModel
+from app.domain.models import EstimateCoverage, EstimateTotal, ImpactComparison, StrictBaseModel
 
 
 class ImpactComparisonDefinition(StrictBaseModel):
@@ -52,6 +52,7 @@ IMPACT_COMPARISON_DEFINITIONS: dict[str, ImpactComparisonDefinition] = {
 def build_impact_comparison(
     total: EstimateTotal,
     *,
+    coverage: EstimateCoverage | None = None,
     region: str = DEFAULT_REGION,
     key: str = DEFAULT_COMPARISON_KEY,
     definitions: Mapping[str, ImpactComparisonDefinition | dict] | None = None,
@@ -74,6 +75,7 @@ def build_impact_comparison(
         or total.co2e <= 0
         or total.confidence.level not in definition.eligible_confidence_levels
         or region not in definition.applicable_regions
+        or (coverage is not None and coverage.estimate_is_partial)
     ):
         return None
 

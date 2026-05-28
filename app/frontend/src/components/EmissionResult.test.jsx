@@ -166,6 +166,32 @@ test("hides comparison output for low-confidence and zero-total result states", 
   expect(screen.queryByLabelText("Impact comparison")).not.toBeInTheDocument();
 });
 
+test("hides a supplied comparison when coverage marks a positive result partial", () => {
+  render(
+    <EmissionResult
+      response={v2Response(
+        [
+          includedDetail({ category: "goods_services", activity_type: "coffee_purchase", co2e: 0.25 }),
+          unresolvedDetail(),
+        ],
+        { score: 0.7, level: "medium" },
+        comparisonFixture(),
+        {
+          represented_activity_count: 2,
+          included_in_total_count: 1,
+          unresolved_count: 1,
+          not_estimated_count: 0,
+          failed_count: 0,
+          estimate_is_partial: true,
+        }
+      )}
+    />
+  );
+
+  expect(screen.queryByLabelText("Impact comparison")).not.toBeInTheDocument();
+  expect(screen.getByText("Needs Attention")).toBeInTheDocument();
+});
+
 test("exposes comparison calculation and provenance only in developer details", () => {
   render(
     <EmissionResult
@@ -378,7 +404,12 @@ test("continues to render a V1 response when the configured endpoint targets V1"
   expect(screen.getByText("Legacy result")).toBeInTheDocument();
 });
 
-function v2Response(details, confidence = { score: 0.7, level: "medium" }, comparison = null) {
+function v2Response(
+  details,
+  confidence = { score: 0.7, level: "medium" },
+  comparison = null,
+  coverage = null
+) {
   const included = details.filter((detail) =>
     ["estimated", "fallback_estimated"].includes(detail.status)
   );
@@ -390,6 +421,7 @@ function v2Response(details, confidence = { score: 0.7, level: "medium" }, compa
       confidence,
       source_breakdown: {},
     },
+    coverage,
     comparison,
     details,
   };

@@ -21,7 +21,12 @@ const COMBINED_PARAMETER_KEYS = [
   ["number", "number_unit"],
 ];
 
-const INTERNAL_PARAMETER_KEYS = new Set(["emissions_boundary", "factor_specificity"]);
+const INTERNAL_PARAMETER_KEYS = new Set([
+  "emissions_boundary",
+  "factor_specificity",
+  "fallback_factor_key",
+  "calculation_boundary",
+]);
 
 export function buildDashboardModel(estimate) {
   const details = Array.isArray(estimate.details) ? estimate.details : [];
@@ -77,7 +82,8 @@ export function buildDashboardModel(estimate) {
     comparison: displayableComparison(
       estimate.comparison,
       contributingTotal,
-      estimate.total?.confidence
+      estimate.total?.confidence,
+      estimate.coverage
     ),
     insight: buildInsight({
       mainDriver,
@@ -89,12 +95,13 @@ export function buildDashboardModel(estimate) {
   };
 }
 
-export function displayableComparison(comparison, total, confidence) {
+export function displayableComparison(comparison, total, confidence, coverage) {
   if (
     !comparison?.message ||
     comparison.approximate !== true ||
     total <= 0 ||
-    !["medium", "high"].includes(confidence?.level)
+    !["medium", "high"].includes(confidence?.level) ||
+    coverage?.estimate_is_partial === true
   ) {
     return null;
   }
