@@ -90,14 +90,15 @@ test("shows category command center in stable category order with included total
   expect(within(command).getByText("1.00 kg")).toBeInTheDocument();
   expect(within(command).getAllByText("0.00 kg")).toHaveLength(2);
 
-  const chartSegments = [...command.querySelectorAll("svg rect")].map((rect) =>
-    rect.getAttribute("fill")
-  );
+  const chartSegments = [...command.querySelectorAll("svg circle")]
+    .map((circle) => circle.getAttribute("stroke"))
+    .filter((stroke) => stroke && stroke !== "#e7e5e4");
   const cardAccents = [...command.querySelectorAll("[data-category-color]")]
     .slice(0, 2)
     .map((accent) => accent.style.backgroundColor);
   expect(chartSegments).toEqual(["#0f766e", "#b45309"]);
   expect(cardAccents).toEqual(["rgb(15, 118, 110)", "rgb(180, 83, 9)"]);
+  expect(within(command).getByText("3.00")).toBeInTheDocument();
 });
 
 test("handles zero-total and unresolved-only responses without implying completeness", () => {

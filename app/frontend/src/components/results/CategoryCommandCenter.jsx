@@ -3,13 +3,15 @@ import { CategoryIcon } from "./ActivityCard";
 import { formatNumber } from "./resultPresentation";
 
 export default function CategoryCommandCenter({ dashboard }) {
-  let left = 0;
   const accessibleSummary = dashboard.breakdown
     .map(
       (category) =>
         `${category.label} ${formatNumber(category.amount)} ${dashboard.unit} CO2e, ${category.percentage} percent`
     )
     .join("; ");
+  const donutRadius = 42;
+  const donutCircumference = 2 * Math.PI * donutRadius;
+  let donutOffset = 0;
 
   return (
     <section
@@ -33,29 +35,75 @@ export default function CategoryCommandCenter({ dashboard }) {
       </div>
 
       {dashboard.breakdown.length > 0 && (
-        <svg
-          aria-label={`Breakdown of estimated emissions: ${accessibleSummary}`}
-          className="mt-5 h-8 w-full overflow-hidden rounded-full bg-stone-100"
-          role="img"
-          viewBox="0 0 100 12"
-          preserveAspectRatio="none"
-        >
-          {dashboard.breakdown.map((category) => {
-            const width = (category.amount / dashboard.total) * 100;
-            const segment = (
-              <rect
-                fill={category.color}
-                height="12"
+        <div className="mt-5 grid gap-5 lg:grid-cols-[260px_1fr] lg:items-center">
+          <div className="flex justify-center">
+            <div className="relative h-56 w-56">
+              <svg
+                aria-label={`Breakdown of estimated emissions: ${accessibleSummary}`}
+                className="h-full w-full -rotate-90"
+                role="img"
+                viewBox="0 0 100 100"
+              >
+                <circle
+                  cx="50"
+                  cy="50"
+                  fill="none"
+                  r={donutRadius}
+                  stroke="#e7e5e4"
+                  strokeWidth="12"
+                />
+                {dashboard.breakdown.map((category) => {
+                  const dashLength = (category.amount / dashboard.total) * donutCircumference;
+                  const segment = (
+                    <circle
+                      cx="50"
+                      cy="50"
+                      fill="none"
+                      key={category.key}
+                      r={donutRadius}
+                      stroke={category.color}
+                      strokeDasharray={`${dashLength} ${donutCircumference - dashLength}`}
+                      strokeDashoffset={-donutOffset}
+                      strokeLinecap="butt"
+                      strokeWidth="12"
+                    />
+                  );
+                  donutOffset += dashLength;
+                  return segment;
+                })}
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <span className="text-xs font-semibold uppercase tracking-wide text-stone-500">
+                  Estimated
+                </span>
+                <span className="mt-1 text-2xl font-semibold text-stone-950">
+                  {formatNumber(dashboard.total)}
+                </span>
+                <span className="text-sm text-stone-600">{dashboard.unit} CO2e</span>
+              </div>
+            </div>
+          </div>
+          <ul className="grid gap-2 sm:grid-cols-2">
+            {dashboard.breakdown.map((category) => (
+              <li
+                className="flex items-center justify-between gap-3 rounded-xl border border-stone-200 bg-stone-50 p-3 text-sm"
                 key={category.key}
-                width={width}
-                x={left}
-                y="0"
-              />
-            );
-            left += width;
-            return segment;
-          })}
-        </svg>
+              >
+                <span className="flex items-center gap-2 font-medium text-stone-800">
+                  <span
+                    aria-hidden="true"
+                    className="inline-block h-3 w-3 rounded-full"
+                    style={{ backgroundColor: category.color }}
+                  />
+                  {category.label}
+                </span>
+                <span className="font-semibold text-stone-950">
+                  {formatNumber(category.amount)} {dashboard.unit} ({category.percentage}%)
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
 
       <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
