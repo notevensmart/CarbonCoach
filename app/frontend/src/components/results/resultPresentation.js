@@ -5,26 +5,26 @@ export const CATEGORIES = [
   {
     key: "transport",
     label: "Transport",
-    color: "#0f766e",
-    softClass: "bg-teal-50 text-teal-900 border-teal-100",
+    color: "#0072b2",
+    softClass: "bg-sky-50 text-sky-950 border-sky-200",
   },
   {
     key: "energy",
     label: "Energy",
-    color: "#b45309",
-    softClass: "bg-amber-50 text-amber-950 border-amber-100",
+    color: "#e69f00",
+    softClass: "bg-amber-50 text-amber-950 border-amber-200",
   },
   {
     key: "goods_services",
     label: "Goods",
-    color: "#3b5bdb",
-    softClass: "bg-blue-50 text-blue-950 border-blue-100",
+    color: "#cc79a7",
+    softClass: "bg-fuchsia-50 text-fuchsia-950 border-fuchsia-200",
   },
   {
     key: "waste",
     label: "Waste",
-    color: "#6d5d4f",
-    softClass: "bg-stone-100 text-stone-950 border-stone-200",
+    color: "#009e73",
+    softClass: "bg-emerald-50 text-emerald-950 border-emerald-200",
   },
 ];
 

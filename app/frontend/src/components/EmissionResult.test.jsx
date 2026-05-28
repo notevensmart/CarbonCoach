@@ -96,8 +96,8 @@ test("shows category command center in stable category order with included total
   const cardAccents = [...command.querySelectorAll("[data-category-color]")]
     .slice(0, 2)
     .map((accent) => accent.style.backgroundColor);
-  expect(chartSegments).toEqual(["#0f766e", "#b45309"]);
-  expect(cardAccents).toEqual(["rgb(15, 118, 110)", "rgb(180, 83, 9)"]);
+  expect(chartSegments).toEqual(["#0072b2", "#e69f00"]);
+  expect(cardAccents).toEqual(["rgb(0, 114, 178)", "rgb(230, 159, 0)"]);
   expect(within(command).getByText("3.00")).toBeInTheDocument();
 });
 
