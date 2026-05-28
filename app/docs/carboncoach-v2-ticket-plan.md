@@ -1273,6 +1273,8 @@ Implement in this order:
 5. V2 Frontend Transparency And UX Pass
 6. V2 Regression, Not Estimated, Confidence, And Hardening
 7. Everyday Journal Coverage And Completeness
+8. LLM Structured Event Extraction Adapter
+9. Hybrid Extraction Intelligence Evaluation And Rollout
 ```
 
 Ticket 7 is specified in:
@@ -1287,6 +1289,16 @@ goods/services and waste coverage, and explicit partial-estimate coverage
 metadata. Because the deterministic impact comparison has already been
 implemented, Ticket 7 must suppress that comparison for partial results rather
 than treating its implementation as future work.
+
+Tickets 8 and 9 are specified in:
+
+```text
+docs/carboncoach-v2-llm-extraction-tickets.md
+```
+
+They add the AI intelligence layer: a safe structured LLM extraction adapter,
+then a hybrid extractor that merges validated LLM candidates with deterministic
+events and proves measurable coverage uplift on everyday mixed journals.
 
 ## Overall Definition Of Done
 
@@ -1318,6 +1330,13 @@ V2 is complete when:
   calculations.
 - Existing impact comparisons are not shown for represented results that are
   partial because one or more activities remain unresolved or failed.
+- LLM-assisted extraction is available behind a safe adapter boundary, with
+  strict schema validation and deterministic fallback.
+- Hybrid extraction improves everyday-journal event coverage without allowing
+  LLM output to control final CO2e, final factors, final confidence, or hidden
+  assumptions.
+- Automated tests for LLM-assisted extraction use fake clients or fixtures and
+  never require live LLM services.
 - Frontend can display V2 outputs clearly.
 - Frontend changes are visible through the deployed production path.
 - The production deployment serves the intended UI instead of the legacy inline FastAPI form.

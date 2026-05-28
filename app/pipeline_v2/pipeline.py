@@ -13,10 +13,11 @@ from app.domain.models import (
 from app.domain.activity_taxonomy import ACTIVITY_TAXONOMY
 from app.domain.impact_comparisons import build_impact_comparison
 from app.pipeline_v2.emission_estimator import ClimatiqEmissionEstimator, EmissionEstimator
-from app.pipeline_v2.event_extractor import JournalEventExtractor
 from app.pipeline_v2.entity_enricher import EntityEnricher
+from app.pipeline_v2.extractor_protocol import EventExtractor
 from app.pipeline_v2.fallback_estimator import LocalFallbackEstimator
 from app.pipeline_v2.journal_preprocessor import JournalPreprocessor
+from app.pipeline_v2.llm_event_extractor import build_event_extractor
 from app.pipeline_v2.parameter_builders import (
     EnergyParameterBuilder,
     GoodsServicesParameterBuilder,
@@ -31,7 +32,7 @@ class CarbonPipelineV2:
     def __init__(
         self,
         preprocessor: JournalPreprocessor | None = None,
-        event_extractor: JournalEventExtractor | None = None,
+        event_extractor: EventExtractor | None = None,
         quantity_normalizer: QuantityNormalizer | None = None,
         entity_enricher: EntityEnricher | None = None,
         energy_builder: EnergyParameterBuilder | None = None,
@@ -42,7 +43,7 @@ class CarbonPipelineV2:
         fallback_estimator: LocalFallbackEstimator | None = None,
     ) -> None:
         self.preprocessor = preprocessor or JournalPreprocessor()
-        self.event_extractor = event_extractor or JournalEventExtractor()
+        self.event_extractor = event_extractor or build_event_extractor()
         self.quantity_normalizer = quantity_normalizer or QuantityNormalizer()
         self.entity_enricher = entity_enricher or EntityEnricher()
         self.energy_builder = energy_builder or EnergyParameterBuilder()
