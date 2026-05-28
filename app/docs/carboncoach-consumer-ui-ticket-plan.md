@@ -45,6 +45,7 @@ UI-1. Consumer Dashboard Core
 UI-2. Deterministic Impact Comparison (already implemented)
 Backend Ticket 7. Everyday Journal Coverage And Completeness and UI-2 hardening
 UI-3. Structured Clarification Workflow
+UI-4. Demo-Grade Intelligent Reflection Experience
 ```
 
 `UI-1` is the recommended immediate next ticket after V2 Ticket 6.
@@ -53,6 +54,11 @@ everyday journals, especially goods/services and waste activities, visible and
 honestly estimable where supported, and must suppress the existing impact
 comparison when a represented result is partial due to unresolved or failed
 activities.
+
+`UI-4` is the final consumer-facing polish ticket after the backend
+intelligence tickets and UI-3. It should make the single-session app feel
+useful, intelligent, and visually premium without adding accounts,
+persistence, history, or unsupported coaching claims.
 
 ## Shared Rules
 
@@ -862,6 +868,591 @@ properties in the same first clarification slice.
 - Do not prompt for information unless the backend knows how to consume it.
 - Do not implement generic conversational follow-ups without a bounded schema.
 
+## UI-4: Demo-Grade Intelligent Reflection Experience
+
+### Goal
+
+Turn the existing consumer dashboard into a polished single-session AI product
+experience that feels insightful, capable, and demo-ready.
+
+The UI should communicate:
+
+```text
+CarbonCoach understood my day, estimated what it safely could, and knows what
+would improve the estimate next.
+```
+
+It should not feel like:
+
+```text
+A prettier debug output.
+```
+
+### Dependencies
+
+- UI-1 Consumer Dashboard Core
+- UI-2 Deterministic Impact Comparison and partial-result hardening
+- UI-3 Structured Clarification Workflow, if implemented
+- Backend Tickets 7-11, especially richer coverage, factor intent, and
+  enriched factor metadata
+
+If UI-3 is not implemented yet, UI-4 may still render non-interactive
+clarification priorities, but it must not fake clarification behavior.
+
+### Design Skill Requirement
+
+Use the installed UI/UX skill before implementation:
+
+```text
+C:\Users\parth\OneDrive\Documents\ML projects\CarbonCoach\CarbonCoach\.codex\skills\ui-ux-pro-max\SKILL.md
+```
+
+Follow its workflow:
+
+1. Generate a design system with `--design-system`.
+2. Pull supplemental UX/chart/React guidance as needed.
+3. Apply the pre-delivery checklist.
+
+The design direction should use the skill's recommended CarbonCoach fit:
+
+```text
+Organic biophilic data dashboard
+calm sustainability assistant
+rounded, premium, readable, accessible
+```
+
+Use an earth/data palette with strong contrast. Avoid greenwashing visuals,
+emoji icons, low-contrast text, layout-shifting hover states, and cluttered
+debug terminology on the primary surface.
+
+### Current Codebase Integration Points
+
+Build on the current React/Tailwind frontend structure:
+
+```text
+frontend/src/pages/Home.jsx
+frontend/src/components/EmissionResult.jsx
+frontend/src/components/results/ConsumerDashboard.jsx
+frontend/src/components/results/HeroSummaryCard.jsx
+frontend/src/components/results/InsightSummary.jsx
+frontend/src/components/results/ImpactComparisonCard.jsx
+frontend/src/components/results/CategoryBreakdown.jsx
+frontend/src/components/results/ActivityCard.jsx
+frontend/src/components/results/NeedsAttention.jsx
+frontend/src/components/results/NotIncludedActivities.jsx
+frontend/src/components/results/DeveloperDetailsAccordion.jsx
+frontend/src/components/results/resultPresentation.js
+frontend/src/index.css
+```
+
+Build against the current V2 backend response models:
+
+```text
+domain/models.py
+pipeline_v2/pipeline.py
+pipeline_v2/retrieval_diagnostics.py
+domain/impact_comparisons.py
+domain/factor_metadata_overlay.py
+```
+
+The UI should consume these existing response fields when present:
+
+```text
+version
+total.co2e
+total.unit
+total.confidence
+total.source_breakdown
+details[]
+details[].raw_text
+details[].category
+details[].activity_type
+details[].status
+details[].parameters
+details[].co2e
+details[].unit
+details[].source
+details[].confidence
+details[].parameter_confidence
+details[].factor_confidence
+details[].source_confidence
+details[].assumptions
+details[].issues
+details[].factor
+details[].factor_diagnostics
+coverage
+comparison
+```
+
+Current backend `coverage` shape:
+
+```text
+represented_activity_count
+included_in_total_count
+unresolved_count
+not_estimated_count
+failed_count
+estimate_is_partial
+```
+
+Current `factor_diagnostics` may include:
+
+```text
+intent_key
+intent
+search_query
+selector_filters
+candidate_count
+selected_activity_id
+selected_reason
+top_rejections
+fallback_used
+fallback_reason
+fallback_assumption_code
+attempts
+```
+
+Add small new components only where they simplify the existing structure.
+Suggested additions:
+
+```text
+frontend/src/components/results/ResultTabs.jsx
+frontend/src/components/results/ActivityCoverageSummary.jsx
+frontend/src/components/results/EstimateQualityCard.jsx
+frontend/src/components/results/CategoryCommandCenter.jsx
+frontend/src/components/results/ClarificationPriorityCard.jsx
+frontend/src/components/results/DemoExampleChips.jsx
+```
+
+Do not rewrite the app in a different framework, add a component library, or
+introduce a charting dependency unless the existing accessible SVG/CSS approach
+cannot meet the requirement.
+
+### Result View Structure
+
+Use lightweight tabs inside the result area, not global app navigation.
+
+Required tabs:
+
+```text
+Overview
+Activities
+Details
+```
+
+The input panel remains above the result. Tabs only change how the latest
+single-session result is presented.
+
+Do not add a day timeline in this ticket.
+
+#### Overview Tab
+
+The Overview tab is the demo-first view.
+
+It should include:
+
+- hero estimated footprint
+- estimate quality card
+- activity coverage summary
+- category command center
+- deterministic reflection summary
+- eligible impact comparison
+- next best clarification, when safe
+
+This tab should answer in under five seconds:
+
+```text
+How much was estimated?
+What drove it?
+How complete is it?
+What would improve it most?
+```
+
+#### Activities Tab
+
+The Activities tab shows the system's decomposition of the journal without a
+timeline.
+
+It should include:
+
+- estimated activity cards
+- needs-attention cards
+- not-included activities
+- per-activity assumptions
+- optional filters or grouped sections by status/category if useful
+
+The user should be able to see all represented activities without technical
+metadata dominating the screen.
+
+#### Details Tab
+
+The Details tab replaces the old single accordion as the engineering view.
+
+It should preserve or improve the existing developer details content:
+
+- raw activity text
+- status and source
+- calculation parameters
+- assumptions and issues, including codes
+- confidence breakdown
+- factor fit and factor confidence
+- selected factor, activity ID, and match reasons when available
+- factor intent and rejected candidates when Ticket 10/11 diagnostics exist
+- comparison methodology when `comparison` is present
+- coverage counts and partial-estimate reason
+
+Technical sections should be grouped and collapsible. Do not expose API keys,
+raw prompts, chain-of-thought, or huge provider payloads.
+
+Recommended grouping:
+
+```text
+Response Summary
+Coverage
+Per-Activity Details
+Factor Linking
+Impact Comparison
+Raw JSON Preview, optional and collapsed
+```
+
+`Factor Linking` should be generated from `detail.factor`,
+`detail.factor_confidence`, and `detail.factor_diagnostics`. It must use
+developer terminology only inside Details, not in Overview.
+
+### Activity Coverage Summary
+
+Add a prominent summary derived from `details` and existing/additive coverage
+metadata:
+
+```text
+We found 9 activities
+3 estimated
+4 need details
+2 not included yet
+```
+
+Counting rules:
+
+- `estimated` and `fallback_estimated` count as estimated
+- `unresolved` and `failed` count as needing details or attention
+- `not_estimated` counts as not included
+- if backend coverage metadata exposes additional detected-but-not-represented
+  counts, show it separately as `not represented yet`
+- never count unresolved, failed, or not-estimated activities in emissions
+  totals
+
+If the backend cannot yet expose missed/detected-but-not-represented
+activities, do not invent them. Use only represented `details`.
+
+Prefer backend `coverage` counts over recomputing when they are present. If
+`coverage` is absent, derive a graceful fallback from `details`.
+
+Recommended mapping from current backend fields:
+
+```text
+found activities:
+  coverage.represented_activity_count or details.length
+
+estimated:
+  coverage.included_in_total_count or count(status in estimated/fallback_estimated)
+
+need details:
+  coverage.unresolved_count + coverage.failed_count or count(status in unresolved/failed)
+
+not included:
+  coverage.not_estimated_count or count(status == not_estimated)
+
+partial estimate:
+  coverage.estimate_is_partial or any unresolved/failed detail
+```
+
+### Estimate Quality Card
+
+Add a human-readable quality explanation derived deterministically from the
+response.
+
+Example:
+
+```text
+Estimate quality: Medium
+
+Why:
+- 3 activities used assumptions
+- 2 activities need more detail
+- The largest estimated categories were Transport and Energy
+```
+
+Rules:
+
+- use the existing total confidence label as the headline quality
+- mention assumption count when assumptions exist
+- mention unresolved/failed count when present
+- mention approximate estimates when fallback-estimated details exist
+- mention partial coverage when coverage marks the result partial
+- do not call confidence "accuracy"
+- do not suggest confidence changes the CO2e amount
+
+### Category Command Center
+
+Improve the category section from a single breakdown bar into four polished
+category cards plus the existing chart or equivalent visualization.
+
+Display categories in the stable order:
+
+```text
+Transport
+Energy
+Goods
+Waste
+```
+
+Each category card should show:
+
+- category label
+- estimated kg CO2e for included statuses
+- percentage of estimated total when total is positive
+- count of estimated activities
+- count of activities needing attention in that category
+- clear empty state when category has no represented activity
+
+Use text and iconography in addition to color.
+
+### Deterministic Reflection Summary
+
+Upgrade the existing deterministic insight into a more useful reflection
+without using a live LLM.
+
+Allowed facts:
+
+- largest estimated category
+- top estimated activity by CO2e
+- partial estimate warning
+- assumption and fallback counts
+- next clarification priority
+- confidence/quality explanation
+
+Example:
+
+```text
+Transport and home energy drove most of today's estimated footprint.
+The estimate is incomplete because several waste and goods activities need
+more detail.
+```
+
+Do not add behavioral advice, moral judgment, avoided-emissions claims, or
+unsupported alternatives.
+
+### Next Best Clarification
+
+Show one prioritized clarification prompt when the backend response supports
+it, or derive a non-interactive priority from unresolved details.
+
+Examples:
+
+```text
+Most useful detail to add
+How much plastic packaging did you throw away?
+```
+
+```text
+Most useful detail to add
+How far was the bus ride?
+[5 km] [10 km] [15 km] [Custom]
+```
+
+Rules:
+
+- if UI-3 clarification API exists for the field, quick controls may submit a
+  structured clarification
+- if UI-3 does not exist for the field, show the prompt as guidance only
+- prioritize unresolved details that are likely to affect emissions:
+  missing distance, missing weight, missing energy/duration, then broad goods
+  details
+- never append hidden text to the journal to simulate clarification
+- never ask for a field the backend cannot consume
+
+### Demo Example Chips
+
+Add example chips near the journal input to improve demos.
+
+Suggested chips:
+
+```text
+Commute Day
+Food + Waste
+Household Energy
+Messy Mixed Journal
+Low-Detail Journal
+```
+
+Behavior:
+
+- clicking a chip populates the textarea with a realistic journal
+- it does not fake or pre-seed results
+- the normal `/api/estimate-v2` request still runs
+- examples should exercise multiple categories and honest unresolved states
+
+Keep examples in frontend metadata or a small fixture module, not embedded
+throughout JSX.
+
+### Visual Polish Requirements
+
+Apply a cohesive premium look:
+
+- comfortable max-width container instead of full-bleed result sprawl
+- responsive layout at 375px, 768px, 1024px, and 1440px
+- organic rounded cards, soft shadows, and strong whitespace
+- consistent category colors and icons
+- no emoji icons; use inline SVG, Heroicons, Lucide-style SVGs, or simple
+  accessible custom SVGs
+- visible keyboard focus states
+- pointer cursor on clickable controls
+- hover states that do not shift layout
+- reduced-motion-safe transitions
+- accessible contrast for all text
+- no horizontal scroll on mobile
+
+Keep CarbonCoach visually calm and credible. Avoid noisy animations, glossy
+greenwashing, or an enterprise analytics wall of tiny numbers.
+
+### Backend Scope
+
+No backend calculation changes are expected.
+
+UI-4 may consume additive backend fields if already present, such as:
+
+```text
+coverage
+comparison
+factor_diagnostics
+clarification_suggestions
+```
+
+The UI must degrade gracefully when these fields are absent.
+
+Small backend additions are allowed only if they are presentation metadata and
+do not change calculation semantics. Acceptable examples:
+
+```text
+clarification_suggestions
+coverage display reason
+stable event_id for UI-3 clarification, if already approved
+```
+
+If a backend addition is made:
+
+- add API/model tests
+- keep it additive
+- keep `/api/estimate` working
+- keep `/api/estimate-v2` response backward-compatible
+- do not alter total CO2e, selected factors, confidence calculations, or
+  statuses for existing inputs
+
+Do not change V2 estimate calculations, factor selection, confidence
+calculation, or response semantics as part of UI-4.
+
+### Acceptance Criteria
+
+- Result area uses `Overview`, `Activities`, and `Details` tabs.
+- No day timeline is implemented.
+- Overview reads as a polished intelligent reflection experience.
+- Activity coverage summary is visible and derived from response data.
+- Estimate quality card explains confidence in human terms.
+- Category command center shows the four supported categories clearly.
+- Deterministic reflection is more useful but still evidence-bound.
+- Next best clarification is shown only when safe and never faked.
+- Demo example chips populate the journal and still use the real API.
+- Activities tab preserves all estimated, unresolved/failed, and
+  not-estimated details.
+- Details tab preserves developer explainability and improves organization.
+- Primary UI avoids raw activity IDs, issue codes, retrieval terminology, and
+  factor scores.
+- Developer details retain technical fields needed for demos/interviews.
+- Existing V1 result rendering still works.
+- Existing `/api/estimate-v2` response contract remains compatible.
+- UI remains useful when optional Ticket 10/11 diagnostics are absent.
+- UI uses backend `coverage` when present instead of relying only on frontend
+  inference.
+- Details tab renders current backend `factor_diagnostics` fields in a readable
+  developer format.
+- Impact comparison methodology is visible in Details when `comparison` is
+  present.
+- If any backend presentation metadata is added, it is additive and tested.
+- UI passes accessibility basics: labels, focus states, keyboard navigation,
+  color contrast, non-color indicators, and `aria-live` error handling.
+- Frontend is responsive and visually polished at mobile, tablet, laptop, and
+  wide desktop widths.
+
+### Test Matrix
+
+Add or update frontend tests using fixtures and accessible queries.
+
+Cover:
+
+- tabs render and switch between Overview, Activities, and Details
+- coverage summary counts estimated, needs-attention, and not-included details
+- estimate quality explains assumptions, fallback estimates, and partial results
+- category command center displays all four categories in stable order
+- zero-total result has a useful empty state
+- unresolved-only result does not show included emissions totals as complete
+- next best clarification appears for supported missing distance or weight
+- next best clarification is guidance-only when no clarification API is wired
+- demo example chip populates the textarea without creating fake results
+- Activities tab shows estimated cards, needs-attention items, and not-included
+  items
+- Details tab exposes developer details and remains navigable by keyboard
+- primary Overview does not expose activity IDs or raw issue codes
+- optional diagnostics absence does not crash rendering
+- current backend `factor_diagnostics` shape renders selected activity,
+  candidate count, fallback reason, and top rejections in Details
+- backend `coverage` counts drive Overview coverage summary when present
+- comparison metadata renders in Details without showing the comparison when
+  partial coverage suppresses the primary card
+- V1 response still renders through `EmissionResult`
+
+Use `getByRole`, `getByLabelText`, and other Testing Library accessible queries
+where possible. Do not rely on `getByTestId` for everything.
+
+### Verification
+
+Run from `app/frontend`:
+
+```powershell
+npm test -- --watchAll=false
+npm run build
+```
+
+Run backend tests from `app` if backend integration, models, API serialization,
+or served-app behavior is touched:
+
+```powershell
+..\venv\Scripts\python.exe -m pytest tests
+```
+
+Verify the production-like FastAPI-served React path in a browser:
+
+- mixed high-coverage journal
+- partial mixed journal with unresolved goods/waste
+- all-unresolved or low-detail journal
+- V1-compatible response if accessible through configuration
+- keyboard tab navigation through input, example chips, result tabs, and
+  details controls
+- mobile-width layout
+
+### Do Not Do
+
+- Do not add login, accounts, persistence, saved history, or trends.
+- Do not implement a day timeline.
+- Do not add live LLM result prose.
+- Do not make unsupported coaching or avoided-emissions claims.
+- Do not hide unresolved or failed activities to make the result look cleaner.
+- Do not make comparison cards appear for partial represented results.
+- Do not make the UI depend on Ticket 10/11 diagnostics being present.
+- Do not add a heavy charting or UI dependency without a clear accessibility
+  and maintainability reason.
+- Do not remove V1 rendering or `/api/estimate`.
+- Do not change V2 confidence, total, or factor semantics in presentation code.
+
 ## Future Work Outside These Tickets
 
 Not included:
@@ -873,6 +1464,7 @@ Not included:
 - long-term analytics
 - counterfactual avoided-emissions claims
 - LLM-written coaching summaries
+- full day timeline or calendar visualization
 
 ## Overall Definition Of Done
 
@@ -886,6 +1478,8 @@ The consumer dashboard work is complete when:
 - deterministic insights avoid unsupported claims
 - impact comparisons, if added, use documented maintained methodology
 - clarification controls, if added, use an explicit provenance-preserving API contract
+- final demo-grade UI has lightweight result tabs, activity coverage,
+  estimate quality, category command center, and example chips
 - developer details preserve explainability while remaining collapsed by default
 - frontend verification passes through the production-like served React path
 - no live external services are required by tests

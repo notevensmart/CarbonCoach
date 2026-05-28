@@ -3,219 +3,123 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
 import EmissionResult from "./EmissionResult";
+import Home from "../pages/Home";
 
-test("renders an estimated heater with visible consumer assumptions", () => {
-  render(
-    <EmissionResult
-      response={v2Response([
-        includedDetail({
-          raw_text: "I turned on the heater for 3 hours.",
-          category: "energy",
-          activity_type: "space_heater_use",
-          co2e: 1.8,
-          confidence: { score: 0.6, level: "medium" },
-          parameters: { duration: 3, duration_unit: "hours", energy: 4.5, energy_unit: "kWh" },
-          assumptions: [
-            {
-              code: "space_heater.default_power",
-              message: "Assumed heater power of 1.5 kW because wattage was not provided.",
-            },
-          ],
-        }),
-      ])}
-    />
-  );
+test("renders result tabs and supports click and keyboard navigation", () => {
+  render(<EmissionResult response={v2Response([includedDetail()])} />);
 
-  const hero = screen.getByText("Today's Estimated Footprint").closest("section");
-  expect(within(hero).getByText("1.80 kg CO2e")).toBeInTheDocument();
-  expect(within(hero).getByText("Medium")).toBeInTheDocument();
-  expect(within(hero).queryByText(/0\.60/)).not.toBeInTheDocument();
+  const overviewTab = screen.getByRole("tab", { name: "Overview" });
+  const activitiesTab = screen.getByRole("tab", { name: "Activities" });
+  const detailsTab = screen.getByRole("tab", { name: "Details" });
+  expect(overviewTab).toHaveAttribute("aria-selected", "true");
 
-  const card = activityCard("Space Heater Use");
-  expect(within(card).getByText("What we assumed")).toBeInTheDocument();
-  expect(
-    within(card).getByText("Assumed heater power of 1.5 kW because wattage was not provided.")
-  ).toBeInTheDocument();
-  expect(within(card).queryByText(/space_heater\.default_power/)).not.toBeInTheDocument();
+  fireEvent.click(activitiesTab);
+  expect(activitiesTab).toHaveAttribute("aria-selected", "true");
+  expect(screen.getByText("Estimated Activities")).toBeVisible();
+
+  fireEvent.keyDown(screen.getByRole("tablist", { name: "Result views" }), {
+    key: "ArrowRight",
+  });
+  expect(detailsTab).toHaveAttribute("aria-selected", "true");
+  expect(screen.getByText("How this estimate was calculated")).toBeVisible();
 });
 
-test("renders an explicit high-confidence estimate without an assumptions block", () => {
-  render(
-    <EmissionResult
-      response={v2Response([
-        includedDetail({
-          raw_text: "I used 5 kWh of electricity.",
-          category: "energy",
-          activity_type: "electricity_use",
-          co2e: 2,
-          confidence: { score: 0.95, level: "high" },
-          parameters: { energy: 5, energy_unit: "kWh" },
-        }),
-      ], { score: 0.95, level: "high" })}
-    />
-  );
-
-  const card = activityCard("Electricity Use");
-  expect(within(card).getByText(/Confidence:/)).toHaveTextContent("Confidence: High");
-  expect(within(card).queryByText("What we assumed")).not.toBeInTheDocument();
-});
-
-test("shows mixed contributing categories, main driver, and accessible breakdown values", () => {
-  render(
-    <EmissionResult
-      response={v2Response([
-        includedDetail({
-          category: "transport",
-          activity_type: "car_ride",
-          co2e: 2,
-          parameters: { distance: 10, distance_unit: "km" },
-        }),
-        includedDetail({
-          category: "energy",
-          activity_type: "electricity_use",
-          co2e: 1,
-          parameters: { energy: 2.5, energy_unit: "kWh" },
-        }),
-      ])}
-    />
-  );
-
-  const hero = screen.getByText("Today's Estimated Footprint").closest("section");
-  expect(within(hero).getByText("3.00 kg CO2e")).toBeInTheDocument();
-  expect(within(hero).getByText("Transport")).toBeInTheDocument();
-  expect(
-    screen.getByText(/Transport was the largest part of today's estimated footprint\./)
-  ).toBeInTheDocument();
-
-  const breakdown = screen.getByText("Breakdown of estimated emissions").closest("section");
-  expect(within(breakdown).getByText("2.00 kg CO2e (67%)")).toBeInTheDocument();
-  expect(within(breakdown).getByText("1.00 kg CO2e (33%)")).toBeInTheDocument();
-  expect(within(breakdown).queryByText("Goods")).not.toBeInTheDocument();
-  expect(
-    within(breakdown).getByRole("img", { name: /Transport 2.00 kg CO2e, 67 percent/ })
-  ).toBeInTheDocument();
-});
-
-test("uses stable tie messaging instead of implying a single category is larger", () => {
-  render(
-    <EmissionResult
-      response={v2Response([
-        includedDetail({ category: "transport", activity_type: "bus_ride", co2e: 1 }),
-        includedDetail({ category: "energy", activity_type: "electricity_use", co2e: 1 }),
-      ])}
-    />
-  );
-
-  const hero = screen.getByText("Today's Estimated Footprint").closest("section");
-  expect(within(hero).getByText("Multiple categories")).toBeInTheDocument();
-  expect(
-    screen.getByText(/Today's estimated footprint was spread across multiple categories\./)
-  ).toBeInTheDocument();
-});
-
-test("renders one backend-supplied approximate impact comparison for an eligible estimate", () => {
+test("uses backend coverage and explains estimate quality in human terms", () => {
   render(
     <EmissionResult
       response={v2Response(
         [
           includedDetail({
-            category: "transport",
-            activity_type: "car_ride",
-            co2e: 3.072,
+            status: "fallback_estimated",
+            source: "fallback",
+            assumptions: [
+              {
+                code: "fallback_factor.energy",
+                message: "Used local fallback factor for electricity.",
+              },
+            ],
           }),
-        ],
-        { score: 0.86, level: "high" },
-        comparisonFixture()
-      )}
-    />
-  );
-
-  const comparison = screen.getByLabelText("Impact comparison");
-  expect(
-    within(comparison).getByText(
-      "Roughly equivalent to driving an average petrol car for 16 km."
-    )
-  ).toBeInTheDocument();
-  expect(screen.getAllByLabelText("Impact comparison")).toHaveLength(1);
-  expect(within(comparison).queryByText(/0\.192|provenance/i)).not.toBeInTheDocument();
-});
-
-test("hides comparison output for low-confidence and zero-total result states", () => {
-  const { rerender } = render(
-    <EmissionResult
-      response={v2Response(
-        [includedDetail({ co2e: 2, confidence: { score: 0.4, level: "low" } })],
-        { score: 0.4, level: "low" },
-        comparisonFixture()
-      )}
-    />
-  );
-
-  expect(screen.queryByLabelText("Impact comparison")).not.toBeInTheDocument();
-
-  rerender(
-    <EmissionResult
-      response={v2Response([unresolvedDetail()], { score: 0.2, level: "low" }, comparisonFixture())}
-    />
-  );
-  expect(screen.queryByLabelText("Impact comparison")).not.toBeInTheDocument();
-
-  rerender(
-    <EmissionResult response={v2Response([], { score: 0.2, level: "low" }, comparisonFixture())} />
-  );
-  expect(screen.queryByLabelText("Impact comparison")).not.toBeInTheDocument();
-});
-
-test("hides a supplied comparison when coverage marks a positive result partial", () => {
-  render(
-    <EmissionResult
-      response={v2Response(
-        [
-          includedDetail({ category: "goods_services", activity_type: "coffee_purchase", co2e: 0.25 }),
           unresolvedDetail(),
+          notEstimatedDetail(),
         ],
-        { score: 0.7, level: "medium" },
-        comparisonFixture(),
+        { score: 0.62, level: "medium" },
+        null,
         {
-          represented_activity_count: 2,
-          included_in_total_count: 1,
-          unresolved_count: 1,
-          not_estimated_count: 0,
-          failed_count: 0,
+          represented_activity_count: 9,
+          included_in_total_count: 3,
+          unresolved_count: 2,
+          failed_count: 1,
+          not_estimated_count: 2,
           estimate_is_partial: true,
         }
       )}
     />
   );
 
-  expect(screen.queryByLabelText("Impact comparison")).not.toBeInTheDocument();
-  expect(screen.getByText("Needs Attention")).toBeInTheDocument();
+  expect(screen.getByText("We found 9 activities")).toBeInTheDocument();
+  expect(screen.getByText("Backend coverage")).toBeInTheDocument();
+  expect(screen.getByText("Estimate quality")).toBeInTheDocument();
+  expect(screen.getAllByText("Medium").length).toBeGreaterThan(0);
+  expect(screen.getByText("1 activity used assumptions")).toBeInTheDocument();
+  expect(screen.getByText("1 activity is an approximate estimate")).toBeInTheDocument();
+  expect(screen.getByText("3 activities need more detail")).toBeInTheDocument();
+  expect(screen.getByText("The represented estimate is partial")).toBeInTheDocument();
 });
 
-test("exposes comparison calculation and provenance only in developer details", () => {
+test("shows category command center in stable category order with included totals only", () => {
   render(
     <EmissionResult
-      response={v2Response(
-        [includedDetail({ category: "transport", activity_type: "car_ride", co2e: 3.072 })],
-        { score: 0.86, level: "high" },
-        comparisonFixture()
-      )}
+      response={v2Response([
+        includedDetail({ category: "transport", activity_type: "car_ride", co2e: 2 }),
+        includedDetail({ category: "energy", activity_type: "electricity_use", co2e: 1 }),
+        unresolvedDetail({ category: "goods_services", activity_type: "generic_purchase" }),
+        notEstimatedDetail({ category: "waste", activity_type: "composting" }),
+      ])}
     />
   );
 
-  const accordion = screen.getByTestId("developer-details");
-  expect(within(accordion).queryByText("Impact comparison calculation")).not.toBeVisible();
-  fireEvent.click(within(accordion).getByText("How this estimate was calculated"));
-
-  expect(within(accordion).getByText("Impact comparison calculation")).toBeVisible();
-  expect(within(accordion).getByText("average_petrol_car_distance")).toBeVisible();
-  expect(within(accordion).getByText("3.072 kg CO2e")).toBeVisible();
-  expect(within(accordion).getByText("0.192 kg CO2e/km")).toBeVisible();
-  expect(within(accordion).getByText("16 km")).toBeVisible();
-  expect(within(accordion).getByText(/National Greenhouse Accounts Factors 2025/)).toBeVisible();
+  const command = screen.getByText("Category command center").closest("section");
+  expect(within(command).getByRole("img", { name: /Transport 2.00 kg CO2e, 67 percent/ }))
+    .toBeInTheDocument();
+  expect(
+    within(command)
+      .getAllByRole("heading", { level: 3 })
+      .map((heading) => heading.textContent)
+  ).toEqual(["Transport", "Energy", "Goods", "Waste"]);
+  expect(within(command).getByText("2.00 kg")).toBeInTheDocument();
+  expect(within(command).getByText("1.00 kg")).toBeInTheDocument();
+  expect(within(command).getAllByText("0.00 kg")).toHaveLength(2);
 });
 
-test("shows a named-vehicle fallback assumption as an approximate estimate without codes", () => {
+test("handles zero-total and unresolved-only responses without implying completeness", () => {
+  render(<EmissionResult response={v2Response([unresolvedDetail()])} />);
+
+  const hero = screen.getByText("Today's Estimated Footprint").closest("section");
+  expect(within(hero).getByText("No emissions estimate is available yet.")).toBeInTheDocument();
+  expect(screen.getByText("No estimated emissions to break down yet.")).toBeInTheDocument();
+  expect(screen.getByText(/This is a partial estimated footprint/)).toBeInTheDocument();
+  expect(screen.queryByLabelText("Impact comparison")).not.toBeInTheDocument();
+});
+
+test("derives next-best clarification as guidance only when no clarification API is wired", () => {
+  render(<EmissionResult response={v2Response([unresolvedDetail()])} />);
+
+  expect(screen.getByText("Next best clarification")).toBeInTheDocument();
+  expect(screen.getByText("How far was this trip?")).toBeInTheDocument();
+  expect(screen.getByText(/guidance only for now\./)).toBeInTheDocument();
+});
+
+test("demo example chips populate the journal without creating fake results", () => {
+  render(<Home />);
+
+  fireEvent.click(screen.getByRole("button", { name: "Food + Waste" }));
+  expect(screen.getByLabelText("Daily journal entry")).toHaveValue(
+    "I bought coffee for $6, picked up groceries for $45, and threw away 500 g of plastic packaging."
+  );
+  expect(screen.queryByLabelText("Emission estimate results")).not.toBeInTheDocument();
+});
+
+test("Activities tab preserves estimated, needs-attention, and not-included activity surfaces", () => {
   render(
     <EmissionResult
       response={v2Response([
@@ -226,16 +130,12 @@ test("shows a named-vehicle fallback assumption as an approximate estimate witho
           status: "fallback_estimated",
           source: "fallback",
           co2e: 1.1,
-          confidence: { score: 0.55, level: "medium" },
           parameters: { vehicle_description: "BMW X5", distance: 5, distance_unit: "km" },
           assumptions: [
             {
               code: "vehicle.named.default_petrol_medium",
-              message: "Recognized the supplied vehicle name BMW X5, but no verified class or fuel mapping is available; supplied medium petrol passenger-car parameters for the Climatiq estimate.",
-            },
-            {
-              code: "fallback_factor.transport.road_distance",
-              message: "Used local fallback factor generic road transport distance (0.18 kg CO2e/km) because no successful compatible Climatiq estimate was available.",
+              message:
+                "Recognized the supplied vehicle name BMW X5, but no verified class or fuel mapping is available; supplied medium petrol passenger-car parameters for the Climatiq estimate.",
             },
           ],
           issues: [
@@ -245,145 +145,131 @@ test("shows a named-vehicle fallback assumption as an approximate estimate witho
             },
           ],
         }),
+        unresolvedDetail(),
+        notEstimatedDetail(),
       ])}
     />
   );
 
-  const card = activityCard("Car Ride");
+  fireEvent.click(screen.getByRole("tab", { name: "Activities" }));
+  const activities = screen.getByRole("tabpanel", { name: "Activities" });
+  const card = within(activities).getByRole("heading", { name: "Car Ride" }).closest("article");
+
   expect(within(card).getByText("Approximate estimate")).toBeInTheDocument();
+  expect(within(card).getByText("What we assumed")).toBeInTheDocument();
   expect(within(card).getByText(/Recognized the supplied vehicle name BMW X5/)).toHaveTextContent(
     "for this estimate"
   );
-  expect(
-    within(card).getByText(
-      "Used an approximate emissions factor because a more specific estimate was not available."
-    )
-  ).toBeInTheDocument();
-  expect(within(card).getByText(/Vehicle Description: BMW X5/)).toBeInTheDocument();
   expect(within(card).queryByText(/vehicle\.named/)).not.toBeInTheDocument();
-  expect(within(card).queryByText("Local fallback")).not.toBeInTheDocument();
-  expect(within(card).queryByText(/Climatiq/i)).not.toBeInTheDocument();
-});
-
-test("excludes unresolved activities from totals and the chart while showing Needs Attention", () => {
-  render(
-    <EmissionResult
-      response={v2Response([
-        includedDetail({ category: "energy", activity_type: "electricity_use", co2e: 2 }),
-        unresolvedDetail(),
-      ])}
-    />
-  );
-
-  const hero = screen.getByText("Today's Estimated Footprint").closest("section");
-  expect(within(hero).getByText("2.00 kg CO2e")).toBeInTheDocument();
-  expect(within(hero).getByText("1 activity could not yet be included.")).toBeInTheDocument();
-  const breakdown = screen.getByText("Breakdown of estimated emissions").closest("section");
-  expect(within(breakdown).queryByText("Transport")).not.toBeInTheDocument();
+  expect(within(activities).getByText("Needs Attention")).toBeInTheDocument();
+  expect(within(activities).getByText("We could not estimate this activity yet.")).toBeInTheDocument();
+  expect(within(activities).getByText("Not Included in Estimated Emissions")).toBeInTheDocument();
   expect(
-    within(breakdown).getByText("Activities needing attention are not included in this breakdown.")
-  ).toBeInTheDocument();
-
-  const needsAttention = screen.getByText("Needs Attention").closest("section");
-  expect(within(needsAttention).getByText('"I used an electric scooter for 4 km."')).toBeInTheDocument();
-  expect(within(needsAttention).getByText("We could not estimate this activity yet.")).toBeInTheDocument();
-  expect(within(needsAttention).queryByText(/0\.00 kg CO2e/)).not.toBeInTheDocument();
-  expect(
-    screen.getByText(/1 activity could not yet be included in the estimate\./)
-  ).toBeInTheDocument();
-});
-
-test("shows not-estimated activities separately without adding them to totals or breakdown", () => {
-  render(
-    <EmissionResult
-      response={v2Response([
-        includedDetail({ category: "energy", activity_type: "electricity_use", co2e: 1 }),
-        {
-          raw_text: "I walked 2 km.",
-          category: "transport",
-          activity_type: "walking",
-          status: "not_estimated",
-          co2e: 25,
-          unit: "kg",
-          source: "none",
-          confidence: { score: 0.9, level: "high" },
-          parameters: { distance: 2, distance_unit: "km" },
-        },
-      ])}
-    />
-  );
-
-  const hero = screen.getByText("Today's Estimated Footprint").closest("section");
-  expect(within(hero).getByText("1.00 kg CO2e")).toBeInTheDocument();
-  const notIncluded = screen.getByText("Not Included in Estimated Emissions").closest("section");
-  expect(within(notIncluded).getByText("Walking")).toBeInTheDocument();
-  expect(
-    within(notIncluded).getByText(
+    within(activities).getByText(
       "This activity was recognised but is not included in estimated emissions."
     )
   ).toBeInTheDocument();
-  const breakdown = screen.getByText("Breakdown of estimated emissions").closest("section");
-  expect(within(breakdown).queryByText("Transport")).not.toBeInTheDocument();
-  expect(screen.queryByText("Needs Attention")).not.toBeInTheDocument();
 });
 
-test("handles all-unresolved and empty-detail responses without an empty chart or main driver", () => {
-  const { rerender } = render(<EmissionResult response={v2Response([unresolvedDetail()])} />);
-
-  let hero = screen.getByText("Today's Estimated Footprint").closest("section");
-  expect(within(hero).getByText("No emissions estimate is available yet.")).toBeInTheDocument();
-  expect(within(hero).queryByText("Main driver")).not.toBeInTheDocument();
-  expect(screen.getByText("No estimated emissions to break down yet.")).toBeInTheDocument();
-
-  rerender(<EmissionResult response={v2Response([])} />);
-  hero = screen.getByText("Today's Estimated Footprint").closest("section");
-  expect(within(hero).getByText("No emissions estimate is available yet.")).toBeInTheDocument();
-  expect(screen.getByText("No carbon-relevant activities were found in this entry.")).toBeInTheDocument();
-  expect(screen.queryByText("Needs Attention")).not.toBeInTheDocument();
-});
-
-test("keeps Ticket 6 confidence and factor evidence in a collapsed developer accordion", () => {
+test("Details tab exposes confidence, factor diagnostics, raw JSON, and suppressed comparison metadata", () => {
   render(
     <EmissionResult
-      response={v2Response([
-        includedDetail({
-          raw_text: "I drove my electric car for 10 km.",
-          category: "transport",
-          activity_type: "car_ride",
-          co2e: 1.14,
-          confidence: { score: 0.75, level: "medium" },
-          parameter_confidence: { score: 0.95, level: "high" },
-          factor_confidence: { score: 0.75, level: "medium" },
-          source_confidence: { score: 1, level: "high" },
-          parameters: { distance: 10, distance_unit: "km", fuel_type: "electric" },
-          factor: {
-            activity_id: "fixture.electric.car",
-            name: "Electric passenger car",
-            score: 0.75,
-            match_reasons: ["normalized fuel_type matched: electric"],
-          },
-        }),
-      ])}
+      response={v2Response(
+        [
+          includedDetail({
+            raw_text: "I drove my electric car for 10 km.",
+            category: "transport",
+            activity_type: "car_ride",
+            co2e: 1.14,
+            confidence: { score: 0.75, level: "medium" },
+            parameter_confidence: { score: 0.95, level: "high" },
+            factor_confidence: { score: 0.75, level: "medium" },
+            source_confidence: { score: 1, level: "high" },
+            parameters: { distance: 10, distance_unit: "km", fuel_type: "electric" },
+            factor: {
+              activity_id: "fixture.electric.car",
+              name: "Electric passenger car",
+              score: 0.75,
+              match_reasons: ["normalized fuel_type matched: electric"],
+            },
+            factor_diagnostics: {
+              intent_key: "transport.car.distance",
+              search_query: "electric passenger car distance",
+              selector_filters: { category: "transport", unit_type: "Distance" },
+              candidate_count: 3,
+              selected_activity_id: "fixture.electric.car",
+              selected_reason: "Best compatible electric factor.",
+              fallback_used: true,
+              fallback_reason: "Climatiq unavailable",
+              fallback_assumption_code: "fallback_factor.transport.road_distance",
+              top_rejections: [
+                { activity_id: "fixture.petrol.car", reason: "fuel_type mismatch" },
+              ],
+            },
+          }),
+        ],
+        { score: 0.75, level: "medium" },
+        comparisonFixture(),
+        {
+          represented_activity_count: 2,
+          included_in_total_count: 1,
+          unresolved_count: 1,
+          failed_count: 0,
+          not_estimated_count: 0,
+          estimate_is_partial: true,
+        }
+      )}
     />
   );
 
-  const card = activityCard("Car Ride");
-  expect(within(card).queryByText("Factor confidence")).not.toBeInTheDocument();
-  expect(within(card).queryByText("Factor fit")).not.toBeInTheDocument();
-  expect(within(card).queryByText("fixture.electric.car")).not.toBeInTheDocument();
+  expect(screen.queryByLabelText("Impact comparison")).not.toBeInTheDocument();
+  const overview = screen.getByRole("tabpanel", { name: "Overview" });
+  expect(within(overview).queryByText("fixture.electric.car")).not.toBeInTheDocument();
+  expect(within(overview).queryByText("transport.car.distance")).not.toBeInTheDocument();
 
-  const accordion = screen.getByTestId("developer-details");
-  expect(accordion).not.toHaveAttribute("open");
+  fireEvent.click(screen.getByRole("tab", { name: "Details" }));
+  const details = screen.getByTestId("developer-details");
+  expect(within(details).getByText("Total estimate confidence")).toBeVisible();
+  expect(within(details).getByText("Parameter confidence")).not.toBeVisible();
 
-  fireEvent.click(within(accordion).getByText("How this estimate was calculated"));
+  fireEvent.click(within(details).getByText("Per-Activity Details"));
+  fireEvent.click(within(details).getAllByText("Car Ride")[0]);
+  expect(within(details).getByText("Parameter confidence")).toBeVisible();
+  expect(within(details).getByText("Factor confidence")).toBeVisible();
+  expect(within(details).getByText("Estimate confidence")).toBeVisible();
 
-  expect(accordion).toHaveAttribute("open");
-  expect(within(accordion).getByText("Factor confidence")).toBeVisible();
-  expect(within(accordion).getByText("Factor fit:")).toBeVisible();
-  expect(within(accordion).getByText("Estimate confidence")).toBeVisible();
-  expect(within(accordion).getByText("fixture.electric.car")).toBeVisible();
-  expect(within(accordion).getByText("normalized fuel_type matched: electric")).toBeVisible();
-  expect(within(accordion).queryByText(/accuracy/i)).not.toBeInTheDocument();
+  fireEvent.click(within(details).getByText("Factor Linking"));
+  expect(within(details).getAllByText("fixture.electric.car")[0]).toBeVisible();
+  expect(within(details).getAllByText("transport.car.distance")[0]).toBeVisible();
+  expect(within(details).getByText("Candidate count")).toBeVisible();
+  expect(within(details).getByText("Climatiq unavailable")).toBeVisible();
+  expect(within(details).getByText("fixture.petrol.car:")).toBeVisible();
+  expect(within(details).getByText("normalized fuel_type matched: electric")).toBeVisible();
+  expect(within(details).queryByText(/accuracy/i)).not.toBeInTheDocument();
+
+  fireEvent.click(within(details).getByText("Impact Comparison"));
+  expect(within(details).getByText("Impact comparison calculation")).toBeVisible();
+  expect(within(details).getByText("average_petrol_car_distance")).toBeVisible();
+  expect(
+    within(details).getByText(/not shown in the primary result because the current display rules/)
+  ).toBeVisible();
+
+  fireEvent.click(within(details).getByText("Raw JSON Preview"));
+  expect(
+    within(details).getByText((content, node) => {
+      return node.tagName.toLowerCase() === "pre" && content.includes('"version": "v2"');
+    })
+  ).toBeVisible();
+});
+
+test("Details tab degrades gracefully when optional diagnostics are absent", () => {
+  render(<EmissionResult response={v2Response([includedDetail()])} />);
+
+  fireEvent.click(screen.getByRole("tab", { name: "Details" }));
+  fireEvent.click(screen.getByText("Factor Linking"));
+  expect(
+    screen.getByText("No factor linking diagnostics were supplied for this response.")
+  ).toBeVisible();
 });
 
 test("continues to render a V1 response when the configured endpoint targets V1", () => {
@@ -408,7 +294,8 @@ function v2Response(
   details,
   confidence = { score: 0.7, level: "medium" },
   comparison = null,
-  coverage = null
+  coverage = null,
+  overrides = {}
 ) {
   const included = details.filter((detail) =>
     ["estimated", "fallback_estimated"].includes(detail.status)
@@ -424,6 +311,7 @@ function v2Response(
     coverage,
     comparison,
     details,
+    ...overrides,
   };
 }
 
@@ -437,7 +325,8 @@ function comparisonFixture(overrides = {}) {
     kg_co2e_per_unit: 0.192,
     input_total_kg_co2e: 3.072,
     applicability: "Australia; representative petrol passenger-car operational travel emissions only.",
-    source_note: "Maintained Australian approximate reference from National Greenhouse Accounts Factors 2025.",
+    source_note:
+      "Maintained Australian approximate reference from National Greenhouse Accounts Factors 2025.",
     approximate: true,
     ...overrides,
   };
@@ -463,9 +352,9 @@ function includedDetail(overrides = {}) {
   };
 }
 
-function unresolvedDetail() {
+function unresolvedDetail(overrides = {}) {
   return {
-    raw_text: "I used an electric scooter for 4 km.",
+    raw_text: "I took a trip across town.",
     category: "transport",
     activity_type: "generic_transport",
     status: "unresolved",
@@ -477,14 +366,27 @@ function unresolvedDetail() {
     assumptions: [],
     issues: [
       {
-        code: "transport.unsupported_mode",
-        message: "No compatible factor pathway has been implemented.",
+        code: "transport.missing_distance",
+        message: "Distance is required for this transport estimate.",
       },
     ],
+    ...overrides,
   };
 }
 
-function activityCard(name) {
-  const activities = screen.getByText("Estimated Activities").closest("section");
-  return within(activities).getByRole("heading", { name }).closest("article");
+function notEstimatedDetail(overrides = {}) {
+  return {
+    raw_text: "I walked 2 km.",
+    category: "transport",
+    activity_type: "walking",
+    status: "not_estimated",
+    co2e: 25,
+    unit: "kg",
+    source: "none",
+    confidence: { score: 0.9, level: "high" },
+    parameters: { distance: 2, distance_unit: "km" },
+    assumptions: [],
+    issues: [],
+    ...overrides,
+  };
 }

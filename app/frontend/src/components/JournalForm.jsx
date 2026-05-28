@@ -12,10 +12,11 @@ export default function JournalForm({ onSubmit }) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <label className="text-lg font-medium flex items-center gap-2">
-        🌿 What did you do today?
+      <label htmlFor="journal-form-input" className="flex items-center gap-2 text-lg font-medium">
+        What did you do today?
       </label>
       <textarea
+        id="journal-form-input"
         value={input}
         onChange={(e) => setInput(e.target.value)}
         rows={4}
