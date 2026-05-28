@@ -144,8 +144,8 @@ def test_same_span_category_activity_conflict_preserves_deterministic_event():
 
 def test_invalid_llm_category_or_activity_is_rejected():
     events = _extract(
-        "I picked up a flat white.",
-        [{"raw_text": "picked up a flat white", "category": "energy", "activity_type": "coffee_purchase"}],
+        "I sipped a flat white.",
+        [{"raw_text": "sipped a flat white", "category": "energy", "activity_type": "coffee_purchase"}],
     )
 
     assert events == []

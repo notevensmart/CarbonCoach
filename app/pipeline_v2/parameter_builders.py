@@ -400,6 +400,8 @@ class GoodsServicesParameterBuilder:
 
         if required_dimension in parameters:
             parameters["calculation_boundary"] = str(pathway["boundary_note"])
+        if pathway.get("fallback_factor_key"):
+            parameters["fallback_factor_key"] = str(pathway["fallback_factor_key"])
         return ParameterBuildResult(
             parameters=parameters,
             confidence=confidence,

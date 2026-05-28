@@ -9,6 +9,7 @@ from app.domain.activity_taxonomy import (
     WASTE_TAXONOMY,
 )
 from app.domain.material_ontology import (
+    WASTE_MATERIAL_SYNONYMS,
     detect_waste_disposal_method,
     detect_waste_material_classes,
 )
@@ -80,8 +81,13 @@ VEHICLE_TRAIT_RE = re.compile(
 )
 VEHICLE_YEAR_RE = re.compile(r"\b(?P<year>(?:19|20)\d{2})\b")
 CLAUSE_SPLIT_RE = re.compile(
-    r"\s*(?:[,.;!?]|\bthen\b|\bwhile\b|"
-    r"\band\b(?=\s+(?:i\s+)?(?:grabbed|bought|purchased|ordered|spent|drove|"
+    r"\s*(?:[.;!?]|\bthen\b|\bwhile\b|"
+    r",(?=\s*(?:and\s+)?(?:i\s+)?(?:grabbed|bought|purchased|ordered|spent|got|"
+    r"picked\s+up|disposed|worked|drove|"
+    r"travelled|traveled|commuted|caught|took|used|ran|turned|recycled|"
+    r"composted|put|threw|walked|read|studied|gaming|played))|"
+    r"\band\b(?=\s+(?:i\s+)?(?:grabbed|bought|purchased|ordered|spent|got|"
+    r"picked\s+up|disposed|worked|drove|"
     r"travelled|traveled|commuted|caught|took|used|ran|turned|recycled|"
     r"composted|put|threw|walked|read|studied|gaming|played)))\s+",
     re.IGNORECASE,
@@ -318,7 +324,7 @@ def _everyday_events(clause: str) -> list[CarbonEvent]:
 def _goods_events(clause: str) -> list[tuple[int, CarbonEvent]]:
     if not _goods_purchase_context(clause):
         return []
-    delivery_context = bool(re.search(r"\bdelivery\s+app\b", clause, re.IGNORECASE))
+    delivery_context = bool(FOOD_DELIVERY_CONTEXT_RE.search(clause))
     positioned: list[tuple[int, CarbonEvent]] = []
     occupied: list[tuple[int, int]] = []
     for activity_type in ("coffee_purchase", "restaurant_meal", "food_purchase"):
@@ -331,6 +337,11 @@ def _goods_events(clause: str) -> list[tuple[int, CarbonEvent]]:
                     if product_class == "unspecified_takeaway" and any(
                         event.activity_type in {"coffee_purchase", "restaurant_meal"}
                         for _, event in positioned
+                    ):
+                        continue
+                    if product_class == "milk" and _milk_is_coffee_modifier(
+                        clause,
+                        match.span(),
                     ):
                         continue
                     selected_class = product_class
@@ -403,6 +414,11 @@ def _unsupported_goods_events(clause: str) -> list[tuple[int, CarbonEvent]]:
     return events
 
 
+def _milk_is_coffee_modifier(clause: str, span: tuple[int, int]) -> bool:
+    nearby = clause[max(0, span[0] - 12) : min(len(clause), span[1] + 24)]
+    return bool(re.search(r"\b(?:oat\s+)?milk\s+coffee\b", nearby, re.IGNORECASE))
+
+
 def _waste_events(clause: str) -> list[tuple[int, CarbonEvent]]:
     matched_method = _waste_method(clause)
     if matched_method is None:
@@ -415,7 +431,15 @@ def _waste_events(clause: str) -> list[tuple[int, CarbonEvent]]:
         activity_type, disposal_method, position = "landfill_waste", "unknown", 0
     else:
         activity_type, disposal_method, position = matched_method
-    material_classes = _material_classes(clause, activity_type)
+    component_events = _waste_component_events(
+        clause,
+        activity_type,
+        disposal_method,
+        position,
+    )
+    if component_events:
+        return component_events
+    material_classes = _specific_material_classes(_material_classes(clause, activity_type))
     material_class = (
         next(iter(material_classes))
         if len(material_classes) == 1
@@ -437,6 +461,147 @@ def _waste_events(clause: str) -> list[tuple[int, CarbonEvent]]:
             ),
         )
     ]
+
+
+def _waste_component_events(
+    clause: str,
+    activity_type: str,
+    disposal_method: str,
+    method_position: int,
+) -> list[tuple[int, CarbonEvent]]:
+    material_matches = _waste_material_matches(clause)
+    if len({material for material, _, _ in material_matches}) < 2:
+        return []
+
+    method_match = _waste_method_match(clause, activity_type, disposal_method)
+    method_surface = method_match.group(0) if method_match else ""
+    component_source = clause
+    method_is_prefix = bool(method_match and method_match.start() <= material_matches[0][1][0])
+    if method_match and method_is_prefix:
+        component_source = clause[method_match.end() :]
+    elif method_match:
+        component_source = clause[: method_match.start()]
+
+    components = _split_waste_components(component_source)
+    positioned: list[tuple[int, CarbonEvent]] = []
+    for component_start, component in components:
+        material_classes = _specific_material_classes(
+            detect_waste_material_classes(component)
+        )
+        if len(material_classes) != 1:
+            continue
+        material_class = next(iter(material_classes))
+        raw_text = _waste_component_raw_text(
+            method_surface,
+            component,
+            method_is_prefix,
+        )
+        if not re.search(r"\b(?:\d|half\s+(?:a\s+)?kilogram)\b", raw_text, re.I):
+            raw_text = _waste_component_raw_text(
+                method_surface,
+                _nearest_weight_component(clause, component_start, component),
+                method_is_prefix,
+            )
+        positioned.append(
+            (
+                component_start + (method_match.end() if method_match and method_is_prefix else 0),
+                CarbonEvent(
+                    raw_text=raw_text,
+                    category="waste",
+                    activity_type=activity_type,
+                    entities={
+                        "disposal_method": disposal_method,
+                        "material_class": material_class,
+                        "material_description": raw_text,
+                    },
+                    confidence=Confidence.from_score(
+                        0.80 if disposal_method != "unknown" else 0.45
+                    ),
+                ),
+            )
+        )
+    return positioned if len(positioned) >= 2 else []
+
+
+def _waste_component_raw_text(
+    method_surface: str,
+    component: str,
+    method_is_prefix: bool,
+) -> str:
+    component = component.strip(" ,")
+    if not method_surface:
+        return component
+    if method_is_prefix:
+        return f"{method_surface} {component}".strip()
+    return f"{component} {method_surface}".strip()
+
+
+def _split_waste_components(text: str) -> list[tuple[int, str]]:
+    pieces: list[tuple[int, str]] = []
+    start = 0
+    for match in re.finditer(r"\s*(?:,|\band\b|\bplus\b|&)\s+", text, re.IGNORECASE):
+        piece = text[start : match.start()].strip(" ,")
+        if piece:
+            pieces.append((start, piece))
+        start = match.end()
+    tail = text[start:].strip(" ,")
+    if tail:
+        pieces.append((start, tail))
+    return pieces
+
+
+def _nearest_weight_component(clause: str, component_start: int, component: str) -> str:
+    if re.search(r"\b(?:\d|half\s+(?:a\s+)?kilogram)\b", component, re.I):
+        return component
+    window_start = max(0, component_start - 24)
+    prefix = clause[window_start:component_start]
+    weight_match = re.search(
+        r"(?:\d+(?:\.\d+)?\s*(?:kg|kilograms?|g|grams?)|half\s+(?:a\s+)?kilogram)\s*(?:of\s+)?$",
+        prefix,
+        re.IGNORECASE,
+    )
+    if weight_match:
+        return f"{weight_match.group(0).strip()} {component}".strip()
+    return component
+
+
+def _waste_material_matches(clause: str) -> list[tuple[str, tuple[int, int], str]]:
+    matches: list[tuple[str, tuple[int, int], str]] = []
+    for material_class, synonyms in WASTE_MATERIAL_SYNONYMS.items():
+        for synonym in sorted(synonyms, key=len, reverse=True):
+            for match in re.finditer(rf"\b{re.escape(synonym)}\b", clause, re.IGNORECASE):
+                matches.append((material_class, match.span(), match.group(0)))
+    matches.sort(key=lambda item: (item[1][0], -(item[1][1] - item[1][0])))
+    selected: list[tuple[str, tuple[int, int], str]] = []
+    for candidate in matches:
+        if any(_spans_overlap(candidate[1], existing[1]) for existing in selected):
+            continue
+        selected.append(candidate)
+    return selected
+
+
+def _specific_material_classes(material_classes: set[str]) -> set[str]:
+    classes = set(material_classes)
+    specific = classes - {"general_waste", "mixed_packaging"}
+    if specific:
+        return specific
+    if len(classes) > 1 and "general_waste" in classes:
+        classes.discard("general_waste")
+    return classes
+
+
+def _waste_method_match(clause: str, activity_type: str, disposal_method: str):
+    synonyms = WASTE_TAXONOMY.get(activity_type, {}).get("disposal_synonyms", ())
+    matches = [
+        match
+        for term in synonyms
+        for match in [re.search(rf"\b{re.escape(term)}\b", clause, re.IGNORECASE)]
+        if match
+    ]
+    if matches:
+        return sorted(matches, key=lambda match: match.start())[0]
+    method_match = re.search(rf"\b{re.escape(disposal_method)}\b", clause, re.IGNORECASE)
+    return method_match
 
 
 def _waste_method(clause: str) -> tuple[str, str, int] | None:
@@ -487,7 +652,8 @@ def _component_fragment(clause: str, span: tuple[int, int]) -> str:
     start = left[-1].end() if left else 0
     right = re.search(r"\s+\band\b\s+|,\s+", clause[span[1] :], re.IGNORECASE)
     end = span[1] + right.start() if right else len(clause)
-    return clause[start:end].strip(" ,")
+    fragment = clause[start:end].strip(" ,")
+    return re.sub(r"^(?:and|plus)\s+", "", fragment, flags=re.IGNORECASE)
 
 
 def _spans_overlap(first: tuple[int, int], second: tuple[int, int]) -> bool:

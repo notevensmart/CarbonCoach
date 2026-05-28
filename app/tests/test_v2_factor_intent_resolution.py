@@ -113,7 +113,7 @@ def test_wrong_method_recycling_factor_never_satisfies_landfill_event():
 
     assert detail["factor"] is None
     assert detail["status"] == "fallback_estimated"
-    assert "waste.landfill.generic_fallback" in _assumption_codes(detail)
+    assert "fallback_factor.waste.landfill_plastic" in _assumption_codes(detail)
     assert any(
         "recycling method conflicts" in rejection["reason"]
         for attempt in detail["factor_diagnostics"]["attempts"]

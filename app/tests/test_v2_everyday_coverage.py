@@ -45,7 +45,7 @@ def test_quantity_normalizer_adds_weight_money_natural_half_and_product_counts()
         (
             "I ordered a beef burrito and a soft drink.",
             ["restaurant_meal", "food_purchase"],
-            ["estimated", "unresolved"],
+            ["estimated", "estimated"],
         ),
         ("I ordered takeaway through a delivery app.", ["restaurant_meal"], ["unresolved"]),
         ("I bought groceries for dinner.", ["food_purchase"], ["unresolved"]),
@@ -177,8 +177,10 @@ def test_mandatory_everyday_journal_is_visible_partial_and_has_no_comparison(v2_
         "space_heater_use",
         "generic_energy_use",
         "landfill_waste",
+        "landfill_waste",
     ]
     assert [detail["status"] for detail in details] == [
+        "estimated",
         "estimated",
         "estimated",
         "estimated",
@@ -191,8 +193,8 @@ def test_mandatory_everyday_journal_is_visible_partial_and_has_no_comparison(v2_
     assert details[5]["parameters"]["device"] == "personal_computer"
     assert details[6]["parameters"]["disposal_method"] == "unknown"
     assert result["coverage"] == {
-        "represented_activity_count": 7,
-        "included_in_total_count": 3,
+        "represented_activity_count": 8,
+        "included_in_total_count": 4,
         "unresolved_count": 4,
         "not_estimated_count": 0,
         "failed_count": 0,

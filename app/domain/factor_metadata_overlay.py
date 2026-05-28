@@ -77,6 +77,10 @@ CONTROLLED_PRODUCT_CLASSES = {
     "coffee",
     "beef",
     "beef_burrito",
+    "burger",
+    "fries",
+    "pizza",
+    "sandwich",
     "restaurant_meal",
     "takeaway_meal",
     "groceries",
@@ -84,6 +88,9 @@ CONTROLLED_PRODUCT_CLASSES = {
     "electronics",
     "generic_purchase",
     "soft_drink",
+    "milk",
+    "bread",
+    "snacks",
 }
 CONTROLLED_PURCHASE_CONTEXTS = {
     "serving",

@@ -29,7 +29,15 @@ class FakeClimatiqEmissionEstimator:
             rate = {
                 "coffee": 0.25,
                 "beef_burrito": 2.0,
+                "burger": 2.5,
+                "fries": 0.55,
+                "pizza": 1.8,
+                "sandwich": 1.2,
                 "beef": 27.0,
+                "soft_drink": 0.25,
+                "milk": 1.2,
+                "bread": 0.7,
+                "snacks": 0.4,
             }[parameters["product_class"]]
             amount = float(parameters.get("number", parameters.get("weight", 0)))
             co2e = amount * rate
@@ -37,9 +45,16 @@ class FakeClimatiqEmissionEstimator:
             rate = {
                 ("recycling", "plastic"): 0.021,
                 ("recycling", "cardboard"): 0.05,
+                ("recycling", "paper"): 0.04,
+                ("recycling", "glass"): 0.03,
+                ("recycling", "metal"): 0.02,
                 ("composting", "food_waste"): 0.1,
                 ("landfill", "general_waste"): 0.5,
                 ("landfill", "mixed_packaging"): 0.5,
+                ("landfill", "plastic"): 0.12,
+                ("landfill", "cardboard"): 0.32,
+                ("landfill", "paper"): 0.38,
+                ("landfill", "food_waste"): 0.75,
             }[(parameters["disposal_method"], parameters["material_class"])]
             co2e = float(parameters["weight"]) * rate
         elif event.activity_type == "bus_ride":

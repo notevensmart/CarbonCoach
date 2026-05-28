@@ -14,11 +14,17 @@ COMPACT_K_RE = re.compile(r"\b(?P<value>\d+(?:\.\d+)?)\s*k\b", re.IGNORECASE)
 MONEY_RE = re.compile(r"\$(?P<value>\d+(?:\.\d+)?)\b")
 HALF_KILOGRAM_RE = re.compile(r"\bhalf\s+(?:a\s+)?kilogram\b", re.IGNORECASE)
 COUNT_RE = re.compile(
-    r"\b(?P<value>\d+(?:\.\d+)?)\s+(?:coffees?|flat\s+whites?|burritos?|soft\s+drinks?|servings?)\b",
+    r"\b(?P<value>\d+(?:\.\d+)?)\s+(?:coffees?|flat\s+whites?|burritos?|"
+    r"burgers?|hamburgers?|servings?|orders?\s+of\s+fries|fries|hot\s+chips|"
+    r"pizzas?|sandwich(?:es)?|soft\s+drinks?|sodas?|milks?|loaves|"
+    r"bread\s+loaves|snacks?)\b",
     re.IGNORECASE,
 )
 WORD_COUNT_RE = re.compile(
-    r"\b(?P<value>one|two|three|four|five)\s+(?:coffees?|flat\s+whites?|burritos?|soft\s+drinks?|servings?)\b",
+    r"\b(?P<value>one|two|three|four|five)\s+(?:coffees?|flat\s+whites?|"
+    r"burritos?|burgers?|hamburgers?|servings?|orders?\s+of\s+fries|fries|"
+    r"hot\s+chips|pizzas?|sandwich(?:es)?|soft\s+drinks?|sodas?|milks?|"
+    r"loaves|bread\s+loaves|snacks?)\b",
     re.IGNORECASE,
 )
 WORD_COUNTS = {"one": 1.0, "two": 2.0, "three": 3.0, "four": 4.0, "five": 5.0}
