@@ -141,9 +141,62 @@ function TechnicalDetail({ detail }) {
         </div>
       )}
 
+      {detail.factor_diagnostics && (
+        <FactorDiagnostics diagnostics={detail.factor_diagnostics} />
+      )}
+
       <TechnicalRecords title="Assumptions" records={detail.assumptions} />
       <TechnicalRecords title="Issues" records={detail.issues} />
     </article>
+  );
+}
+
+function FactorDiagnostics({ diagnostics }) {
+  return (
+    <div className="mt-4">
+      <h4 className="font-semibold text-gray-800">Factor retrieval diagnostics</h4>
+      <dl className="mt-2 grid gap-2 rounded-md bg-gray-50 p-3 sm:grid-cols-2">
+        <TechnicalField label="Factor intent" value={diagnostics.intent_key || "None"} />
+        <TechnicalField label="Search query" value={diagnostics.search_query || "None"} />
+        <TechnicalField
+          label="Candidate count"
+          value={String(diagnostics.candidate_count ?? 0)}
+        />
+        <TechnicalField
+          label="Selected factor"
+          value={diagnostics.selected_activity_id || "None"}
+        />
+        <TechnicalField
+          label="Fallback used"
+          value={diagnostics.fallback_used ? "Yes" : "No"}
+        />
+        {diagnostics.fallback_reason && (
+          <TechnicalField label="Fallback reason" value={diagnostics.fallback_reason} />
+        )}
+      </dl>
+      {diagnostics.selected_reason && (
+        <p className="mt-2">
+          <strong>Selected reason:</strong> {diagnostics.selected_reason}
+        </p>
+      )}
+      {diagnostics.top_rejections?.length > 0 && (
+        <>
+          <h5 className="mt-3 font-semibold">Rejected candidates</h5>
+          <ul className="mt-1 list-disc space-y-1 pl-5">
+            {diagnostics.top_rejections.map((rejection, index) => (
+              <li key={`${rejection.activity_id || index}-${index}`}>
+                {rejection.activity_id && (
+                  <span className="break-all font-mono text-xs">
+                    {rejection.activity_id}:{" "}
+                  </span>
+                )}
+                {rejection.reason}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
   );
 }
 

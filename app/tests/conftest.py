@@ -24,6 +24,8 @@ class FakeClimatiqEmissionEstimator:
         if event.category == "energy":
             co2e = float(parameters["energy"]) * 0.6
         elif event.category == "goods_services":
+            if "money" in parameters:
+                return EmissionEstimateResult(ok=False, failure_status="unresolved")
             rate = {
                 "coffee": 0.25,
                 "beef_burrito": 2.0,

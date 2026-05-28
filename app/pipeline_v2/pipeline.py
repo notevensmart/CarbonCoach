@@ -14,7 +14,7 @@ from app.domain.activity_taxonomy import ACTIVITY_TAXONOMY
 from app.domain.impact_comparisons import build_impact_comparison
 from app.pipeline_v2.emission_estimator import ClimatiqEmissionEstimator, EmissionEstimator
 from app.pipeline_v2.entity_enricher import EntityEnricher
-from app.pipeline_v2.extractor_protocol import EventExtractor
+from app.pipeline_v2.extractor_protocol import EventExtractor, LLMExtractionClient
 from app.pipeline_v2.fallback_estimator import LocalFallbackEstimator
 from app.pipeline_v2.journal_preprocessor import JournalPreprocessor
 from app.pipeline_v2.llm_event_extractor import build_event_extractor
@@ -26,6 +26,7 @@ from app.pipeline_v2.parameter_builders import (
     WasteParameterBuilder,
 )
 from app.pipeline_v2.quantity_normalizer import QuantityNormalizer
+from app.pipeline_v2.retrieval_diagnostics import with_fallback
 
 
 class CarbonPipelineV2:
@@ -33,6 +34,8 @@ class CarbonPipelineV2:
         self,
         preprocessor: JournalPreprocessor | None = None,
         event_extractor: EventExtractor | None = None,
+        extractor_mode: str | None = None,
+        llm_client: LLMExtractionClient | None = None,
         quantity_normalizer: QuantityNormalizer | None = None,
         entity_enricher: EntityEnricher | None = None,
         energy_builder: EnergyParameterBuilder | None = None,
@@ -43,7 +46,10 @@ class CarbonPipelineV2:
         fallback_estimator: LocalFallbackEstimator | None = None,
     ) -> None:
         self.preprocessor = preprocessor or JournalPreprocessor()
-        self.event_extractor = event_extractor or build_event_extractor()
+        self.event_extractor = event_extractor or build_event_extractor(
+            mode=extractor_mode,
+            llm_client=llm_client,
+        )
         self.quantity_normalizer = quantity_normalizer or QuantityNormalizer()
         self.entity_enricher = entity_enricher or EntityEnricher()
         self.energy_builder = energy_builder or EnergyParameterBuilder()
@@ -183,6 +189,14 @@ class CarbonPipelineV2:
             fallback = self.fallback_estimator.estimate(event, parameters)
             if fallback is not None:
                 factor_confidence = Confidence.from_score(fallback.confidence)
+                fallback_diagnostics = with_fallback(
+                    estimate.factor_diagnostics,
+                    reason=(
+                        "Used a maintained local fallback factor after compatible "
+                        "database factor retrieval or estimation did not produce a result."
+                    ),
+                    assumption_code=fallback.assumptions[0].code if fallback.assumptions else None,
+                )
                 return EstimateDetail(
                     raw_text=event.raw_text,
                     category=event.category,
@@ -202,6 +216,7 @@ class CarbonPipelineV2:
                     source_confidence=factor_confidence,
                     assumptions=[*assumptions, *fallback.assumptions],
                     issues=[*issues, *estimate.issues],
+                    factor_diagnostics=fallback_diagnostics,
                 )
             failure_status = getattr(estimate, "failure_status", "failed")
             return EstimateDetail(
@@ -217,6 +232,7 @@ class CarbonPipelineV2:
                 assumptions=assumptions,
                 issues=[*issues, *estimate.issues],
                 factor=estimate.factor,
+                factor_diagnostics=estimate.factor_diagnostics,
             )
         if estimate.factor and estimate.factor.specificity_match:
             assumptions, issues, parameters = _apply_specificity_match_visibility(
@@ -228,6 +244,7 @@ class CarbonPipelineV2:
             parameter_confidence = _specificity_match_confidence(event, parameter_confidence)
         factor_confidence = _factor_confidence(estimate.factor)
         source_confidence = Confidence.from_score(1.0)
+        success_issues = _successful_estimate_issues(issues, parameters)
         return EstimateDetail(
             raw_text=event.raw_text,
             category=event.category,
@@ -245,9 +262,10 @@ class CarbonPipelineV2:
             parameter_confidence=parameter_confidence,
             factor_confidence=factor_confidence,
             source_confidence=source_confidence,
-            assumptions=assumptions,
-            issues=[*issues, *estimate.issues],
+            assumptions=[*assumptions, *estimate.assumptions],
+            issues=[*success_issues, *estimate.issues],
             factor=estimate.factor,
+            factor_diagnostics=estimate.factor_diagnostics,
         )
 
 
@@ -349,3 +367,13 @@ def _factor_confidence(factor) -> Confidence | None:
 def _overall_confidence(*confidence_parts: Confidence | None) -> Confidence:
     scores = [part.score for part in confidence_parts if part is not None]
     return Confidence.from_score(min(scores) if scores else 0.0)
+
+
+def _successful_estimate_issues(issues: list[Issue], parameters: dict) -> list[Issue]:
+    if "money" not in parameters:
+        return issues
+    return [
+        issue
+        for issue in issues
+        if issue.code != "goods_services.money_factor_unavailable"
+    ]

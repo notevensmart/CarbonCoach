@@ -156,6 +156,7 @@ class EstimateDetail(StrictBaseModel):
     assumptions: list[Assumption] = Field(default_factory=list)
     issues: list[Issue] = Field(default_factory=list)
     factor: FactorCandidate | None = None
+    factor_diagnostics: dict[str, Any] | None = None
 
 
 class SourceBreakdown(StrictBaseModel):

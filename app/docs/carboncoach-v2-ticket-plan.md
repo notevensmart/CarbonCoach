@@ -1275,6 +1275,8 @@ Implement in this order:
 7. Everyday Journal Coverage And Completeness
 8. LLM Structured Event Extraction Adapter
 9. Hybrid Extraction Intelligence Evaluation And Rollout
+10. Semantic Factor Intent Resolution
+11. Curated Common Factor Pathway Metadata Overlay
 ```
 
 Ticket 7 is specified in:
@@ -1299,6 +1301,29 @@ docs/carboncoach-v2-llm-extraction-tickets.md
 They add the AI intelligence layer: a safe structured LLM extraction adapter,
 then a hybrid extractor that merges validated LLM candidates with deterministic
 events and proves measurable coverage uplift on everyday mixed journals.
+
+Ticket 10 is specified in:
+
+```text
+docs/carboncoach-v2-factor-intent-ticket.md
+```
+
+It is the final planned backend architecture ticket for semantic factor
+linking. It adds semantic factor intent resolution so validated events can
+connect to compatible database activity IDs instead of being limited by narrow
+local fallback pathways.
+
+Ticket 11 is specified in:
+
+```text
+docs/carboncoach-v2-common-factor-pathways-ticket.md
+```
+
+It is a focused data and retrieval quality pass after Ticket 10. It adds a
+repo-bundled, source-noted metadata overlay for common personal pathways
+across transport, energy, goods/services, and waste. The default
+implementation must not require manual GCP blob storage updates; the overlay
+ships with the app and merges with raw factor metadata at runtime.
 
 ## Overall Definition Of Done
 
@@ -1337,6 +1362,19 @@ V2 is complete when:
   assumptions.
 - Automated tests for LLM-assisted extraction use fake clients or fixtures and
   never require live LLM services.
+- Validated events generate semantic factor intents that can search compatible
+  database activity IDs by unit type, category family, material, method,
+  product, and other structured dimensions.
+- Factor linking prefers specific compatible database factors over generic
+  fallbacks, uses transparent fallback assumptions when needed, and exposes
+  developer diagnostics for selected and rejected candidates.
+- Common personal pathways have curated enriched metadata across transport,
+  energy, goods/services, and waste.
+- The enriched metadata overlay is source-noted, schema-validated,
+  repo-bundled, and merged with raw factor metadata at runtime.
+- The default V2 data path does not require manual GCP blob storage updates.
+- Tests prove enriched metadata improves semantic factor linking without live
+  external services.
 - Frontend can display V2 outputs clearly.
 - Frontend changes are visible through the deployed production path.
 - The production deployment serves the intended UI instead of the legacy inline FastAPI form.

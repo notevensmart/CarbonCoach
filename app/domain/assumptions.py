@@ -160,3 +160,17 @@ def singular_item_count_assumption(activity_type: str, product_label: str) -> As
         source="inference",
         confidence_impact=-0.25,
     )
+
+
+def generic_waste_fallback_assumption(material_class: str, disposal_method: str) -> Assumption:
+    material_label = material_class.replace("_", " ")
+    method_label = disposal_method.replace("_", " ")
+    return Assumption(
+        code=f"waste.{disposal_method}.generic_fallback",
+        message=(
+            f"Used a general {method_label} waste factor because no compatible "
+            f"{material_label}-specific {method_label} factor was found."
+        ),
+        source="fallback",
+        confidence_impact=-0.25,
+    )

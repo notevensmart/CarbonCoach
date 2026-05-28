@@ -1,10 +1,18 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 import re
 from typing import Callable, Protocol
 
 from app.domain.activity_taxonomy import ACTIVITY_TAXONOMY
+from app.domain.factor_intents import FactorIntent
+from app.domain.material_ontology import (
+    material_is_broader_match,
+    material_matches,
+    method_matches,
+)
 from app.domain.models import CarbonEvent, FactorCandidate
+from app.pipeline_v2.retrieval_diagnostics import build_factor_diagnostics
 from app.pipeline_v2.validator import (
     MIN_ACCEPTED_FACTOR_SCORE,
     FactorCompatibilityValidator,
@@ -22,8 +30,15 @@ class FactorRetriever(Protocol):
         event: CarbonEvent,
         parameters: dict,
         limit: int = 5,
+        intent: FactorIntent | None = None,
     ) -> list[FactorCandidate]:
         """Return compatible Climatiq activity IDs ordered by match quality."""
+
+
+@dataclass(frozen=True)
+class RetrievalResult:
+    candidates: list[FactorCandidate]
+    diagnostics: dict
 
 
 class ClimatiqFactorRetriever:
@@ -46,43 +61,85 @@ class ClimatiqFactorRetriever:
         event: CarbonEvent,
         parameters: dict,
         limit: int = 5,
+        intent: FactorIntent | None = None,
     ) -> list[FactorCandidate]:
+        return self.retrieve_with_diagnostics(event, parameters, limit, intent).candidates
+
+    def retrieve_with_diagnostics(
+        self,
+        event: CarbonEvent,
+        parameters: dict,
+        limit: int = 5,
+        intent: FactorIntent | None = None,
+    ) -> RetrievalResult:
+        local_rejections: list[dict] = []
+        local_records = self.local_records_provider()
         local_candidates = _rank_records(
             event,
             parameters,
-            self.local_records_provider(),
+            local_records,
+            intent=intent,
             semantic_scorer=self.semantic_scorer,
             validator=self.validator,
+            rejections=local_rejections,
         )
         identity_evidence = _identity_evidence(event, parameters)
 
         if not _local_retrieval_is_weak(local_candidates, bool(identity_evidence)):
-            return local_candidates[:limit]
+            selected = local_candidates[:limit]
+            return RetrievalResult(
+                candidates=selected,
+                diagnostics=build_factor_diagnostics(
+                    intent=intent,
+                    search_query=_factor_query(event, parameters, intent),
+                    selector_filters=_selector_filters(event, intent),
+                    candidate_count=len(local_records),
+                    selected=selected[0] if selected else None,
+                    rejections=local_rejections,
+                ),
+            )
 
+        remote_rejections: list[dict] = []
+        remote_records = self._remote_records(event, parameters, limit, intent)
         remote_candidates = _rank_records(
             event,
             parameters,
-            self._remote_records(event, parameters, limit),
+            remote_records,
+            intent=intent,
             semantic_scorer=self.semantic_scorer,
             validator=self.validator,
+            rejections=remote_rejections,
         )
-        return _merge_candidates(local_candidates, remote_candidates)[:limit]
+        merged = _merge_candidates(local_candidates, remote_candidates)[:limit]
+        return RetrievalResult(
+            candidates=merged,
+            diagnostics=build_factor_diagnostics(
+                intent=intent,
+                search_query=_factor_query(event, parameters, intent),
+                selector_filters=_selector_filters(event, intent),
+                candidate_count=len(local_records) + len(remote_records),
+                selected=merged[0] if merged else None,
+                rejections=[*local_rejections, *remote_rejections],
+            ),
+        )
 
     def _remote_records(
         self,
         event: CarbonEvent,
         parameters: dict,
         limit: int,
+        intent: FactorIntent | None = None,
     ) -> list[dict]:
         metadata = ACTIVITY_TAXONOMY[event.activity_type]
         records: list[dict] = []
-        for unit_type in metadata.get("compatible_unit_types", ()):
+        unit_types = (intent.unit_type,) if intent is not None else metadata.get("compatible_unit_types", ())
+        for unit_type in unit_types:
             records.extend(
                 self._remote_candidates(
-                    _factor_query(event, parameters),
+                    _factor_query(event, parameters, intent),
                     limit,
                     str(unit_type),
-                    _expected_sector(event),
+                    _expected_sector(event, intent),
                 )
             )
         return records
@@ -111,18 +168,18 @@ def _rank_records(
     parameters: dict,
     records: list[dict],
     *,
+    intent: FactorIntent | None = None,
     semantic_scorer: Callable[[CarbonEvent, dict, dict], float] | None = None,
     validator: FactorCompatibilityValidator | None = None,
+    rejections: list[dict] | None = None,
 ) -> list[FactorCandidate]:
     metadata = ACTIVITY_TAXONOMY[event.activity_type]
-    match_terms = tuple(str(term).lower() for term in metadata.get("factor_match_terms", ()))
+    match_terms = _match_terms(metadata, intent)
     required_terms = tuple(
         str(term).lower() for term in metadata.get("factor_required_terms", ())
     )
-    preferred_terms = _preferred_terms(event, metadata, parameters)
-    excluded_terms = tuple(
-        str(term).lower() for term in metadata.get("factor_excluded_terms", ())
-    )
+    preferred_terms = _preferred_terms(event, metadata, parameters, intent)
+    excluded_terms = _excluded_terms(metadata, intent)
     identity_evidence = _identity_evidence(event, parameters)
     validator = validator or FactorCompatibilityValidator()
     candidates: list[FactorCandidate] = []
@@ -130,16 +187,36 @@ def _rank_records(
     for record in records:
         activity_id = str(record.get("activity_id") or "").strip()
         text = _record_text(record)
-        validation = validator.validate_record(event, parameters, record)
+        validation = validator.validate_record(event, parameters, record, intent=intent)
         if not activity_id or not validation.compatible:
+            _record_rejection(
+                rejections,
+                record,
+                validation.errors[0] if validation.errors else "factor metadata is incompatible",
+            )
             continue
         if required_terms and not any(
             _contains_phrase(text, term) for term in required_terms
         ):
+            _record_rejection(
+                rejections,
+                record,
+                "required taxonomy terms were not present in factor metadata",
+            )
             continue
         if any(_contains_phrase(text, term) for term in excluded_terms):
+            _record_rejection(
+                rejections,
+                record,
+                "factor metadata contained terms excluded by the resolved intent",
+            )
             continue
         if _has_authoritative_trait_conflict(event, metadata, parameters, text):
+            _record_rejection(
+                rejections,
+                record,
+                "factor metadata conflicts with explicit user or verified trait evidence",
+            )
             continue
 
         specificity_match = _matches_identity_evidence(identity_evidence, text)
@@ -150,6 +227,7 @@ def _rank_records(
             record,
             text,
             semantic_scorer,
+            intent,
         )
         if identity_evidence and not specificity_match:
             semantic_score *= 0.60
@@ -165,6 +243,7 @@ def _rank_records(
             preferred_terms,
             identity_evidence,
             specificity_match,
+            intent,
         )
         source_quality_score, source_reasons = _source_quality_score(record)
         score = round(
@@ -175,6 +254,11 @@ def _rank_records(
             2,
         )
         if score < MIN_ACCEPTED_SCORE:
+            _record_rejection(
+                rejections,
+                record,
+                f"factor fit score {score:.2f} was below the {MIN_ACCEPTED_SCORE:.2f} threshold",
+            )
             continue
         reasons = [
             *metadata_reasons,
@@ -229,6 +313,7 @@ def _semantic_score(
     record: dict,
     text: str,
     semantic_scorer: Callable[[CarbonEvent, dict, dict], float] | None,
+    intent: FactorIntent | None = None,
 ) -> tuple[float, list[str]]:
     if semantic_scorer is not None:
         score = _bounded_score(semantic_scorer(event, parameters, record))
@@ -238,7 +323,7 @@ def _semantic_score(
             score = _bounded_score(record[key])
             return score, [f"record {key} score: {score:.2f}"]
 
-    query_tokens = set(_meaningful_tokens(_factor_query(event, parameters)))
+    query_tokens = set(_meaningful_tokens(_factor_query(event, parameters, intent)))
     record_tokens = set(_meaningful_tokens(text))
     matches = sorted(query_tokens.intersection(record_tokens))
     score = len(matches) / len(query_tokens) if query_tokens else 0.0
@@ -258,6 +343,7 @@ def _keyword_score(
     preferred_terms: tuple[str, ...],
     identity_evidence: list[tuple[str, str]],
     specificity_match: bool,
+    intent: FactorIntent | None = None,
 ) -> tuple[float, list[str]]:
     reasons: list[str] = []
     score = 0.0
@@ -276,6 +362,9 @@ def _keyword_score(
     trait_score, trait_reasons = _trait_evidence_score(metadata, parameters, text)
     score += trait_score
     reasons.extend(trait_reasons)
+    intent_score, intent_reasons = _intent_evidence_score(intent, text)
+    score += intent_score
+    reasons.extend(intent_reasons)
     if specificity_match:
         score += 0.40
         values = ", ".join(value for _, value in identity_evidence)
@@ -387,15 +476,7 @@ def _merge_candidates(*candidate_lists: list[FactorCandidate]) -> list[FactorCan
 
 
 def _record_text(record: dict) -> str:
-    values = [
-        record.get("activity_id"),
-        record.get("name"),
-        record.get("category"),
-        record.get("sector"),
-        record.get("source"),
-        record.get("unit_type"),
-        record.get("description"),
-    ]
+    values = list(_record_scalar_values(record))
     text = " ".join(str(value or "") for value in values).lower()
     return _normalized_text(text)
 
@@ -405,7 +486,9 @@ def _normalized_text(value: object) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
-def _expected_sector(event: CarbonEvent) -> str:
+def _expected_sector(event: CarbonEvent, intent: FactorIntent | None = None) -> str:
+    if intent is not None and intent.selector_filters.get("sector"):
+        return intent.selector_filters["sector"]
     return {
         "energy": "Energy",
         "transport": "Transport",
@@ -414,7 +497,22 @@ def _expected_sector(event: CarbonEvent) -> str:
     }[event.category]
 
 
-def _factor_query(event: CarbonEvent, parameters: dict) -> str:
+def _selector_filters(event: CarbonEvent, intent: FactorIntent | None = None) -> dict:
+    if intent is not None:
+        return dict(intent.selector_filters)
+    return {
+        "unit_type": "",
+        "sector": _expected_sector(event),
+    }
+
+
+def _factor_query(
+    event: CarbonEvent,
+    parameters: dict,
+    intent: FactorIntent | None = None,
+) -> str:
+    if intent is not None:
+        return intent.search_query
     metadata = ACTIVITY_TAXONOMY[event.activity_type]
     values = [
         str(parameters[field])
@@ -427,7 +525,7 @@ def _factor_query(event: CarbonEvent, parameters: dict) -> str:
     query_terms = [
         str(metadata.get("climatiq_factor_query", event.activity_type)),
         *metadata.get("factor_match_terms", ()),
-        *_preferred_terms(event, metadata, parameters),
+        *_preferred_terms(event, metadata, parameters, intent),
         *values,
     ]
     return " ".join(dict.fromkeys(term.strip() for term in query_terms if term.strip()))
@@ -450,7 +548,14 @@ def _bounded_score(value: object) -> float:
         return 0.0
 
 
-def _preferred_terms(event: CarbonEvent, metadata: dict, parameters: dict) -> tuple[str, ...]:
+def _preferred_terms(
+    event: CarbonEvent,
+    metadata: dict,
+    parameters: dict,
+    intent: FactorIntent | None = None,
+) -> tuple[str, ...]:
+    if intent is not None:
+        return tuple(str(term).lower() for term in intent.preferred_terms)
     terms = tuple(str(term).lower() for term in metadata.get("factor_preferred_terms", ()))
     authoritative_fields = {
         str(field)
@@ -470,3 +575,73 @@ def _contains_phrase(text: str, phrase: str) -> bool:
     if not normalized_phrase:
         return False
     return f" {normalized_phrase} " in f" {text} "
+
+
+def _match_terms(metadata: dict, intent: FactorIntent | None) -> tuple[str, ...]:
+    terms = [str(term).lower() for term in metadata.get("factor_match_terms", ())]
+    if intent is not None:
+        terms.extend(str(term).lower() for term in intent.preferred_terms)
+        terms.extend(str(value).replace("_", " ").lower() for value in intent.semantic_dimensions.values())
+    return tuple(dict.fromkeys(term for term in terms if term))
+
+
+def _excluded_terms(metadata: dict, intent: FactorIntent | None) -> tuple[str, ...]:
+    terms = [str(term).lower() for term in metadata.get("factor_excluded_terms", ())]
+    if intent is not None:
+        terms.extend(str(term).lower() for term in intent.excluded_terms)
+    return tuple(dict.fromkeys(term for term in terms if term))
+
+
+def _intent_evidence_score(
+    intent: FactorIntent | None,
+    text: str,
+) -> tuple[float, list[str]]:
+    if intent is None:
+        return 0.0, []
+    score = 0.0
+    reasons: list[str] = []
+    method = intent.semantic_dimensions.get("disposal_method")
+    if method and method_matches(method, text):
+        score += 0.18
+        reasons.append(f"intent disposal method matched: {method}")
+    material = intent.semantic_dimensions.get("material_class")
+    if material and material_matches(material, text):
+        score += 0.18
+        reasons.append(f"intent material matched: {material}")
+    elif material and material_is_broader_match(material, text):
+        score += 0.10
+        reasons.append(f"broader material factor matched intent: {material}")
+    product = intent.semantic_dimensions.get("product_class")
+    if product and _contains_phrase(text, product.replace("_", " ")):
+        score += 0.25
+        reasons.append(f"intent product class matched: {product}")
+    if intent.unit_type and _contains_phrase(text, intent.unit_type):
+        score += 0.06
+        reasons.append(f"intent unit type matched in metadata text: {intent.unit_type}")
+    return min(score, 0.45), reasons
+
+
+def _record_rejection(rejections: list[dict] | None, record: dict, reason: str) -> None:
+    if rejections is None:
+        return
+    rejections.append(
+        {
+            "activity_id": str(record.get("activity_id") or ""),
+            "name": str(record.get("name") or record.get("activity_id") or ""),
+            "reason": reason,
+        }
+    )
+
+
+def _record_scalar_values(record: dict):
+    for value in record.values():
+        if isinstance(value, (str, int, float)):
+            yield value
+        elif isinstance(value, (list, tuple, set)):
+            for item in value:
+                if isinstance(item, (str, int, float)):
+                    yield item
+        elif isinstance(value, dict):
+            for item in value.values():
+                if isinstance(item, (str, int, float)):
+                    yield item

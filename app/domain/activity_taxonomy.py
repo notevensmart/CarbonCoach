@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from app.domain.material_ontology import WASTE_DISPOSAL_METHOD_SYNONYMS, WASTE_MATERIAL_SYNONYMS
+
 
 VEHICLE_FACTOR_VALUE_ALIASES = {
     "fuel_type": {
@@ -374,7 +376,7 @@ GOODS_SERVICES_TAXONOMY = {
         "supporting_quantity_dimensions": ("money",),
         "parameter_builder": "goods_services",
         "fallback_factor_key": "goods.coffee_serving",
-        "compatible_unit_types": ("Number",),
+        "compatible_unit_types": ("Number", "Money"),
         "factor_match_terms": ("coffee", "beverage"),
         "factor_preferred_terms": ("serving", "cup"),
         "factor_identity_fields": ("product_class",),
@@ -464,13 +466,8 @@ WASTE_TAXONOMY = {
     "recycling": {
         "category": "waste",
         "disposal_method": "recycling",
-        "disposal_synonyms": ("recycled", "recycle", "recycling bin"),
-        "material_synonyms": {
-            "plastic": ("plastic", "plastic bottles"),
-            "cardboard": ("cardboard",),
-            "glass": ("glass",),
-            "metal": ("cans", "aluminium cans"),
-        },
+        "disposal_synonyms": WASTE_DISPOSAL_METHOD_SYNONYMS["recycling"],
+        "material_synonyms": WASTE_MATERIAL_SYNONYMS,
         "required_quantity_dimensions": ("weight",),
         "parameter_builder": "waste",
         "compatible_unit_types": ("Weight",),
@@ -485,8 +482,8 @@ WASTE_TAXONOMY = {
     "composting": {
         "category": "waste",
         "disposal_method": "composting",
-        "disposal_synonyms": ("composted", "compost", "compost bin"),
-        "material_synonyms": {"food_waste": ("food scraps", "food waste")},
+        "disposal_synonyms": WASTE_DISPOSAL_METHOD_SYNONYMS["composting"],
+        "material_synonyms": WASTE_MATERIAL_SYNONYMS,
         "required_quantity_dimensions": ("weight",),
         "parameter_builder": "waste",
         "compatible_unit_types": ("Weight",),
@@ -500,17 +497,8 @@ WASTE_TAXONOMY = {
     "landfill_waste": {
         "category": "waste",
         "disposal_method": "landfill",
-        "disposal_synonyms": (
-            "landfill bin",
-            "general rubbish",
-            "general waste",
-            "threw away",
-            "discarded",
-        ),
-        "material_synonyms": {
-            "general_waste": ("general rubbish", "general waste", "rubbish", "garbage", "trash"),
-            "mixed_packaging": ("mixed packaging", "packaging"),
-        },
+        "disposal_synonyms": WASTE_DISPOSAL_METHOD_SYNONYMS["landfill"],
+        "material_synonyms": WASTE_MATERIAL_SYNONYMS,
         "required_quantity_dimensions": ("weight",),
         "parameter_builder": "waste",
         "compatible_unit_types": ("Weight",),
@@ -520,6 +508,10 @@ WASTE_TAXONOMY = {
         "pathways": {
             "general_waste": {"fallback_factor_key": "waste.landfill_general"},
             "mixed_packaging": {"fallback_factor_key": "waste.landfill_general"},
+            "plastic": {
+                "fallback_factor_key": "waste.landfill_general",
+                "fallback_material_class": "general_waste",
+            },
         },
     },
 }

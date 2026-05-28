@@ -12,6 +12,11 @@ from app.domain.activity_taxonomy import (
     GOODS_SERVICES_TAXONOMY,
     WASTE_TAXONOMY,
 )
+from app.domain.material_ontology import (
+    detect_waste_disposal_method,
+    detect_waste_material_classes,
+    normalize_waste_material,
+)
 from app.domain.models import (
     ActivityType,
     CarbonEvent,
@@ -335,38 +340,17 @@ def _controlled_material_class(
     activity_type: str,
     raw_text: str,
 ) -> str | None:
-    if not proposed:
-        return None
-    metadata = WASTE_TAXONOMY.get(activity_type, {})
-    for material_class, synonyms in metadata.get("material_synonyms", {}).items():
-        if proposed == material_class and any(
-            re.search(rf"\b{re.escape(term)}\b", raw_text, re.IGNORECASE)
-            for term in synonyms
-        ):
-            return str(material_class)
-    return None
+    return normalize_waste_material(proposed, raw_text)
 
 
 def _material_classes(raw_text: str, activity_type: str) -> set[str]:
-    metadata = WASTE_TAXONOMY.get(activity_type, {})
-    return {
-        str(material_class)
-        for material_class, synonyms in metadata.get("material_synonyms", {}).items()
-        if any(re.search(rf"\b{re.escape(term)}\b", raw_text, re.IGNORECASE) for term in synonyms)
-    }
+    return detect_waste_material_classes(raw_text)
 
 
 def _waste_disposal_method(activity_type: str, raw_text: str) -> str:
-    if re.search(r"\b(?:recycled|recycle|recycling\s+bin)\b", raw_text, re.IGNORECASE):
-        return "recycling"
-    if re.search(r"\b(?:composted|compost|compost\s+bin)\b", raw_text, re.IGNORECASE):
-        return "composting"
-    if re.search(
-        r"\b(?:landfill\s+bin|general\s+rubbish|general\s+waste|threw\s+away|discarded)\b",
-        raw_text,
-        re.IGNORECASE,
-    ):
-        return "landfill"
+    detected = detect_waste_disposal_method(raw_text)
+    if detected is not None:
+        return detected
     if activity_type in {"recycling", "composting"}:
         return str(WASTE_TAXONOMY[activity_type]["disposal_method"])
     return "unknown"

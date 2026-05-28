@@ -7,6 +7,7 @@ from app.domain.models import CarbonEvent, PreprocessedJournal
 from app.pipeline_v2.event_extractor import JournalEventExtractor
 from app.pipeline_v2.extraction_schema import parse_llm_events_json
 from app.pipeline_v2.extractor_protocol import EventExtractor, LLMExtractionClient
+from app.pipeline_v2.hybrid_event_extractor import EmptyEventExtractor, HybridEventExtractor
 
 
 EXTRACTOR_MODE_ENV = "CARBONCOACH_V2_EXTRACTOR_MODE"
@@ -50,9 +51,12 @@ def build_event_extractor(
     fallback = fallback_extractor or JournalEventExtractor()
     if requested_mode == "llm" and llm_client is not None:
         return LLMStructuredEventExtractor(llm_client, fallback)
+    if requested_mode == "hybrid" and llm_client is not None:
+        return HybridEventExtractor(
+            heuristic_extractor=fallback,
+            llm_extractor=LLMStructuredEventExtractor(llm_client, EmptyEventExtractor()),
+        )
 
-    # Ticket 9 owns true hybrid merging. Until then, hybrid config remains a
-    # safe heuristic path unless an explicit extractor is dependency-injected.
     return fallback
 
 

@@ -8,6 +8,10 @@ from app.domain.activity_taxonomy import (
     TRANSPORT_TAXONOMY,
     WASTE_TAXONOMY,
 )
+from app.domain.material_ontology import (
+    detect_waste_disposal_method,
+    detect_waste_material_classes,
+)
 from app.domain.models import (
     CarbonEvent,
     Confidence,
@@ -94,6 +98,12 @@ EXPLICIT_DISTANCE_RE = re.compile(
 ROAD_VEHICLE_RE = re.compile(
     r"\b(?:car|suv|4wd|four[- ]wheel[- ]drive|crossover|ute|pickup|pick-up|"
     r"van|sedan|hatchback|wagon|coupe)\b",
+    re.IGNORECASE,
+)
+RUNNING_LATE_RE = re.compile(r"\brunn?ing\s+late\b", re.IGNORECASE)
+RUN_WORD_RE = re.compile(r"\b(?:run|ran|running)\b", re.IGNORECASE)
+FOOD_DELIVERY_CONTEXT_RE = re.compile(
+    r"\b(?:uber\s+eats|doordash|deliveroo|menulog|delivery\s+app)\b",
     re.IGNORECASE,
 )
 TRANSPORT_MATCH_PRIORITY = (
@@ -251,6 +261,16 @@ def _transport_activity_type(clause: str) -> str | None:
         ),
         None,
     )
+    if explicit_mode == "walking" and RUNNING_LATE_RE.search(clause):
+        return None
+    if (
+        explicit_mode == "walking"
+        and RUN_WORD_RE.search(clause)
+        and not EXPLICIT_DISTANCE_RE.search(clause)
+    ):
+        return None
+    if explicit_mode == "rideshare" and FOOD_DELIVERY_CONTEXT_RE.search(clause):
+        return None
     has_road_vehicle_context = bool(
         description and description.lower() not in mode_terms or ROAD_VEHICLE_RE.search(clause)
     )
@@ -420,6 +440,24 @@ def _waste_events(clause: str) -> list[tuple[int, CarbonEvent]]:
 
 
 def _waste_method(clause: str) -> tuple[str, str, int] | None:
+    detected_method = detect_waste_disposal_method(clause)
+    if detected_method is not None:
+        activity_type = {
+            "landfill": "landfill_waste",
+            "recycling": "recycling",
+            "composting": "composting",
+        }.get(detected_method)
+        if activity_type:
+            first_position = min(
+                (
+                    match.start()
+                    for term in WASTE_TAXONOMY[activity_type]["disposal_synonyms"]
+                    for match in [re.search(rf"\b{re.escape(term)}\b", clause, re.IGNORECASE)]
+                    if match
+                ),
+                default=0,
+            )
+            return activity_type, detected_method, first_position
     for activity_type in ("recycling", "composting", "landfill_waste"):
         metadata = WASTE_TAXONOMY[activity_type]
         for term in metadata["disposal_synonyms"]:
@@ -430,12 +468,7 @@ def _waste_method(clause: str) -> tuple[str, str, int] | None:
 
 
 def _material_classes(clause: str, activity_type: str) -> set[str]:
-    metadata = WASTE_TAXONOMY[activity_type]
-    return {
-        material_class
-        for material_class, synonyms in metadata.get("material_synonyms", {}).items()
-        if any(re.search(rf"\b{re.escape(term)}\b", clause, re.IGNORECASE) for term in synonyms)
-    }
+    return detect_waste_material_classes(clause)
 
 
 def _goods_purchase_context(clause: str) -> bool:

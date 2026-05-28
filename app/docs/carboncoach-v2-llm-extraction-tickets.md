@@ -423,6 +423,20 @@ Recommended flow:
 8. return ordered event list to the existing V2 pipeline
 ```
 
+Quantity precedence is fixed:
+
+```text
+explicit deterministic quantity evidence
+> validated LLM quantity hint backed by raw surface text
+> maintained deterministic inference rule
+> unresolved
+```
+
+LLM quantities must never override deterministic quantities from the same span.
+If the LLM proposes a distance, weight, spend, duration, power, or mass that
+the deterministic normalizer cannot verify from the event text, discard that
+quantity and let the normal pipeline return an assumption or unresolved issue.
+
 ### Merge And Dedupe Rules
 
 Deduping must be deterministic.
@@ -435,16 +449,39 @@ Potential duplicate signals:
 - same required quantity surface
 - same dominant entity such as item/material/device/mode
 
+An event should be treated as a duplicate only when the overlap points to the
+same calculation boundary. Adjacent activities in the same sentence, such as
+`grabbed a coffee and recycled the cup`, must remain separate events.
+
 Rules:
 
 - exact deterministic event wins over a lower-confidence LLM duplicate
 - LLM may enrich an event with additional non-conflicting entities only if
   validation permits it
 - conflicting explicit quantities are not merged silently
+- same-span category or activity conflicts are not merged silently; preserve
+  the deterministic event unless a maintained rule proves the LLM event is
+  the safer controlled interpretation
+- same-span quantity conflicts keep the deterministic quantity and add no LLM
+  quantity unless the raw surface evidence is identical
 - if both extractors find adjacent but distinct activities, keep both
 - detail order follows journal order after merging
 - if ordering cannot be determined, preserve deterministic order and append
   valid LLM-only events in candidate order
+
+Example conflicts:
+
+```text
+Uber Eats
+heuristic: goods_services / restaurant_meal
+LLM: transport / rideshare
+-> keep the food/delivery context; do not turn delivery wording into a ride
+
+bag of rubbish
+heuristic: waste / landfill_waste with missing weight
+LLM: waste / landfill_waste with 1 kg
+-> keep the waste event but discard the invented mass
+```
 
 ### Confidence And Provenance
 
@@ -476,6 +513,17 @@ min(parameter confidence, factor confidence, source confidence)
 Extraction confidence may cap parameter/event confidence where appropriate,
 but it must not multiply or rescale CO2e.
 
+When provenance is serialized, keep it developer-only and additive. Useful
+fields are:
+
+```text
+extractor_source: heuristic | llm | hybrid
+merged_from: heuristic+llm, if a duplicate was collapsed
+llm_candidate_index: optional stable index for debugging fixture behavior
+```
+
+Do not expose AI badges, raw prompts, provider payloads, or chain-of-thought.
+
 ### Coverage And Comparison Behavior
 
 The hybrid extractor should improve represented coverage, but it must keep
@@ -506,6 +554,23 @@ Each row should include:
     {"category": "waste", "activity_type": "recycling"}
   ],
   "negative_activity_types": ["restaurant_meal"]
+}
+```
+
+Rows may include fake LLM candidates when needed to make the comparison fully
+deterministic:
+
+```json
+{
+  "input": "I grabbed coffee and drove 8 km home.",
+  "llm_events": [
+    {"raw_text": "grabbed coffee", "category": "goods_services", "activity_type": "coffee_purchase"}
+  ],
+  "expected_events": [
+    {"category": "goods_services", "activity_type": "coffee_purchase"},
+    {"category": "transport", "activity_type": "car_ride"}
+  ],
+  "negative_activity_types": []
 }
 ```
 
@@ -599,6 +664,9 @@ used my PC for a few hours
 charged my laptop
 watched TV for 2 hours
 worked on laptop with no energy-use implication, if policy says negative
+washing machine, dryer, dishwasher, or laundry wording maps only to a
+controlled existing activity such as generic_energy_use unless a taxonomy
+entry is explicitly added
 ```
 
 ### Live LLM Manual Smoke Test
@@ -632,6 +700,8 @@ Required API/pipeline cases:
   path safely
 - valid LLM-only waste event reaches waste builder or unresolved path safely
 - valid LLM-only PC/device event reaches energy unresolved path safely
+- appliance/laundry wording that lacks a controlled taxonomy activity reaches
+  `generic_energy_use` or unresolved, not invented activity types
 - invalid LLM output still returns heuristic V2 result
 - LLM timeout still returns heuristic V2 result
 - hybrid extraction does not change CO2e for an already-correct deterministic
@@ -659,6 +729,10 @@ extractor detects more unresolved activities. That is expected.
 - Hybrid extraction does not drop any correct heuristic event.
 - Hybrid extraction does not add false positives for explicit negative cases.
 - Dedupe prevents duplicate activity cards/details for the same event.
+- Same-span conflicts preserve the deterministic event and reject unsafe LLM
+  quantities or category changes.
+- Developer-only extractor provenance is available when serialized, without
+  changing consumer-facing copy.
 - Raw event ordering remains stable.
 - LLM failures, invalid output, and timeouts fall back safely.
 - Controlled taxonomy is enforced for all LLM-assisted events.
@@ -678,7 +752,9 @@ Add tests for:
 - duplicate LLM and heuristic events collapse to one detail
 - adjacent distinct events are not collapsed
 - conflicting quantities are not silently merged
+- same-span category/activity conflicts preserve the safer deterministic event
 - invalid LLM category/activity is rejected
+- unsupported appliance names do not create invented activity types
 - raw span ordering controls detail ordering
 - evaluation harness reports recall improvement over heuristic-only
 - negative examples produce zero false positives

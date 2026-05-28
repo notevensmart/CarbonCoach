@@ -7,6 +7,7 @@ from typing import Mapping
 from app.domain.activity_taxonomy import ACTIVITY_TAXONOMY
 from app.domain.fallback_factors import FallbackFactor, LOCAL_FALLBACK_FACTORS
 from app.domain.models import Assumption, CarbonEvent
+from app.domain.assumptions import generic_waste_fallback_assumption
 
 
 @dataclass(frozen=True)
@@ -48,7 +49,7 @@ class LocalFallbackEstimator:
             co2e=round(float(amount) * factor.kg_co2e_per_unit, 3),
             co2e_unit="kg",
             confidence=factor.confidence,
-            assumptions=[factor.assumption()],
+            assumptions=[*_generic_fallback_assumptions(event, parameters, factor), factor.assumption()],
         )
 
 
@@ -73,3 +74,20 @@ def _declared_fallback_keys(taxonomy: dict) -> set[str]:
         if pathway.get("fallback_factor_key")
     )
     return keys
+
+
+def _generic_fallback_assumptions(
+    event: CarbonEvent,
+    parameters: dict,
+    factor: FallbackFactor,
+) -> list[Assumption]:
+    material_class = str(parameters.get("material_class") or "")
+    disposal_method = str(parameters.get("disposal_method") or "")
+    if (
+        event.category == "waste"
+        and factor.key == "waste.landfill_general"
+        and disposal_method == "landfill"
+        and material_class not in {"", "general_waste", "mixed_packaging"}
+    ):
+        return [generic_waste_fallback_assumption(material_class, disposal_method)]
+    return []

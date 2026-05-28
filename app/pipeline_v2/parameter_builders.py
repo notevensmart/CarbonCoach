@@ -347,6 +347,25 @@ class GoodsServicesParameterBuilder:
                 )
             )
             confidence = Confidence.from_score(0.62)
+        elif quantity is None and _first_quantity(event.quantities, "money") is not None:
+            money = _first_quantity(event.quantities, "money")
+            parameters.update(
+                {
+                    "money": _round_quantity(money.value),
+                    "money_unit": money.unit,
+                }
+            )
+            confidence = Confidence.from_score(0.90)
+            issues.append(
+                Issue(
+                    code="goods_services.money_factor_unavailable",
+                    message=(
+                        "This product pathway needs a compatible money-based factor; "
+                        "purchase price is not converted into item count."
+                    ),
+                    severity="warning",
+                )
+            )
         elif quantity is None:
             parameters.update(_preserved_quantity_parameters(event.quantities))
             missing_code = (
@@ -379,7 +398,8 @@ class GoodsServicesParameterBuilder:
             )
             confidence = Confidence.from_score(0.93)
 
-        parameters["calculation_boundary"] = str(pathway["boundary_note"])
+        if required_dimension in parameters:
+            parameters["calculation_boundary"] = str(pathway["boundary_note"])
         return ParameterBuildResult(
             parameters=parameters,
             confidence=confidence,
@@ -437,7 +457,7 @@ class WasteParameterBuilder:
             )
 
         pathway = metadata.get("pathways", {}).get(material_class)
-        if pathway is None:
+        if pathway is None and material_class in {"", "unknown", "mixed"}:
             parameters.update({"weight": _round_quantity(weight.value), "weight_unit": "kg"})
             return ParameterBuildResult(
                 parameters=parameters,
@@ -459,9 +479,10 @@ class WasteParameterBuilder:
             {
                 "weight": _round_quantity(weight.value),
                 "weight_unit": "kg",
-                "fallback_factor_key": str(pathway["fallback_factor_key"]),
             }
         )
+        if pathway is not None and pathway.get("fallback_factor_key"):
+            parameters["fallback_factor_key"] = str(pathway["fallback_factor_key"])
         return ParameterBuildResult(
             parameters=parameters,
             confidence=Confidence.from_score(0.93),
