@@ -58,12 +58,39 @@ test("uses backend coverage and explains estimate quality in human terms", () =>
 
   expect(screen.getByText("We found 9 activities")).toBeInTheDocument();
   expect(screen.getByText("Backend coverage")).toBeInTheDocument();
+  const coverage = screen.getByText("Activity coverage").closest("section");
+  expect(coverage.querySelector("dl")).toHaveClass("sm:grid-cols-3");
+  expect(within(coverage).getByText("not included yet")).toHaveClass("whitespace-nowrap");
   expect(screen.getByText("Estimate quality")).toBeInTheDocument();
+  expect(screen.getByText("Estimate quality").closest("section")).toHaveClass(
+    "border-yellow-200",
+    "bg-yellow-50"
+  );
   expect(screen.getAllByText("Medium").length).toBeGreaterThan(0);
   expect(screen.getByText("1 activity used assumptions")).toBeInTheDocument();
   expect(screen.getByText("1 activity is an approximate estimate")).toBeInTheDocument();
   expect(screen.getByText("3 activities need more detail")).toBeInTheDocument();
   expect(screen.getByText("The represented estimate is partial")).toBeInTheDocument();
+});
+
+test("summary gives deterministic daily context for complete medium-or-high estimates", () => {
+  render(
+    <EmissionResult
+      response={v2Response([
+        includedDetail({ category: "transport", activity_type: "car_ride", co2e: 2 }),
+        includedDetail({ category: "energy", activity_type: "electricity_use", co2e: 1 }),
+      ])}
+    />
+  );
+
+  const summary = screen.getByText("Summary").closest("section");
+  expect(within(summary).getByText("What stood out")).toBeInTheDocument();
+  expect(
+    within(summary).getByText(
+      "This included estimate is about 7% of the broad Australian per-person daily emissions reference."
+    )
+  ).toBeInTheDocument();
+  expect(screen.queryByText("Deterministic reflection")).not.toBeInTheDocument();
 });
 
 test("shows category command center in stable category order with included totals only", () => {
@@ -208,6 +235,9 @@ test("activity card explains how to improve a medium-confidence estimate with no
     .closest("article");
 
   expect(within(card).queryByText("What we assumed")).not.toBeInTheDocument();
+  const confidenceText = within(card).getByText("Medium");
+  expect(confidenceText).toHaveClass("text-yellow-700");
+  expect(confidenceText.parentElement).toHaveClass("bg-yellow-100", "text-yellow-950");
   expect(within(card).getByText("What would improve this estimate")).toBeInTheDocument();
   expect(
     within(card).getByText(

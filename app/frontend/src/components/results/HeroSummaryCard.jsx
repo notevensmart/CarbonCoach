@@ -1,9 +1,10 @@
 import React from "react";
-import { confidenceLabel, formatNumber } from "./resultPresentation";
+import { confidenceLabel, confidenceTone, formatNumber } from "./resultPresentation";
 
 export default function HeroSummaryCard({ dashboard }) {
   const attentionCount = dashboard.attentionDetails.length;
   const confidence = confidenceLabel(dashboard.confidence);
+  const confidenceToneClasses = confidenceTone(dashboard.confidence).badgeClass;
 
   return (
     <section
@@ -37,7 +38,11 @@ export default function HeroSummaryCard({ dashboard }) {
         {confidence && (
           <div>
             <dt className="text-teal-200">Confidence</dt>
-            <dd className="font-semibold">{confidence}</dd>
+            <dd
+              className={`mt-1 inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${confidenceToneClasses}`}
+            >
+              {confidence}
+            </dd>
           </div>
         )}
       </dl>

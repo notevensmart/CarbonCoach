@@ -4,6 +4,7 @@ import {
   categoryMeta,
   categoryLabel,
   confidenceLabel,
+  confidenceTone,
   consumerAssumptionMessage,
   formatNumber,
   improvementGuidance,
@@ -14,6 +15,8 @@ export default function ActivityCard({ detail }) {
   const assumptions = detail.assumptions || [];
   const summary = parameterSummary(detail.parameters);
   const guidance = improvementGuidance(detail);
+  const confidence = confidenceLabel(detail.confidence);
+  const confidenceToneMeta = confidenceTone(detail.confidence);
 
   return (
     <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm shadow-stone-900/5">
@@ -38,9 +41,14 @@ export default function ActivityCard({ detail }) {
         <p className="text-xl font-bold text-teal-900">
           {formatNumber(detail.co2e)} {detail.unit || "kg"} CO2e
         </p>
-        {detail.confidence && (
+        {confidence && (
           <p className="text-sm text-stone-700">
-            Confidence: <span className="font-semibold">{confidenceLabel(detail.confidence)}</span>
+            Confidence:{" "}
+            <span
+              className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${confidenceToneMeta.badgeClass}`}
+            >
+              <span className={confidenceToneMeta.textClass}>{confidence}</span>
+            </span>
           </p>
         )}
       </div>

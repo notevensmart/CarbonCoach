@@ -49,6 +49,11 @@ const INTERNAL_PARAMETER_KEYS = new Set([
   "calculation_boundary",
 ]);
 
+const AU_DAILY_REFERENCE = {
+  kgCo2ePerDay: 44,
+  label: "broad Australian per-person daily emissions reference",
+};
+
 export function buildDashboardModel(estimate) {
   const details = Array.isArray(estimate.details) ? estimate.details : [];
   const estimatedDetails = details.filter((detail) =>
@@ -154,16 +159,15 @@ export function buildDashboardModel(estimate) {
       estimate.coverage
     ),
     insight: buildInsight({
-      mainDriver,
-      hasContributingCategory: breakdown.length > 0,
-      attentionCount: attentionDetails.length,
+      breakdown,
+      contributingTotal,
       confidence: estimate.total?.confidence,
-      estimatedCount: estimatedDetails.length,
+      estimatedDetails,
+      attentionDetails,
       topActivity,
       coverageSummary,
       assumptionCount,
       fallbackCount,
-      largestCategoryLabels,
       clarification,
     }),
   };
@@ -183,54 +187,90 @@ export function displayableComparison(comparison, total, confidence, coverage) {
 }
 
 export function buildInsight({
-  mainDriver,
-  hasContributingCategory,
-  attentionCount,
+  breakdown,
+  contributingTotal,
   confidence,
-  estimatedCount,
+  estimatedDetails,
+  attentionDetails,
   topActivity,
   coverageSummary,
   assumptionCount,
   fallbackCount,
-  largestCategoryLabels,
   clarification,
 }) {
-  const sentences = [];
-  if (hasContributingCategory) {
-    if (largestCategoryLabels?.length > 1) {
-      sentences.push(
-        `${joinLabels(largestCategoryLabels)} drove most of today's estimated footprint.`
-      );
-    } else {
-      sentences.push(`${mainDriver} was the largest part of today's estimated footprint.`);
-    }
+  const points = [];
+  const sortedCategories = [...(breakdown || [])].sort((a, b) => b.amount - a.amount);
+  const topCategory = sortedCategories[0];
+  const secondCategory = sortedCategories[1];
+  const topActivityShare = topActivity
+    ? percentage(includedAmount(topActivity), contributingTotal)
+    : 0;
+
+  if (topActivity && topActivityShare >= 60) {
+    points.push(
+      `${activityLabel(topActivity.activity_type)} makes up ${topActivityShare}% of the estimated footprint, so today's result is concentrated in one activity.`
+    );
+  } else if (topCategory && topCategory.percentage >= 50) {
+    const activityCount =
+      topCategory.estimatedCount > 1
+        ? ` across ${topCategory.estimatedCount} estimated activities`
+        : "";
+    points.push(
+      `${topCategory.label} accounts for ${topCategory.percentage}% of the estimated footprint${activityCount}.`
+    );
+  } else if (topCategory && secondCategory) {
+    points.push(
+      `The estimate is split most between ${topCategory.label} (${topCategory.percentage}%) and ${secondCategory.label} (${secondCategory.percentage}%).`
+    );
+  } else if (topCategory) {
+    points.push(`${topCategory.label} is the only estimated category in this result.`);
   }
-  if (topActivity && sentences.length < 2 && !coverageSummary?.partial) {
-    sentences.push(
-      `${activityLabel(topActivity.activity_type)} was the largest estimated activity.`
+
+  const dailyContext = dailyReferenceInsight({
+    total: contributingTotal,
+    confidence,
+    coverageSummary,
+  });
+  if (dailyContext) {
+    points.push(dailyContext);
+  }
+
+  const bottleneck = confidenceBottleneck(estimatedDetails);
+  if (bottleneck) {
+    points.push(bottleneck);
+  }
+
+  if (coverageSummary?.partial && attentionDetails?.length && points.length < 3) {
+    points.push(partialInsight(attentionDetails, clarification));
+  }
+
+  if (topActivity && topActivityShare < 60 && points.length < 3) {
+    points.push(
+      `${activityLabel(topActivity.activity_type)} is the largest single activity at ${formatNumber(includedAmount(topActivity))} ${topActivity.unit || "kg"} CO2e.`
     );
   }
-  if (sentences.length < 2 && attentionCount) {
-    sentences.push(
-      `${attentionCount} ${attentionCount === 1 ? "activity" : "activities"} could not yet be included in the estimate.`
-    );
-  }
-  if (sentences.length < 2 && clarification?.prompt) {
-    sentences.push(`The most useful next detail is: ${clarification.prompt}`);
-  }
-  if (sentences.length < 2 && (assumptionCount > 0 || fallbackCount > 0)) {
-    sentences.push("Some activities used assumptions or approximate emissions factors.");
-  }
+
   if (
-    sentences.length < 2 &&
-    estimatedCount > 0 &&
+    points.length < 2 &&
+    estimatedDetails?.length > 0 &&
+    assumptionCount === 0 &&
+    fallbackCount === 0 &&
+    confidence?.level === "high"
+  ) {
+    points.push(
+      "The included activities did not need assumptions, so this estimate is relatively direct."
+    );
+  }
+
+  if (
+    points.length < 2 &&
+    estimatedDetails?.length > 0 &&
     ["medium", "low"].includes(confidence?.level)
   ) {
-    sentences.push(
-      "Treat this as an approximate guide because some details were uncertain or assumed."
-    );
+    points.push("The estimate is useful for direction, but one or more inputs still limited confidence.");
   }
-  return sentences.join(" ");
+
+  return uniqueMessages(points).slice(0, 3);
 }
 
 export function buildCoverageSummary(coverage, details) {
@@ -304,8 +344,44 @@ export function buildQuality({
 
   return {
     label: confidenceLabel(confidence) || "Unknown",
+    level: confidence?.level || "unknown",
     reasons: reasons.slice(0, 4),
   };
+}
+
+const CONFIDENCE_TONES = {
+  high: {
+    badgeClass: "border-emerald-200 bg-emerald-100 text-emerald-950",
+    cardClass: "border-emerald-200 bg-emerald-50 text-emerald-950 shadow-emerald-900/5",
+    dotClass: "bg-emerald-500",
+    textClass: "text-emerald-700",
+  },
+  medium: {
+    badgeClass: "border-yellow-200 bg-yellow-100 text-yellow-950",
+    cardClass: "border-yellow-200 bg-yellow-50 text-yellow-950 shadow-yellow-900/5",
+    dotClass: "bg-yellow-500",
+    textClass: "text-yellow-700",
+  },
+  low: {
+    badgeClass: "border-red-200 bg-red-100 text-red-950",
+    cardClass: "border-red-200 bg-red-50 text-red-950 shadow-red-900/5",
+    dotClass: "bg-red-500",
+    textClass: "text-red-700",
+  },
+  unknown: {
+    badgeClass: "border-stone-200 bg-stone-100 text-stone-800",
+    cardClass: "border-stone-200 bg-white text-stone-950 shadow-stone-900/5",
+    dotClass: "bg-stone-400",
+    textClass: "text-stone-700",
+  },
+};
+
+export function confidenceTone(confidenceOrLevel) {
+  const level =
+    typeof confidenceOrLevel === "string"
+      ? confidenceOrLevel
+      : confidenceOrLevel?.level;
+  return CONFIDENCE_TONES[level] || CONFIDENCE_TONES.unknown;
 }
 
 export function buildClarificationPriority(suggestions, attentionDetails) {
@@ -523,6 +599,109 @@ function joinLabels(labels) {
     return `${labels[0]} and ${labels[1]}`;
   }
   return `${labels.slice(0, -1).join(", ")}, and ${labels[labels.length - 1]}`;
+}
+
+function confidenceBottleneck(estimatedDetails = []) {
+  const candidates = estimatedDetails
+    .filter((detail) => detail.confidence?.level && detail.confidence.level !== "high")
+    .sort((a, b) => {
+      const amountDifference = includedAmount(b) - includedAmount(a);
+      if (Math.abs(amountDifference) > 1e-9) {
+        return amountDifference;
+      }
+      return (a.confidence?.score ?? 1) - (b.confidence?.score ?? 1);
+    });
+
+  if (!candidates.length) {
+    return null;
+  }
+
+  const detail = candidates[0];
+  const label = activityLabel(detail.activity_type);
+  const confidence = confidenceLabel(detail.confidence)?.toLowerCase() || "lower";
+
+  if (detail.status === "fallback_estimated" || detail.source === "fallback") {
+    return `${label} is included in the total, but it relies on an approximate local emissions factor.`;
+  }
+
+  const weakestPart = weakestConfidencePart(detail);
+  if (weakestPart === "parameter") {
+    return `${label} has ${confidence} confidence because the activity quantity or unit was still broad.`;
+  }
+  if (weakestPart === "factor") {
+    return `${label} had clear activity details, but the matched emissions factor was broad.`;
+  }
+  if (weakestPart === "source") {
+    return `${label} is limited mostly by emissions source confidence, not the activity details.`;
+  }
+  if (detail.assumptions?.length > 0) {
+    return `${label} carries assumptions, so it is a useful activity to verify if the total feels off.`;
+  }
+
+  return null;
+}
+
+function weakestConfidencePart(detail) {
+  const confidenceParts = [
+    ["parameter", detail.parameter_confidence?.score],
+    ["factor", detail.factor_confidence?.score],
+    ["source", detail.source_confidence?.score],
+  ].filter(([, score]) => typeof score === "number");
+
+  if (!confidenceParts.length) {
+    return null;
+  }
+
+  return confidenceParts.reduce((weakest, current) =>
+    current[1] < weakest[1] ? current : weakest
+  )[0];
+}
+
+function partialInsight(attentionDetails, clarification) {
+  const detail = attentionDetails[0];
+  const label = activityLabel(detail.activity_type);
+  if (clarification?.prompt) {
+    return `${label} was detected but left out of the total; answering "${clarification.prompt}" would make the summary more complete.`;
+  }
+  return `${label} was detected but left out of the total, so the current number should be read as partial.`;
+}
+
+function dailyReferenceInsight({ total, confidence, coverageSummary }) {
+  if (
+    total <= 0 ||
+    coverageSummary?.partial ||
+    !["medium", "high"].includes(confidence?.level)
+  ) {
+    return null;
+  }
+
+  const ratio = total / AU_DAILY_REFERENCE.kgCo2ePerDay;
+  if (ratio >= 1) {
+    return `This included estimate is about ${formatRatio(ratio)} times the ${AU_DAILY_REFERENCE.label}.`;
+  }
+
+  return `This included estimate is about ${formatPercent(ratio)} of the ${AU_DAILY_REFERENCE.label}.`;
+}
+
+function formatRatio(ratio) {
+  if (ratio >= 10) {
+    return String(Math.round(ratio));
+  }
+  return ratio.toFixed(1).replace(/\.0$/, "");
+}
+
+function formatPercent(ratio) {
+  const percentageValue = ratio * 100;
+  if (percentageValue < 1) {
+    return "less than 1%";
+  }
+  return `${Math.round(percentageValue)}%`;
+}
+
+function uniqueMessages(messages) {
+  return messages.filter((message, index, allMessages) => {
+    return message && allMessages.indexOf(message) === index;
+  });
 }
 
 function clarificationPriority(detail) {

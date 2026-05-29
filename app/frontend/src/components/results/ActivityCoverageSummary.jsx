@@ -33,26 +33,28 @@ export default function ActivityCoverageSummary({ coverage }) {
         )}
       </div>
 
-      <dl className="mt-5 grid gap-3 sm:grid-cols-4">
+      <dl className="mt-5 grid gap-3 sm:grid-cols-3">
         {COVERAGE_ITEMS.slice(1).map((item) => (
-          <div key={item.key} className="rounded-xl border border-stone-200 bg-stone-50 p-3">
-            <dt className="text-xs font-semibold uppercase tracking-wide text-stone-500">
+          <div
+            key={item.key}
+            className="rounded-xl border border-stone-200 bg-stone-50 p-4"
+          >
+            <dt className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-wide text-stone-500">
               {item.label}
             </dt>
             <dd className="mt-1 text-2xl font-semibold text-stone-950">{coverage[item.key]}</dd>
           </div>
         ))}
-        {coverage.notRepresented !== null && coverage.notRepresented !== undefined && (
-          <div className="rounded-xl border border-stone-200 bg-stone-50 p-3">
-            <dt className="text-xs font-semibold uppercase tracking-wide text-stone-500">
-              not represented yet
-            </dt>
-            <dd className="mt-1 text-2xl font-semibold text-stone-950">
-              {coverage.notRepresented}
-            </dd>
-          </div>
-        )}
       </dl>
+
+      {coverage.notRepresented !== null && coverage.notRepresented !== undefined && (
+        <div className="mt-3 rounded-xl border border-stone-200 bg-stone-50 p-4">
+          <p className="flex items-center justify-between gap-3 text-sm">
+            <span className="font-medium text-stone-600">Not represented yet</span>
+            <span className="text-lg font-semibold text-stone-950">{coverage.notRepresented}</span>
+          </p>
+        </div>
+      )}
 
       {coverage.partial && (
         <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-950">
