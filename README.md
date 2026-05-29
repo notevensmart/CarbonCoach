@@ -39,8 +39,6 @@ CarbonCoach is my answer to that product and engineering problem.
 
 ## The Demo Story
 
-For a recruiter or non-technical reviewer, the product story is simple:
-
 1. Type or select a messy daily journal entry.
 2. CarbonCoach estimates the footprint it can support.
 3. The Overview tab shows the result in a few seconds.
@@ -79,11 +77,13 @@ The React production build is copied into the FastAPI container, so the deployed
 
 ## Engineering Decisions
 
-### Structured events instead of simple labels
+### 1. How should messy journal text become calculable data?
 
-The first version of the pipeline was closer to a RAG/classification flow: classify an activity, retrieve a matching emissions record, estimate from that.
+**Design question:** A journal entry is unstructured, but emissions calculations require structured activity data. How do you avoid reducing everything to broad labels like `transport` or `energy`?
 
-That is not enough for real journal entries. These inputs need different treatment:
+**Approach:** I treated the journal as a source of activity evidence, not as a label to classify. Before estimating, CarbonCoach turns the text into structured carbon events. Each event keeps the raw text span alongside a controlled activity type, quantities, entities, assumptions, issues, and confidence.
+
+That distinction matters for inputs like:
 
 ```text
 I drove 7 km.
@@ -92,24 +92,13 @@ I drove 7 km in an electric SUV.
 I took a 7k ride in a Toyota Camry.
 ```
 
-The current pipeline represents each activity as a structured event with:
+Those examples are all "transport," but they should not produce the same calculation path.
 
-- category
-- controlled activity type
-- raw text span
-- quantities
-- entities
-- assumptions
-- issues
-- confidence
+### 2. Where should AI stop and deterministic code take over?
 
-That gives the rest of the system something reliable to validate and calculate against.
+**Design question:** LLMs are useful for interpreting language, but carbon estimates need validation, units, factors, and confidence boundaries. How do you keep the model helpful without letting it invent calculations?
 
-### LLMs can help extract, but deterministic code decides
-
-The app supports an LLM extraction path, but the calculation pipeline does not blindly trust model output.
-
-Before anything reaches an emissions estimate, it goes through:
+**Approach:** I used the model where it is strongest: interpreting messy language into candidate structure. The calculation path is deliberately less flexible. Before anything reaches an emissions estimate, it goes through:
 
 - Pydantic schema validation
 - controlled category and activity enums
@@ -119,38 +108,20 @@ Before anything reaches an emissions estimate, it goes through:
 - factor compatibility checks
 - confidence scoring
 
-If the extracted data is incomplete or unsafe, the activity becomes `unresolved`, `not_estimated`, `failed`, or a visible fallback estimate. It does not get silently forced into a calculation.
+If the extracted data is incomplete or unsafe, the system would rather surface that uncertainty than hide it. The activity becomes `unresolved`, `not_estimated`, `failed`, or a visible fallback estimate instead of being silently forced into a calculation.
 
-### Confidence is part of the product, not decoration
+### 3. How should the app handle incomplete or uncertain estimates?
 
-CarbonCoach uses confidence as an explanation surface.
+**Design question:** Real journal entries often omit important details. Should the app block the user, guess silently, or return a partial result?
 
-Each estimate can expose:
+**Approach:** I chose an estimate-first flow because blocking on follow-up questions would make journaling feel heavy. The tradeoff is that uncertainty has to be part of the product surface, not an afterthought. Each estimated activity can expose:
 
 - parameter confidence
 - factor confidence
 - source confidence
 - overall estimate confidence
 
-Overall confidence is conservative. A successful Climatiq response does not automatically mean high confidence if the parameters were assumed or the factor was broad.
-
-The consumer UI shows this as High, Medium, or Low. The Details tab keeps the numeric breakdown for technical review.
-
-### Factor fit is not called accuracy
-
-Factor retrieval can tell us whether a factor appears compatible with the activity. It cannot prove the final emissions number is exact.
-
-So the UI and docs use language like:
-
-- factor fit
-- factor confidence
-- estimate confidence
-
-They avoid calling factor matching "accuracy." That distinction is small, but it matters when building trustworthy AI products.
-
-### Partial results stay visibly partial
-
-Only these statuses count toward the emissions total:
+Only these statuses count toward totals and category charts:
 
 ```text
 estimated
@@ -165,30 +136,15 @@ failed
 not_estimated
 ```
 
-Unresolved and not-estimated activities still appear in the UI. They just do not get treated as zero-emission activities. This keeps the dashboard from making incomplete results look complete.
+This lets the app stay useful for quick reflection while still making it clear when the number is only a partial estimate.
 
-### Assumptions are shown to the user
+### 4. How do you make technical uncertainty understandable in the UI?
 
-Material assumptions are not buried in a developer panel.
+**Design question:** A raw response with factor IDs, confidence scores, issue codes, and assumptions is useful to engineers but overwhelming to most users.
 
-If CarbonCoach assumes a heater power, uses a local fallback factor, interprets compact distance notation, or cannot fully map a vehicle, the activity card says so in plain language.
+**Approach:** I separated the UI into layers. The default experience answers the questions a user has first: how much was estimated, what drove it, how complete is it, and what would improve it? The technical evidence stays available one tab deeper instead of competing with the main result.
 
-Technical codes and raw diagnostics are still available in the Details tab.
-
-### The result summary is deterministic
-
-The app does not call an LLM to write the final result prose.
-
-The summary is generated from response data only. It can talk about:
-
-- largest estimated category
-- top estimated activity
-- partial coverage
-- confidence bottlenecks
-- next useful clarification
-- broad daily emissions context when the estimate is eligible
-
-It does not give unsupported coaching, moral judgment, avoided-emissions claims, or fake precision.
+The result summary is deterministic. It can mention supported facts like largest category, top activity, partial coverage, confidence bottlenecks, or next useful clarification. It does not call an LLM to generate coaching prose, and it avoids unsupported claims such as avoided emissions or exact accuracy.
 
 ## UI Design
 
