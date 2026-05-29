@@ -75,7 +75,7 @@ The React production build is copied into the FastAPI container, so the deployed
 
 ![CarbonCoach architecture](app/docs/assets/carboncoach-architecture.svg)
 
-Editable FigJam source: https://www.figma.com/board/kX98y4jqZsddzK0aoZVJat
+[Open the interactive architecture diagram](https://embed.figma.com/board/kX98y4jqZsddzK0aoZVJat/CarbonCoach-Architecture?node-id=0-1&embed-host=share)
 
 ## Engineering Decisions
 
