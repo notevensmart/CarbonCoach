@@ -215,14 +215,6 @@ The response includes:
 - `factor`
 - `factor_diagnostics`
 
-### Health check
-
-```http
-GET /healthz
-```
-
-Returns readiness and preload state.
-
 ## Tech Stack
 
 | Layer | Technology |
@@ -303,17 +295,6 @@ Recent frontend tests cover:
 - activity cards
 - confidence color treatment
 - technical Details tab
-
-## What This Shows Reviewers
-
-CarbonCoach is not just a prompt wrapped in a UI. It demonstrates:
-
-- turning unstructured text into validated domain objects
-- keeping an AI system bounded by deterministic code
-- designing for incomplete and uncertain data
-- building a UI that makes uncertainty understandable
-- separating consumer product experience from technical diagnostics
-- deploying a React/FastAPI app through a production-like container path
 
 ## Limitations
 
