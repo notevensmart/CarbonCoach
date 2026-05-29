@@ -1,5 +1,23 @@
 import React from "react";
 
+const TAB_TONES = {
+  overview: {
+    selected: "border-teal-700 bg-teal-700 text-white shadow-teal-900/20",
+    idle: "border-teal-200 bg-teal-50 text-teal-950 hover:bg-teal-100",
+    focus: "focus-visible:outline-teal-700",
+  },
+  activities: {
+    selected: "border-emerald-700 bg-emerald-700 text-white shadow-emerald-900/20",
+    idle: "border-emerald-200 bg-emerald-50 text-emerald-950 hover:bg-emerald-100",
+    focus: "focus-visible:outline-emerald-700",
+  },
+  details: {
+    selected: "border-sky-700 bg-sky-700 text-white shadow-sky-900/20",
+    idle: "border-sky-200 bg-sky-50 text-sky-950 hover:bg-sky-100",
+    focus: "focus-visible:outline-sky-700",
+  },
+};
+
 export default function ResultTabs({ tabs, activeTab, onChange }) {
   const handleKeyDown = (event) => {
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) {
@@ -29,20 +47,23 @@ export default function ResultTabs({ tabs, activeTab, onChange }) {
   return (
     <div
       aria-label="Result views"
-      className="flex w-full gap-1 rounded-xl border border-stone-200 bg-stone-100 p-1"
+      className="flex w-full gap-2 rounded-2xl border border-stone-200 bg-white p-1.5 shadow-sm"
       onKeyDown={handleKeyDown}
       role="tablist"
     >
       {tabs.map((tab) => {
         const selected = tab.id === activeTab;
+        const tone = TAB_TONES[tab.id] || TAB_TONES.overview;
         return (
           <button
             aria-controls={`result-panel-${tab.id}`}
             aria-selected={selected}
-            className={`min-h-11 flex-1 cursor-pointer rounded-lg px-3 py-2 text-sm font-semibold transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 ${
+            className={`min-h-11 flex-1 cursor-pointer rounded-xl border px-3 py-2 text-sm font-semibold shadow-sm transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
+              tone.focus
+            } ${
               selected
-                ? "bg-white text-teal-950 shadow-sm"
-                : "text-stone-700 hover:bg-white/70 hover:text-stone-950"
+                ? `${tone.selected} shadow-md`
+                : `${tone.idle} hover:shadow`
             }`}
             id={`result-tab-${tab.id}`}
             key={tab.id}

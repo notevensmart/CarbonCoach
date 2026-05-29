@@ -13,14 +13,14 @@ export default function JournalForm({ onSubmit }) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <label htmlFor="journal-form-input" className="flex items-center gap-2 text-lg font-medium">
-        What did you do today?
+        Turn your day into a transparent carbon estimate.
       </label>
       <textarea
         id="journal-form-input"
         value={input}
         onChange={(e) => setInput(e.target.value)}
         rows={4}
-        placeholder="e.g., Took a 5km bus ride, cooked dinner at home..."
+        placeholder="What did you do today? e.g., Took a 5km bus ride, cooked dinner at home..."
         className="p-3 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-green-500"
       />
       <button
