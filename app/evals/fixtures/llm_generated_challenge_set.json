@@ -1,0 +1,234 @@
+{
+  "name": "llm_generated_challenge_set",
+  "generated_by": "Codex GPT-5",
+  "generated_on": "2026-05-29",
+  "review_status": "Expected labels were reviewed and frozen before scoring.",
+  "purpose": "Broader natural-language challenge set for activity extraction, quantity normalization, status handling, assumptions, and partial-result behavior.",
+  "cases": [
+    {
+      "name": "hybrid commute and coffee",
+      "journal": "After breakfast I drove my hybrid car 18 km to uni and grabbed a coffee.",
+      "expected": [
+        {"activity_type": "car_ride", "category": "transport", "status_group": "included", "parameters": {"distance": 18.0, "fuel_type": "hybrid"}},
+        {"activity_type": "coffee_purchase", "category": "goods_services", "status_group": "included", "parameters": {"number": 1.0}, "assumption_expected": true, "max_confidence_level": "medium"}
+      ]
+    },
+    {
+      "name": "work from home electricity",
+      "journal": "Worked from home and used 4.2 kWh of electricity.",
+      "expected": [
+        {"activity_type": "electricity_use", "category": "energy", "status_group": "included", "parameters": {"energy": 4.2}}
+      ]
+    },
+    {
+      "name": "rideshare with distance",
+      "journal": "Took an Uber 9 km to dinner.",
+      "expected": [
+        {"activity_type": "rideshare", "category": "transport", "status_group": "included", "parameters": {"distance": 9.0}}
+      ]
+    },
+    {
+      "name": "taxi missing distance",
+      "journal": "Caught a taxi across town for a meeting.",
+      "expected": [
+        {"activity_type": "rideshare", "category": "transport", "status_group": "attention"}
+      ]
+    },
+    {
+      "name": "train and pizza",
+      "journal": "I took the train 35 km and ordered a pizza.",
+      "expected": [
+        {"activity_type": "train_ride", "category": "transport", "status_group": "included", "parameters": {"distance": 35.0}},
+        {"activity_type": "restaurant_meal", "category": "goods_services", "status_group": "included", "parameters": {"number": 1.0}, "assumption_expected": true, "max_confidence_level": "medium"}
+      ]
+    },
+    {
+      "name": "bus and paper landfill",
+      "journal": "I rode a bus 6 km and threw away 200 g of paper in the general waste.",
+      "expected": [
+        {"activity_type": "bus_ride", "category": "transport", "status_group": "included", "parameters": {"distance": 6.0}},
+        {"activity_type": "landfill_waste", "category": "waste", "status_group": "included", "parameters": {"weight": 0.2}}
+      ]
+    },
+    {
+      "name": "glass recycling",
+      "journal": "Recycled 1 kg of glass bottles after dinner.",
+      "expected": [
+        {"activity_type": "recycling", "category": "waste", "status_group": "included", "parameters": {"weight": 1.0}}
+      ]
+    },
+    {
+      "name": "compost banana peels",
+      "journal": "Composted 0.5 kg of banana peels.",
+      "expected": [
+        {"activity_type": "composting", "category": "waste", "status_group": "included", "parameters": {"weight": 0.5}}
+      ]
+    },
+    {
+      "name": "burger and fries",
+      "journal": "I bought a burger and fries for lunch.",
+      "expected": [
+        {"activity_type": "restaurant_meal", "category": "goods_services", "status_group": "included", "parameters": {"number": 1.0}, "assumption_expected": true, "max_confidence_level": "medium"},
+        {"activity_type": "restaurant_meal", "category": "goods_services", "status_group": "included", "parameters": {"number": 1.0}, "assumption_expected": true, "max_confidence_level": "medium"}
+      ]
+    },
+    {
+      "name": "groceries spend and plastic recycling",
+      "journal": "Picked up groceries for $45 and recycled 500 g of plastic packaging.",
+      "expected": [
+        {"activity_type": "food_purchase", "category": "goods_services", "status_group": "attention", "parameters": {"money": 45.0}},
+        {"activity_type": "recycling", "category": "waste", "status_group": "included", "parameters": {"weight": 0.5}}
+      ]
+    },
+    {
+      "name": "electric suv and ac",
+      "journal": "Drove 22 km in an electric SUV, then ran the AC for 1 hour.",
+      "expected": [
+        {"activity_type": "car_ride", "category": "transport", "status_group": "included", "parameters": {"distance": 22.0, "fuel_type": "electric", "vehicle_size": "large"}},
+        {"activity_type": "air_conditioner_use", "category": "energy", "status_group": "attention", "parameters": {"duration": 1.0}}
+      ]
+    },
+    {
+      "name": "walk and train missing distance",
+      "journal": "Walked 3 km to the station and caught the train to the city.",
+      "expected": [
+        {"activity_type": "walking", "category": "transport", "status_group": "not_included", "parameters": {"distance": 3.0}},
+        {"activity_type": "train_ride", "category": "transport", "status_group": "attention"}
+      ]
+    },
+    {
+      "name": "sandwiches and soft drink",
+      "journal": "Bought 2 sandwiches and a soft drink.",
+      "expected": [
+        {"activity_type": "restaurant_meal", "category": "goods_services", "status_group": "included", "parameters": {"number": 2.0}},
+        {"activity_type": "food_purchase", "category": "goods_services", "status_group": "included", "parameters": {"number": 1.0}, "assumption_expected": true, "max_confidence_level": "medium"}
+      ]
+    },
+    {
+      "name": "desktop duration",
+      "journal": "I used my desktop computer for 4 hours.",
+      "expected": [
+        {"activity_type": "generic_energy_use", "category": "energy", "status_group": "attention", "parameters": {"duration": 4.0}}
+      ]
+    },
+    {
+      "name": "domestic flight",
+      "journal": "Flew 800 km domestic economy.",
+      "expected": [
+        {"activity_type": "flight", "category": "transport", "status_group": "included", "parameters": {"distance": 800.0}}
+      ]
+    },
+    {
+      "name": "international flight business",
+      "journal": "Took an international business class flight 12000 km.",
+      "expected": [
+        {"activity_type": "flight", "category": "transport", "status_group": "included", "parameters": {"distance": 12000.0}}
+      ]
+    },
+    {
+      "name": "electric bike unsupported",
+      "journal": "Rode an e-bike 10 km along the beach.",
+      "expected": [
+        {"activity_type": "generic_transport", "category": "transport", "status_group": "attention", "parameters": {"distance": 10.0}}
+      ]
+    },
+    {
+      "name": "laptop purchase unsupported",
+      "journal": "Bought a laptop for school.",
+      "expected": [
+        {"activity_type": "electronics_purchase", "category": "goods_services", "status_group": "attention"}
+      ]
+    },
+    {
+      "name": "clothing purchase unsupported",
+      "journal": "Ordered two shirts online.",
+      "expected": [
+        {"activity_type": "clothing_purchase", "category": "goods_services", "status_group": "attention"}
+      ]
+    },
+    {
+      "name": "rubbish without mass",
+      "journal": "Threw away a bag of rubbish.",
+      "expected": [
+        {"activity_type": "landfill_waste", "category": "waste", "status_group": "attention"}
+      ]
+    },
+    {
+      "name": "mixed waste disposal",
+      "journal": "Disposed of 2 kg of mixed waste.",
+      "expected": [
+        {"activity_type": "landfill_waste", "category": "waste", "status_group": "attention", "parameters": {"weight": 2.0}}
+      ]
+    },
+    {
+      "name": "heater and coffee spend",
+      "journal": "Used a 1.5 kW heater for 2 hours and bought coffee for $4.",
+      "expected": [
+        {"activity_type": "space_heater_use", "category": "energy", "status_group": "included", "parameters": {"energy": 3.0, "power": 1.5, "duration": 2.0}},
+        {"activity_type": "coffee_purchase", "category": "goods_services", "status_group": "attention", "parameters": {"money": 4.0}}
+      ]
+    },
+    {
+      "name": "metal and glass recycling",
+      "journal": "Recycled 250 g metal cans and 300 g glass bottles.",
+      "expected": [
+        {"activity_type": "recycling", "category": "waste", "status_group": "included", "parameters": {"weight": 0.25}},
+        {"activity_type": "recycling", "category": "waste", "status_group": "included", "parameters": {"weight": 0.3}}
+      ]
+    },
+    {
+      "name": "electric commute",
+      "journal": "Commuted 30 km in an electric car.",
+      "expected": [
+        {"activity_type": "car_ride", "category": "transport", "status_group": "included", "parameters": {"distance": 30.0, "fuel_type": "electric"}}
+      ]
+    },
+    {
+      "name": "delivery app meal",
+      "journal": "Ordered a beef burrito and a soft drink through Uber Eats.",
+      "expected": [
+        {"activity_type": "restaurant_meal", "category": "goods_services", "status_group": "included", "parameters": {"number": 1.0}, "assumption_expected": true, "max_confidence_level": "medium"},
+        {"activity_type": "food_purchase", "category": "goods_services", "status_group": "included", "parameters": {"number": 1.0}, "assumption_expected": true, "max_confidence_level": "medium"}
+      ]
+    },
+    {
+      "name": "coffee spend and walking",
+      "journal": "Spent $20 on coffee and walked 1 km home.",
+      "expected": [
+        {"activity_type": "coffee_purchase", "category": "goods_services", "status_group": "attention", "parameters": {"money": 20.0}},
+        {"activity_type": "walking", "category": "transport", "status_group": "not_included", "parameters": {"distance": 1.0}}
+      ]
+    },
+    {
+      "name": "hot water duration",
+      "journal": "Used hot water for 20 minutes.",
+      "expected": [
+        {"activity_type": "hot_water_use", "category": "energy", "status_group": "attention", "parameters": {"duration": 0.333}}
+      ]
+    },
+    {
+      "name": "oven duration",
+      "journal": "Ran the oven for 45 minutes.",
+      "expected": [
+        {"activity_type": "cooking_appliance_use", "category": "energy", "status_group": "attention", "parameters": {"duration": 0.75}}
+      ]
+    },
+    {
+      "name": "food waste landfill",
+      "journal": "Put 1 kg food waste in landfill.",
+      "expected": [
+        {"activity_type": "landfill_waste", "category": "waste", "status_group": "included", "parameters": {"weight": 1.0}}
+      ]
+    },
+    {
+      "name": "messy multi-category day",
+      "journal": "Morning was messy: taxi 5km, two coffees, 3 kWh electricity, and 400g cardboard recycling.",
+      "expected": [
+        {"activity_type": "rideshare", "category": "transport", "status_group": "included", "parameters": {"distance": 5.0}},
+        {"activity_type": "coffee_purchase", "category": "goods_services", "status_group": "included", "parameters": {"number": 2.0}},
+        {"activity_type": "electricity_use", "category": "energy", "status_group": "included", "parameters": {"energy": 3.0}},
+        {"activity_type": "recycling", "category": "waste", "status_group": "included", "parameters": {"weight": 0.4}}
+      ]
+    }
+  ]
+}

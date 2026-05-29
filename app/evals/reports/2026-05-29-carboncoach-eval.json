@@ -1,0 +1,46 @@
+{
+  "date": "2026-05-29",
+  "offline": {
+    "curated_regression": {
+      "benchmark_cases": 24,
+      "expected_events": 29,
+      "activity_extraction_recall": 100.0,
+      "status_correctness": 100.0,
+      "quantity_parameter_accuracy": 100.0,
+      "assumption_visibility": 100.0,
+      "confidence_discipline": 100.0,
+      "partial_coverage_correctness": 100.0,
+      "total_integrity": 100.0,
+      "failures": []
+    },
+    "llm_generated_challenge": {
+      "benchmark_cases": 30,
+      "expected_events": 45,
+      "activity_extraction_recall": 95.6,
+      "status_correctness": 97.7,
+      "quantity_parameter_accuracy": 100.0,
+      "assumption_visibility": 100.0,
+      "confidence_discipline": 100.0,
+      "partial_coverage_correctness": 96.7,
+      "total_integrity": 100.0,
+      "failures": [
+        "compost banana peels: partial=True, expected False",
+        "compost banana peels: composting status unresolved != included",
+        "messy multi-category day: missing transport/rideshare",
+        "messy multi-category day: missing goods_services/coffee_purchase"
+      ]
+    }
+  },
+  "deployed": {
+    "url": "https://carboncoach-518373042997.us-central1.run.app/api/estimate-v2",
+    "iterations": 20,
+    "success_count": 20,
+    "failure_count": 0,
+    "success_rate": 100.0,
+    "median_seconds": 1.577,
+    "p95_seconds": 2.084,
+    "max_seconds": 2.087,
+    "failures": []
+  },
+  "methodology_note": "Curated regression metrics use hand-authored cases for known supported behavior. LLM-generated challenge metrics use a frozen set of 30 generated natural-language journals with reviewed expected outputs to probe broader phrasing and generalization. Offline metrics use a deterministic emissions-provider stub to evaluate extraction, normalization, status handling, assumptions, confidence discipline, partial coverage, and total integrity without live provider variability. Deployed metrics measure observed Cloud Run API latency separately."
+}
