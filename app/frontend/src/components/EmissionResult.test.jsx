@@ -208,6 +208,93 @@ test("Activities tab preserves estimated, needs-attention, and not-included acti
   ).toBeInTheDocument();
 });
 
+test("activity cards show location provenance without exposing internal place ids", () => {
+  render(
+    <EmissionResult
+      response={v2Response([
+        includedDetail({
+          raw_text: "I took the train from Redfernn to Chastwood.",
+          category: "transport",
+          activity_type: "train_ride",
+          co2e: 0.55,
+          parameters: {
+            distance: 13.8,
+            distance_unit: "km",
+            origin: "Redfernn",
+            destination: "Chastwood",
+            origin_place_id: "au-nsw-redfern",
+            destination_place_id: "au-nsw-chatswood",
+            origin_place_name: "Redfern",
+            destination_place_name: "Chatswood",
+            origin_match_type: "fuzzy_alias",
+            destination_match_type: "fuzzy_alias",
+            distance_source: "qgis_route_network_gtfs_shape",
+            route_exact: true,
+            route_path_place_names: "Redfern -> Central -> North Sydney -> Chatswood",
+          },
+          assumptions: [
+            {
+              code: "location.place_fuzzy_matched",
+              message: 'Interpreted origin place "Redfernn" as Redfern.',
+            },
+          ],
+        }),
+      ])}
+    />
+  );
+
+  fireEvent.click(screen.getByRole("tab", { name: "Activities" }));
+  const activities = screen.getByRole("tabpanel", { name: "Activities" });
+  const card = within(activities)
+    .getByRole("heading", { name: "Train Ride" })
+    .closest("article");
+
+  expect(within(card).getByText("Location context")).toBeInTheDocument();
+  expect(within(card).getByText("Redfern to Chatswood")).toBeInTheDocument();
+  expect(
+    within(card).getByText('Origin "Redfernn" matched to Redfern; Destination "Chastwood" matched to Chatswood')
+  ).toBeInTheDocument();
+  expect(
+    within(card).getByText("Redfern -> Central -> North Sydney -> Chatswood")
+  ).toBeInTheDocument();
+  expect(within(card).queryByText("au-nsw-redfern")).not.toBeInTheDocument();
+});
+
+test("needs-attention activities surface location resolution issues", () => {
+  render(
+    <EmissionResult
+      response={v2Response([
+        unresolvedDetail({
+          raw_text: "I drove from Springfeld to Bondi.",
+          category: "transport",
+          activity_type: "car_ride",
+          parameters: {
+            origin: "Springfeld",
+            destination: "Bondi",
+          },
+          issues: [
+            {
+              code: "location.place_ambiguous",
+              message:
+                "The origin place Springfeld matched multiple maintained places: Springfield NSW, Springfield QLD.",
+            },
+          ],
+        }),
+      ])}
+    />
+  );
+
+  fireEvent.click(screen.getByRole("tab", { name: "Activities" }));
+  const activities = screen.getByRole("tabpanel", { name: "Activities" });
+
+  expect(within(activities).getByText("What needs attention")).toBeInTheDocument();
+  expect(
+    within(activities).getByText(
+      "The origin place Springfeld matched multiple maintained places: Springfield NSW, Springfield QLD."
+    )
+  ).toBeInTheDocument();
+});
+
 test("activity card explains how to improve a medium-confidence estimate with no assumptions", () => {
   render(
     <EmissionResult

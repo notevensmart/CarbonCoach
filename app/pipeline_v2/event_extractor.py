@@ -41,6 +41,11 @@ FLIGHT_CLASS_RE = re.compile(
     r"\b(premium\s+economy|business(?:\s+class)?|first(?:\s+class)?|economy)\b",
     re.IGNORECASE,
 )
+ORIGIN_DESTINATION_RE = re.compile(
+    r"\bfrom\s+(?P<origin>[^,.;]+?)\s+to\s+(?P<destination>[^,.;]+?)"
+    r"(?=\s+(?:in|on|by|for|using|with|via|and|then)\b|[,.;]|$)",
+    re.IGNORECASE,
+)
 POWERED_BICYCLE_RE = re.compile(
     r"\b(?:e[- ]?bike|electric\s+bicycle|electric\s+bike|pedal[- ]?assist(?:ed)?\s+bike)\b",
     re.IGNORECASE,
@@ -666,6 +671,10 @@ def _transport_entities(
     activity_type: str,
 ) -> dict[str, str | float | int | bool | None]:
     entities: dict[str, str | float | int | bool | None] = {"transport_mode": activity_type}
+    origin_destination = _origin_destination(clause)
+    if origin_destination is not None:
+        entities["origin"] = origin_destination[0]
+        entities["destination"] = origin_destination[1]
     if activity_type in {"car_ride", "rideshare"}:
         entities["vehicle_type"] = "car"
 
@@ -732,6 +741,23 @@ def _explicit_fuel_type(clause: str) -> str | None:
     if PETROL_RE.search(clause):
         return "petrol"
     return None
+
+
+def _origin_destination(clause: str) -> tuple[str, str] | None:
+    match = ORIGIN_DESTINATION_RE.search(clause)
+    if match is None:
+        return None
+    origin = _clean_place_surface(match.group("origin"))
+    destination = _clean_place_surface(match.group("destination"))
+    if not origin or not destination:
+        return None
+    return origin, destination
+
+
+def _clean_place_surface(value: str) -> str:
+    cleaned = re.sub(r"\s+", " ", value).strip(" ,")
+    cleaned = re.sub(r"^(?:the|a|an)\s+", "", cleaned, flags=re.IGNORECASE)
+    return cleaned
 
 
 def _normalized_flight_class(surface: str) -> str:

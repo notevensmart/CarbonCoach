@@ -7,6 +7,7 @@ import {
   confidenceTone,
   consumerAssumptionMessage,
   formatNumber,
+  geospatialSummary,
   improvementGuidance,
   parameterSummary,
 } from "./resultPresentation";
@@ -17,6 +18,7 @@ export default function ActivityCard({ detail }) {
   const guidance = improvementGuidance(detail);
   const confidence = confidenceLabel(detail.confidence);
   const confidenceToneMeta = confidenceTone(detail.confidence);
+  const locationLines = geospatialSummary(detail);
 
   return (
     <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm shadow-stone-900/5">
@@ -36,6 +38,23 @@ export default function ActivityCard({ detail }) {
       </header>
 
       {summary && <p className="mt-4 text-sm text-stone-600">{summary}</p>}
+
+      {locationLines && (
+        <section
+          aria-label="Location context"
+          className="mt-4 border-l-4 border-teal-200 pl-3 text-sm text-stone-700"
+        >
+          <h4 className="font-semibold text-stone-950">Location context</h4>
+          <dl className="mt-2 space-y-1.5">
+            {locationLines.map((line) => (
+              <div key={`${line.label}-${line.value}`} className="grid gap-0.5 sm:grid-cols-[8rem_1fr] sm:gap-3">
+                <dt className="font-medium text-stone-500">{line.label}</dt>
+                <dd className="text-stone-800">{line.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )}
 
       <div className="mt-4 flex flex-wrap items-end justify-between gap-3 border-t border-stone-100 pt-4">
         <p className="text-xl font-bold text-teal-900">

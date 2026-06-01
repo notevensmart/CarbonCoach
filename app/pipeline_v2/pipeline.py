@@ -18,6 +18,7 @@ from app.pipeline_v2.extractor_protocol import EventExtractor, LLMExtractionClie
 from app.pipeline_v2.fallback_estimator import LocalFallbackEstimator
 from app.pipeline_v2.journal_preprocessor import JournalPreprocessor
 from app.pipeline_v2.llm_event_extractor import build_event_extractor
+from app.pipeline_v2.location_enricher import LocationEnricher
 from app.pipeline_v2.parameter_builders import (
     EnergyParameterBuilder,
     GoodsServicesParameterBuilder,
@@ -37,6 +38,7 @@ class CarbonPipelineV2:
         extractor_mode: str | None = None,
         llm_client: LLMExtractionClient | None = None,
         quantity_normalizer: QuantityNormalizer | None = None,
+        location_enricher: LocationEnricher | None = None,
         entity_enricher: EntityEnricher | None = None,
         energy_builder: EnergyParameterBuilder | None = None,
         transport_builder: TransportParameterBuilder | None = None,
@@ -51,6 +53,7 @@ class CarbonPipelineV2:
             llm_client=llm_client,
         )
         self.quantity_normalizer = quantity_normalizer or QuantityNormalizer()
+        self.location_enricher = location_enricher or LocationEnricher()
         self.entity_enricher = entity_enricher or EntityEnricher()
         self.energy_builder = energy_builder or EnergyParameterBuilder()
         self.transport_builder = transport_builder or TransportParameterBuilder()
@@ -137,7 +140,8 @@ class CarbonPipelineV2:
         with_quantities = event.model_copy(
             update={"quantities": self.quantity_normalizer.normalize(event.raw_text, event)}
         )
-        return self.entity_enricher.enrich(with_quantities)
+        with_location = self.location_enricher.enrich(with_quantities)
+        return self.entity_enricher.enrich(with_location)
 
     def _estimate_energy_event(self, event: CarbonEvent) -> EstimateDetail:
         build = self.energy_builder.build(event)

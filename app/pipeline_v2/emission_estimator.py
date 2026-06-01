@@ -232,7 +232,7 @@ class ClimatiqEmissionEstimator:
         candidate: FactorCandidate,
     ):
         api_parameters = _climatiq_parameters(parameters, candidate.unit_type)
-        selector_filters = _selector_filters(event)
+        selector_filters = _selector_filters(event, parameters)
         if selector_filters:
             return self.climatiq_client.estimate(
                 candidate.activity_id,
@@ -242,10 +242,17 @@ class ClimatiqEmissionEstimator:
         return self.climatiq_client.estimate(candidate.activity_id, api_parameters)
 
 
-def _selector_filters(event: CarbonEvent) -> dict:
+def _selector_filters(event: CarbonEvent, parameters: dict) -> dict:
     if event.category == "energy":
+        region = (
+            parameters.get("factor_region")
+            or parameters.get("region")
+            or event.entities.get("factor_region")
+            or event.entities.get("region")
+            or DEFAULT_ELECTRICITY_REGION
+        )
         return {
-            "region": DEFAULT_ELECTRICITY_REGION,
+            "region": str(region),
             "region_fallback": True,
         }
     return {}

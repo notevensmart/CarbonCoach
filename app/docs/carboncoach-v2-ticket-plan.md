@@ -1325,6 +1325,18 @@ across transport, energy, goods/services, and waste. The default
 implementation must not require manual GCP blob storage updates; the overlay
 ships with the app and merges with raw factor metadata at runtime.
 
+Ticket 12 is specified in:
+
+```text
+docs/carboncoach-v2-qgis-geospatial-ticket.md
+```
+
+It adds QGIS-backed geospatial enrichment for location-aware route and
+electricity-region inputs. QGIS is used to prepare and validate app-ready
+geospatial artifacts offline; the live pipeline consumes provider-backed
+lookup tables so examples like Parramatta to Bondi, Redfern to Chatswood, and
+NSW electricity context can flow through existing parameter and factor paths.
+
 ## Overall Definition Of Done
 
 V2 is complete when:

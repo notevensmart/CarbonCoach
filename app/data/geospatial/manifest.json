@@ -1,0 +1,41 @@
+{
+  "artifact_set": "carboncoach-v2-geospatial-fixtures",
+  "version": "2026-06-01",
+  "runtime_dependency_policy": "QGIS is used only for offline data preparation; FastAPI runtime loads these compact JSONL artifacts.",
+  "crs": "EPSG:4326",
+  "artifacts": [
+    {
+      "path": "place_aliases.jsonl",
+      "schema": "place_alias_record",
+      "source_notes": "Small maintained fixture derived from QGIS-reviewed place centroids and aliases for deterministic V2 tests.",
+      "license_notes": "Fixture data for application tests; replace with authoritative source-specific license notes before broad production rollout.",
+      "generation_notes": "Export canonical place records and aliases from QGIS as UTF-8 JSONL with WGS84 latitude/longitude."
+    },
+    {
+      "path": "route_distances.jsonl",
+      "schema": "route_distance_record",
+      "source_notes": "Optional exact origin/destination route cache. Empty in the default fixture so tests exercise the route-network provider path.",
+      "license_notes": "Fixture data for application tests; replace with authoritative route-source license notes before broad production rollout.",
+      "generation_notes": "Export validated route-cache rows from QGIS route layers or reviewed route-distance tables."
+    },
+    {
+      "path": "route_network_edges.jsonl",
+      "schema": "route_network_edge",
+      "source_notes": "Small maintained fixture of mode-aware route-network edges reviewed in QGIS and consumed by the shortest-path provider.",
+      "license_notes": "Fixture data for application tests; replace with authoritative route-network license notes before broad production rollout.",
+      "generation_notes": "Export routable edge rows from QGIS after topology checks; include origin/destination place IDs, mode, distance, confidence, and source version."
+    },
+    {
+      "path": "electricity_regions.jsonl",
+      "schema": "electricity_region_record",
+      "source_notes": "Maintained Australian state and territory alias mapping used to pass explicit region context into electricity estimates.",
+      "license_notes": "Fixture mapping maintained in-repo; attach authoritative region/factor applicability license notes when upgraded.",
+      "generation_notes": "Export region mapping rows after QGIS spatial joins or manual review of state/grid-region applicability."
+    }
+  ],
+  "open_decisions": [
+    "Replace fixture place centroids with authoritative locality/station source records and source licenses.",
+    "Choose a production route-distance source such as GTFS shapes, OSRM, pgRouting, or a maintained cache.",
+    "Decide whether factor_region should map directly to Climatiq regions, local grid factors, or both."
+  ]
+}

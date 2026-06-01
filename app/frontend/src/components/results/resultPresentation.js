@@ -47,6 +47,32 @@ const INTERNAL_PARAMETER_KEYS = new Set([
   "factor_specificity",
   "fallback_factor_key",
   "calculation_boundary",
+  "origin_place_id",
+  "destination_place_id",
+  "origin_place_name",
+  "destination_place_name",
+  "origin_place_type",
+  "destination_place_type",
+  "origin_region",
+  "destination_region",
+  "origin_matched_alias",
+  "destination_matched_alias",
+  "origin_match_type",
+  "destination_match_type",
+  "origin_confidence",
+  "destination_confidence",
+  "distance_confidence",
+  "distance_source",
+  "route_exact",
+  "route_source_version",
+  "route_path_place_ids",
+  "route_path_place_names",
+  "region_name",
+  "factor_region",
+  "fallback_region",
+  "region_source",
+  "region_source_version",
+  "region_confidence",
 ]);
 
 const AU_DAILY_REFERENCE = {
@@ -477,6 +503,51 @@ export function parameterSummary(parameters = {}) {
   return parts.join(" | ");
 }
 
+export function geospatialSummary(detail) {
+  const parameters = detail?.parameters || {};
+  const lines = [];
+  if (parameters.origin || parameters.destination) {
+    const origin = parameters.origin_place_name || parameters.origin;
+    const destination = parameters.destination_place_name || parameters.destination;
+    lines.push({
+      label: "Route",
+      value: [origin, destination].filter(Boolean).join(" to "),
+    });
+    const fuzzyMatches = fuzzyPlaceMatchMessages(parameters);
+    if (fuzzyMatches.length > 0) {
+      lines.push({
+        label: "Place matching",
+        value: fuzzyMatches.join("; "),
+      });
+    }
+    if (parameters.route_path_place_names) {
+      lines.push({
+        label: "Route path",
+        value: parameters.route_path_place_names,
+      });
+    }
+    if (parameters.distance_source) {
+      lines.push({
+        label: "Distance source",
+        value: `${formatLabel(parameters.distance_source)}${
+          parameters.route_exact === false ? " (approximate)" : ""
+        }`,
+      });
+    }
+  }
+
+  if (parameters.region || parameters.region_name) {
+    lines.push({
+      label: "Electricity region",
+      value: parameters.region_name
+        ? `${parameters.region_name} (${parameters.region})`
+        : parameters.region,
+    });
+  }
+
+  return lines.length > 0 ? lines : null;
+}
+
 export function consumerAssumptionMessage(assumption) {
   const message = assumption?.message || String(assumption);
   if (/local fallback factor/i.test(message)) {
@@ -485,6 +556,25 @@ export function consumerAssumptionMessage(assumption) {
   return message
     .replace(/for the Climatiq estimate/gi, "for this estimate")
     .replace(/\bClimatiq\b/gi, "an emissions data source");
+}
+
+function fuzzyPlaceMatchMessages(parameters) {
+  return [
+    ["origin", "Origin"],
+    ["destination", "Destination"],
+  ]
+    .map(([key, label]) => {
+      if (parameters[`${key}_match_type`] !== "fuzzy_alias") {
+        return null;
+      }
+      const supplied = parameters[key];
+      const matched = parameters[`${key}_place_name`] || parameters[`${key}_matched_alias`];
+      if (!supplied || !matched) {
+        return null;
+      }
+      return `${label} "${supplied}" matched to ${matched}`;
+    })
+    .filter(Boolean);
 }
 
 export function improvementGuidance(detail) {

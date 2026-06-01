@@ -30,7 +30,8 @@ class EnergyParameterBuilder:
         energy = _first_quantity(event.quantities, "energy")
         power = _first_quantity(event.quantities, "power")
         duration = _first_quantity(event.quantities, "duration")
-        assumptions = [default_au_electricity_region_assumption()]
+        region_parameters = _energy_region_parameters(event)
+        assumptions = [] if region_parameters else [default_au_electricity_region_assumption()]
 
         if event.activity_type in {
             "natural_gas_use",
@@ -121,6 +122,7 @@ class EnergyParameterBuilder:
                 parameters={
                     "energy": _round_quantity(energy.value),
                     "energy_unit": "kWh",
+                    **region_parameters,
                 },
                 confidence=Confidence.from_score(0.95),
                 assumptions=assumptions,
@@ -136,6 +138,7 @@ class EnergyParameterBuilder:
                     "power_unit": "kW",
                     "duration": _round_quantity(duration.value),
                     "duration_unit": "hours",
+                    **region_parameters,
                 },
                 confidence=Confidence.from_score(0.90),
                 assumptions=assumptions,
@@ -152,6 +155,7 @@ class EnergyParameterBuilder:
                     "power_unit": "kW",
                     "duration": _round_quantity(duration.value),
                     "duration_unit": "hours",
+                    **region_parameters,
                 },
                 confidence=Confidence.from_score(0.60),
                 assumptions=[
@@ -182,7 +186,7 @@ class EnergyParameterBuilder:
             )
 
         return ParameterBuildResult(
-            parameters={},
+            parameters=region_parameters,
             confidence=Confidence.from_score(0.25),
             assumptions=assumptions,
             issues=[
@@ -200,8 +204,10 @@ class TransportParameterBuilder:
     def build(self, event: CarbonEvent) -> ParameterBuildResult:
         distance = _first_quantity(event.quantities, "distance")
         if distance is None:
+            parameters = {"transport_mode": event.activity_type}
+            _add_geospatial_transport_parameters(parameters, event)
             return ParameterBuildResult(
-                parameters={},
+                parameters=parameters,
                 confidence=Confidence.from_score(0.25),
                 issues=[
                     Issue(
@@ -223,6 +229,7 @@ class TransportParameterBuilder:
             "distance_unit": "km",
             "transport_mode": event.activity_type,
         }
+        _add_geospatial_transport_parameters(parameters, event)
         _add_declared_transport_traits(parameters, event, metadata)
         if event.activity_type == "flight":
             _add_flight_factor_defaults(parameters, event, distance, assumptions)
@@ -531,6 +538,58 @@ def _add_declared_transport_traits(parameters: dict, event: CarbonEvent, metadat
         value = _entity_text(event.entities.get(str(field)))
         if value:
             parameters[str(field)] = value
+
+
+def _add_geospatial_transport_parameters(parameters: dict, event: CarbonEvent) -> None:
+    for field in (
+        "origin",
+        "destination",
+        "origin_place_id",
+        "destination_place_id",
+        "origin_place_name",
+        "destination_place_name",
+        "origin_place_type",
+        "destination_place_type",
+        "origin_region",
+        "destination_region",
+        "origin_matched_alias",
+        "destination_matched_alias",
+        "origin_match_type",
+        "destination_match_type",
+        "distance_source",
+        "route_exact",
+        "route_source_version",
+        "route_path_place_ids",
+        "route_path_place_names",
+    ):
+        value = event.entities.get(field)
+        if value is not None:
+            parameters[field] = value
+    for field in ("origin_confidence", "destination_confidence", "distance_confidence"):
+        value = event.entities.get(field)
+        if isinstance(value, (int, float)):
+            parameters[field] = round(float(value), 3)
+
+
+def _energy_region_parameters(event: CarbonEvent) -> dict:
+    region = _entity_text(event.entities.get("region"))
+    if not region:
+        return {}
+    parameters = {"region": region.upper()}
+    for field in (
+        "region_name",
+        "factor_region",
+        "fallback_region",
+        "region_source",
+        "region_source_version",
+    ):
+        value = event.entities.get(field)
+        if value is not None:
+            parameters[field] = value
+    confidence = event.entities.get("region_confidence")
+    if isinstance(confidence, (int, float)):
+        parameters["region_confidence"] = round(float(confidence), 3)
+    return parameters
 
 
 def _add_flight_factor_defaults(

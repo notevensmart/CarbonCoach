@@ -26,6 +26,86 @@ def default_au_electricity_region_assumption() -> Assumption:
     )
 
 
+def user_supplied_energy_region_assumption(region: str, region_name: str | None = None) -> Assumption:
+    label = region_name or region
+    return Assumption(
+        code="region.energy.user_supplied",
+        message=f"Used the supplied electricity region {label} ({region}).",
+        source="user",
+        confidence_impact=0.0,
+    )
+
+
+def route_cache_distance_assumption(
+    origin: str,
+    destination: str,
+    mode: str,
+    distance_source: str,
+) -> Assumption:
+    mode_label = mode.replace("_", " ")
+    return Assumption(
+        code="route.distance.from_route_cache",
+        message=(
+            f"Used maintained {mode_label} route distance from {origin} to "
+            f"{destination} ({distance_source})."
+        ),
+        source="inference",
+        confidence_impact=-0.07,
+    )
+
+
+def route_network_distance_assumption(
+    origin: str,
+    destination: str,
+    mode: str,
+    distance_source: str,
+) -> Assumption:
+    mode_label = mode.replace("_", " ")
+    return Assumption(
+        code="route.distance.from_route_network",
+        message=(
+            f"Calculated maintained {mode_label} route distance from {origin} to "
+            f"{destination} over QGIS-exported route-network edges ({distance_source})."
+        ),
+        source="inference",
+        confidence_impact=-0.10,
+    )
+
+
+def place_fuzzy_match_assumption(
+    query: str,
+    matched_name: str,
+    role: str,
+    confidence: float,
+) -> Assumption:
+    return Assumption(
+        code="location.place_fuzzy_matched",
+        message=(
+            f'Interpreted {role} place "{query}" as {matched_name} '
+            f"using maintained place aliases (match confidence {confidence:.2f})."
+        ),
+        source="inference",
+        confidence_impact=-0.10,
+    )
+
+
+def route_centroid_distance_assumption(
+    origin: str,
+    destination: str,
+    mode: str,
+) -> Assumption:
+    mode_label = mode.replace("_", " ")
+    return Assumption(
+        code="route.distance.estimated_from_place_centroids",
+        message=(
+            f"Estimated {mode_label} distance from {origin} to {destination} "
+            "using place centroids because no exact route record was available."
+        ),
+        source="inference",
+        confidence_impact=-0.30,
+    )
+
+
 def distance_compact_k_context_assumption(surface: str) -> Assumption:
     return Assumption(
         code="distance.compact_k_context_km",

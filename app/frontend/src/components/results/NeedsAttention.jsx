@@ -34,6 +34,18 @@ export default function NeedsAttention({ details }) {
             <p className="mt-2 text-sm text-stone-800">
               {friendlyStatusCopy(detail.status)}
             </p>
+            {detail.issues?.length > 0 && (
+              <div className="mt-3 border-l-4 border-amber-200 pl-3 text-sm text-stone-700">
+                <h4 className="font-semibold text-stone-950">What needs attention</h4>
+                <ul className="mt-1 space-y-1">
+                  {detail.issues.map((issue, issueIndex) => (
+                    <li key={`${issue.code || "issue"}-${issueIndex}`}>
+                      {issue.message || String(issue)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </article>
         ))}
       </div>
