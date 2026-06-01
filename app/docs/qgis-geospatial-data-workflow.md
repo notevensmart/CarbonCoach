@@ -19,6 +19,98 @@ These files are intentionally small fixtures for Ticket 12. Broader production
 coverage should replace or extend them with source-noted exports generated from
 authoritative datasets.
 
+## Required QGIS Export Contract
+
+Export these app-ready layers from QGIS into a local directory such as
+`app/data/geospatial/qgis_exports/`:
+
+- `places.geojson`
+- `route_network_edges.geojson`
+- `electricity_regions.csv`
+- optional `route_distances.csv`
+- optional `qgis_export_manifest.json`
+
+QGIS remains outside the FastAPI runtime. The importer reads exported files and
+generates the compact JSONL artifacts consumed by the live app:
+
+```powershell
+..\venv\Scripts\python.exe -m app.pipeline_v2.qgis_geospatial_importer `
+  --input-dir app\data\geospatial\qgis_exports `
+  --output-dir app\data\geospatial
+```
+
+From the `app/` directory, the same command is:
+
+```powershell
+..\venv\Scripts\python.exe -m pipeline_v2.qgis_geospatial_importer `
+  --input-dir data\geospatial\qgis_exports `
+  --output-dir data\geospatial
+```
+
+### `places.geojson`
+
+Each feature must have Point geometry, or `latitude` and `longitude`
+properties. Required properties:
+
+```text
+place_id
+name
+aliases              pipe-delimited string or JSON array
+place_type
+region
+source
+source_version
+```
+
+### `route_network_edges.geojson`
+
+Each feature represents a routable graph edge. Geometry is retained in QGIS for
+review, but runtime currently relies on the exported properties:
+
+```text
+origin_place_id
+destination_place_id
+mode                 car_ride, rideshare, bus_ride, train_ride, etc.
+distance_km          preferred, or distance + distance_unit
+distance_source
+confidence           0.0 to 1.0
+source_version
+bidirectional        true/false
+```
+
+The importer validates that every edge endpoint exists in `places.geojson`.
+
+### `electricity_regions.csv`
+
+Required columns:
+
+```text
+region
+region_name
+country
+factor_region
+fallback_region
+aliases              pipe-delimited string or JSON array
+source
+source_version
+```
+
+### Optional `route_distances.csv`
+
+Use this only for audited exact origin/destination route cache rows. Required
+columns match `route_network_edges.geojson` except geometry is absent:
+
+```text
+origin_place_id
+destination_place_id
+mode
+distance_km          preferred, or distance + distance_unit
+distance_source
+confidence
+source_version
+bidirectional
+```
+
 ## QGIS Regeneration Steps
 
 1. Load raw place, station, locality, state, grid-region, and route datasets into
