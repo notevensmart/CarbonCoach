@@ -561,11 +561,27 @@ def _add_geospatial_transport_parameters(parameters: dict, event: CarbonEvent) -
         "route_source_version",
         "route_path_place_ids",
         "route_path_place_names",
+        "origin_route_node_id",
+        "destination_route_node_id",
+        "route_path_node_ids",
+        "route_path_edge_ids",
+        "snap_source",
+        "origin_snap_source",
+        "destination_snap_source",
     ):
         value = event.entities.get(field)
         if value is not None:
             parameters[field] = value
-    for field in ("origin_confidence", "destination_confidence", "distance_confidence"):
+    for field in (
+        "origin_confidence",
+        "destination_confidence",
+        "distance_confidence",
+        "snap_confidence",
+        "origin_snap_distance_m",
+        "destination_snap_distance_m",
+        "origin_snap_confidence",
+        "destination_snap_confidence",
+    ):
         value = event.entities.get(field)
         if isinstance(value, (int, float)):
             parameters[field] = round(float(value), 3)

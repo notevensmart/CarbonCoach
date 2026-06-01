@@ -1277,6 +1277,18 @@ Implement in this order:
 9. Hybrid Extraction Intelligence Evaluation And Rollout
 10. Semantic Factor Intent Resolution
 11. Curated Common Factor Pathway Metadata Overlay
+12. QGIS-Backed Geospatial Enrichment
+13. QGIS Gazetteer Import For Australian Places
+14. Alias, State Context, And Typo Resolution
+15. QGIS Road Network Artifact Import
+16. Place-To-Road-Node Snapping
+17. Runtime Road Graph Routing For Car And Rideshare
+17B. Real Offline Road Data Layer Seed Build
+18. Offline OD Cache For Common Routes
+19. Public Transport Geospatial Layer
+20. Location Confidence And UI Transparency
+21. Geospatial Artifact QA Command
+22. Route Coverage Seed Pack For Common Australian Journeys
 ```
 
 Ticket 7 is specified in:
@@ -1337,6 +1349,21 @@ geospatial artifacts offline; the live pipeline consumes provider-backed
 lookup tables so examples like Parramatta to Bondi, Redfern to Chatswood, and
 NSW electricity context can flow through existing parameter and factor paths.
 
+Tickets 13-22 are specified in:
+
+```text
+docs/carboncoach-v2-geospatial-routing-tickets.md
+```
+
+They turn Ticket 12's enrichment foundation into a broader offline geospatial
+routing data product. The key shift is from place-name enrichment and limited
+route fixtures to QGIS-exported gazetteers, snapped road-network nodes,
+mode-aware offline routing, a real open-data seed road layer, OD cache
+priority, public-transport artifacts, artifact QA, and UI transparency for
+casual route inputs such as Uber, rideshare, car, train, and bus trips. These
+tickets are intentionally scoped as separate vertical slices so Ticket 12 does
+not become an unbounded national GIS rewrite.
+
 ## Overall Definition Of Done
 
 V2 is complete when:
@@ -1387,6 +1414,18 @@ V2 is complete when:
 - The default V2 data path does not require manual GCP blob storage updates.
 - Tests prove enriched metadata improves semantic factor linking without live
   external services.
+- Location-aware route entries use maintained geospatial artifacts rather than
+  complete journal sentence branches.
+- QGIS remains an offline data-preparation workflow; FastAPI runtime loads
+  compact artifacts only.
+- Place resolution handles known, unknown, ambiguous, state-hinted, and
+  conservative fuzzy-match cases with visible output.
+- Route distance selection preserves explicit user distance first, then uses
+  exact OD cache, snapped graph routing, lower-confidence approximation, or
+  unresolved issues in that order.
+- Casual car/rideshare routes are not considered broadly supported until the
+  gazetteer, snapping, road graph, OD cache, and QA tickets have sufficient
+  data coverage.
 - Frontend can display V2 outputs clearly.
 - Frontend changes are visible through the deployed production path.
 - The production deployment serves the intended UI instead of the legacy inline FastAPI form.

@@ -444,6 +444,46 @@ This ticket is complete when:
 - focused tests pass without QGIS, network, Climatiq, or external GIS services
 - documentation explains how to regenerate the geospatial artifacts from QGIS
 
+## Scoped Boundary After Ticket 12
+
+Ticket 12 proves the provider-backed enrichment architecture and a deterministic
+vertical slice. It does not claim that arbitrary casual car, rideshare, Uber,
+train, or bus trips across Australia are fully covered.
+
+The honest post-Ticket-12 boundary is:
+
+- if the place aliases and route artifacts contain the requested places and a
+  compatible route/cache path, the pipeline can estimate with visible source
+  and confidence
+- if the places resolve but no route path exists, the provider may use a
+  lower-confidence centroid approximation only when the configured policy
+  allows it
+- if places are unknown, ambiguous, unsnapped, disconnected, or unsupported for
+  the requested mode, the event must remain unresolved or visibly approximate
+  instead of silently guessing
+
+Do not expand Ticket 12 by adding one-off routes or sentence-specific branches.
+Broader casual route handling is split into scoped follow-on tickets in:
+
+```text
+docs/carboncoach-v2-geospatial-routing-tickets.md
+```
+
+Those tickets cover the production-grade data path:
+
+```text
+QGIS-exported gazetteer
+-> alias/state/typo resolver
+-> road-network artifacts
+-> place-to-node snapping
+-> runtime graph routing
+-> exact OD cache
+-> public transport artifacts
+-> UI transparency
+-> artifact QA
+-> seed route coverage
+```
+
 ## Open Decisions
 
 Resolve before broad rollout:

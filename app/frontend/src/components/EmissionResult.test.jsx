@@ -4,6 +4,7 @@ import "@testing-library/jest-dom";
 
 import EmissionResult from "./EmissionResult";
 import Home from "../pages/Home";
+import { geospatialSummary } from "./results/resultPresentation";
 
 test("renders result tabs and supports click and keyboard navigation", () => {
   render(<EmissionResult response={v2Response([includedDetail()])} />);
@@ -258,6 +259,34 @@ test("activity cards show location provenance without exposing internal place id
     within(card).getByText("Redfern -> Central -> North Sydney -> Chatswood")
   ).toBeInTheDocument();
   expect(within(card).queryByText("au-nsw-redfern")).not.toBeInTheDocument();
+});
+
+test("geospatial summaries distinguish road-network routes from centroid approximations", () => {
+  const roadNetworkLines = geospatialSummary({
+    parameters: {
+      origin: "Surry Hills",
+      destination: "Newtown",
+      distance_source: "qgis_road_network_graph",
+      route_exact: true,
+    },
+  });
+  const centroidLines = geospatialSummary({
+    parameters: {
+      origin: "Parramatta",
+      destination: "Chatswood",
+      distance_source: "place_centroid_approximation",
+      route_exact: false,
+    },
+  });
+
+  expect(roadNetworkLines).toContainEqual({
+    label: "Distance source",
+    value: "Road network route",
+  });
+  expect(centroidLines).toContainEqual({
+    label: "Distance source",
+    value: "Centroid approximation (approximate)",
+  });
 });
 
 test("needs-attention activities surface location resolution issues", () => {

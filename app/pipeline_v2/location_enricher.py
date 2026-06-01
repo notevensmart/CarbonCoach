@@ -97,6 +97,7 @@ class LocationEnricher:
             destination,
             event.activity_type,
         )
+        _add_route_provider_issues(issues, route)
         if route.status == "mode_not_supported":
             issues.append(
                 Issue(
@@ -135,10 +136,15 @@ class LocationEnricher:
                 "route_source_version": route.source_version,
             }
         )
+        _add_route_node_entities(entities, route)
         if route.route_path_place_ids:
             entities["route_path_place_ids"] = "|".join(route.route_path_place_ids)
         if route.route_path_place_names:
             entities["route_path_place_names"] = " -> ".join(route.route_path_place_names)
+        if route.route_path_node_ids:
+            entities["route_path_node_ids"] = "|".join(route.route_path_node_ids)
+        if route.route_path_edge_ids:
+            entities["route_path_edge_ids"] = "|".join(route.route_path_edge_ids)
         assumptions.append(
             _route_distance_assumption(
                 origin.name,
@@ -295,6 +301,46 @@ def _add_place_entities(
 
 def _has_quantity(event: CarbonEvent, dimension: str) -> bool:
     return any(quantity.dimension == dimension for quantity in event.quantities)
+
+
+def _add_route_provider_issues(issues: list[Issue], route) -> None:
+    existing = {issue.code for issue in issues}
+    for provider_issue in getattr(route, "issues", ()):
+        if provider_issue.code in existing:
+            continue
+        issues.append(
+            Issue(
+                code=provider_issue.code,
+                message=provider_issue.message,
+                severity=provider_issue.severity,
+            )
+        )
+        existing.add(provider_issue.code)
+
+
+def _add_route_node_entities(entities: dict, route) -> None:
+    scalar_fields = (
+        "origin_route_node_id",
+        "destination_route_node_id",
+        "snap_source",
+        "origin_snap_source",
+        "destination_snap_source",
+    )
+    numeric_fields = (
+        "snap_confidence",
+        "origin_snap_distance_m",
+        "destination_snap_distance_m",
+        "origin_snap_confidence",
+        "destination_snap_confidence",
+    )
+    for field in scalar_fields:
+        value = getattr(route, field, None)
+        if value is not None:
+            entities[field] = value
+    for field in numeric_fields:
+        value = getattr(route, field, None)
+        if isinstance(value, (int, float)):
+            entities[field] = round(float(value), 3)
 
 
 def _route_distance_assumption(

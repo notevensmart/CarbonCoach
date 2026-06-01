@@ -67,6 +67,18 @@ const INTERNAL_PARAMETER_KEYS = new Set([
   "route_source_version",
   "route_path_place_ids",
   "route_path_place_names",
+  "origin_route_node_id",
+  "destination_route_node_id",
+  "route_path_node_ids",
+  "route_path_edge_ids",
+  "snap_confidence",
+  "snap_source",
+  "origin_snap_distance_m",
+  "destination_snap_distance_m",
+  "origin_snap_confidence",
+  "destination_snap_confidence",
+  "origin_snap_source",
+  "destination_snap_source",
   "region_name",
   "factor_region",
   "fallback_region",
@@ -529,7 +541,7 @@ export function geospatialSummary(detail) {
     if (parameters.distance_source) {
       lines.push({
         label: "Distance source",
-        value: `${formatLabel(parameters.distance_source)}${
+        value: `${routeDistanceSourceLabel(parameters.distance_source)}${
           parameters.route_exact === false ? " (approximate)" : ""
         }`,
       });
@@ -556,6 +568,26 @@ export function consumerAssumptionMessage(assumption) {
   return message
     .replace(/for the Climatiq estimate/gi, "for this estimate")
     .replace(/\bClimatiq\b/gi, "an emissions data source");
+}
+
+function routeDistanceSourceLabel(source) {
+  if (!source) {
+    return null;
+  }
+  const normalized = String(source).toLowerCase();
+  if (normalized.includes("road_network") || normalized.includes("route_network_road")) {
+    return "Road network route";
+  }
+  if (normalized.includes("gtfs") || normalized.includes("transit")) {
+    return "Transit graph route";
+  }
+  if (normalized.includes("centroid")) {
+    return "Centroid approximation";
+  }
+  if (normalized.includes("route_cache")) {
+    return "Exact route cache";
+  }
+  return formatLabel(source);
 }
 
 function fuzzyPlaceMatchMessages(parameters) {

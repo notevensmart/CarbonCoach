@@ -1,19 +1,125 @@
 {
   "artifact_set": "carboncoach-v2-geospatial-fixtures",
   "version": "2026-06-01",
+  "generated_at": "2026-06-01T00:00:00+00:00",
+  "generated_from": "app/data/geospatial/qgis_exports",
   "runtime_dependency_policy": "QGIS is used only for offline data preparation; FastAPI runtime loads these compact JSONL artifacts.",
   "crs": "EPSG:4326",
+  "artifact_counts": {
+    "places": 40,
+    "route_network_edges": 11,
+    "road_network_nodes": 10,
+    "road_network_edges": 7,
+    "place_route_nodes": 20,
+    "route_distances": 0,
+    "electricity_regions": 8
+  },
+  "place_counts": {
+    "by_place_type": {
+      "airport": 2,
+      "cbd": 2,
+      "city": 22,
+      "city_region": 1,
+      "locality": 1,
+      "poi": 1,
+      "station_suburb": 4,
+      "suburb": 6,
+      "train_station": 1
+    },
+    "by_region": {
+      "AU-ACT": 1,
+      "AU-NSW": 17,
+      "AU-NT": 1,
+      "AU-QLD": 10,
+      "AU-SA": 1,
+      "AU-TAS": 2,
+      "AU-VIC": 7,
+      "AU-WA": 1
+    }
+  },
+  "validation": {
+    "status": "passed",
+    "places": {
+      "status": "passed",
+      "duplicate_place_ids": [],
+      "duplicate_aliases": [],
+      "ambiguous_aliases": [
+        {
+          "alias": "springfield",
+          "normalized_alias": "springfield",
+          "place_ids": [
+            "au-nsw-springfield",
+            "au-qld-springfield"
+          ],
+          "place_names": [
+            "Springfield NSW",
+            "Springfield QLD"
+          ]
+        }
+      ]
+    },
+    "road_network": {
+      "status": "passed",
+      "supported_modes": [
+        "car_ride",
+        "rideshare"
+      ],
+      "unsupported_modes": [],
+      "unknown_node_references": [],
+      "duplicate_node_ids": [],
+      "duplicate_edge_ids": []
+    },
+    "place_route_nodes": {
+      "status": "passed",
+      "supported_modes": [
+        "car_ride",
+        "rideshare"
+      ],
+      "unknown_place_references": [],
+      "unknown_node_references": [],
+      "duplicate_place_mode_refs": [],
+      "snap_distance_threshold_m": 1000.0
+    }
+  },
+  "road_network": {
+    "node_count": 10,
+    "edge_count": 7,
+    "connected_component_count": 3,
+    "connected_component_count_by_mode": {
+      "car_ride": 3,
+      "rideshare": 3
+    },
+    "mode_coverage": {
+      "car_ride": 7,
+      "rideshare": 7
+    },
+    "source_version": "2026-06-01",
+    "validation_status": "passed"
+  },
+  "place_route_nodes": {
+    "snap_count": 20,
+    "mode_coverage": {
+      "car_ride": 10,
+      "rideshare": 10
+    },
+    "approximate_snap_count": 0,
+    "snap_distance_threshold_m": 1000.0,
+    "source_version": "2026-06-01",
+    "validation_status": "passed"
+  },
   "artifacts": [
     {
       "path": "place_aliases.jsonl",
       "schema": "place_alias_record",
-      "source_notes": "Small maintained fixture derived from QGIS-reviewed place centroids and aliases for deterministic V2 tests.",
+      "source": "places.geojson",
+      "source_notes": "Maintained fixture derived from QGIS-reviewed capital-city, major-city, suburb, station, airport, POI, and locality centroids plus aliases for deterministic V2 tests.",
       "license_notes": "Fixture data for application tests; replace with authoritative source-specific license notes before broad production rollout.",
       "generation_notes": "Export canonical place records and aliases from QGIS as UTF-8 JSONL with WGS84 latitude/longitude."
     },
     {
       "path": "route_distances.jsonl",
       "schema": "route_distance_record",
+      "source": "route_distances.csv",
       "source_notes": "Optional exact origin/destination route cache. Empty in the default fixture so tests exercise the route-network provider path.",
       "license_notes": "Fixture data for application tests; replace with authoritative route-source license notes before broad production rollout.",
       "generation_notes": "Export validated route-cache rows from QGIS route layers or reviewed route-distance tables."
@@ -21,13 +127,39 @@
     {
       "path": "route_network_edges.jsonl",
       "schema": "route_network_edge",
-      "source_notes": "Small maintained fixture of mode-aware route-network edges reviewed in QGIS and consumed by the shortest-path provider.",
+      "source": "route_network_edges.geojson",
+      "source_notes": "Small maintained fixture of mode-aware local and intercity route-network edges reviewed in QGIS and consumed by the shortest-path provider.",
       "license_notes": "Fixture data for application tests; replace with authoritative route-network license notes before broad production rollout.",
       "generation_notes": "Export routable edge rows from QGIS after topology checks; include origin/destination place IDs, mode, distance, confidence, and source version."
     },
     {
+      "path": "road_network_nodes.jsonl",
+      "schema": "road_network_node",
+      "source": "road_network_nodes.geojson",
+      "source_notes": "Small QGIS-reviewed road-node fixture for Ticket 15 importer and runtime graph-loading tests.",
+      "license_notes": "Fixture data for application tests; replace with authoritative road-network license notes before broad production rollout.",
+      "generation_notes": "Export road nodes from an offline GIS/routing workflow as WGS84 point features with stable node_id values."
+    },
+    {
+      "path": "road_network_edges.jsonl",
+      "schema": "road_network_edge",
+      "source": "road_network_edges.geojson",
+      "source_notes": "Small QGIS-reviewed routable road graph with car_ride and rideshare mode coverage, one-way metadata, and a disconnected component.",
+      "license_notes": "Fixture data for application tests; replace with authoritative road-network license notes before broad production rollout.",
+      "generation_notes": "Export road edges from an offline GIS/routing workflow after topology validation; include from/to node IDs, road modes, distance, directionality, source, confidence, and source version."
+    },
+    {
+      "path": "place_route_nodes.jsonl",
+      "schema": "place_route_node_snap",
+      "source": "place_route_nodes.csv",
+      "source_notes": "Small QGIS-reviewed place-to-road-node snap fixture that connects resolved places to the routable road graph for Ticket 16.",
+      "license_notes": "Fixture data for application tests; replace with authoritative snapping-source license notes before broad production rollout.",
+      "generation_notes": "Export place-to-node snap rows from QGIS after nearest-network review; include place ID, mode, road node ID, snap distance, confidence, source, and source version."
+    },
+    {
       "path": "electricity_regions.jsonl",
       "schema": "electricity_region_record",
+      "source": "electricity_regions.csv",
       "source_notes": "Maintained Australian state and territory alias mapping used to pass explicit region context into electricity estimates.",
       "license_notes": "Fixture mapping maintained in-repo; attach authoritative region/factor applicability license notes when upgraded.",
       "generation_notes": "Export region mapping rows after QGIS spatial joins or manual review of state/grid-region applicability."
