@@ -3,6 +3,7 @@ import ActivityCard from "./ActivityCard";
 import ActivityCoverageSummary from "./ActivityCoverageSummary";
 import CategoryCommandCenter from "./CategoryCommandCenter";
 import ClarificationPriorityCard from "./ClarificationPriorityCard";
+import CoachingRecommendationCard from "./CoachingRecommendationCard";
 import DeveloperDetailsAccordion from "./DeveloperDetailsAccordion";
 import EstimateQualityCard from "./EstimateQualityCard";
 import HeroSummaryCard from "./HeroSummaryCard";
@@ -42,6 +43,11 @@ export default function ConsumerDashboard({ estimate }) {
           <ActivityCoverageSummary coverage={dashboard.coverageSummary} />
           <InsightSummary insight={dashboard.insight} />
         </div>
+        {dashboard.coaching && (
+          <div className="mt-5">
+            <CoachingRecommendationCard coaching={dashboard.coaching} />
+          </div>
+        )}
         <div className="mt-5">
           <CategoryCommandCenter dashboard={dashboard} />
         </div>

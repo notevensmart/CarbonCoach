@@ -57,6 +57,7 @@ export function normalizeEstimateResponse(data) {
       },
       coverage: data.coverage || null,
       comparison: data.comparison || null,
+      coaching: data.coaching ?? null,
       clarification_suggestions: data.clarification_suggestions || null,
       details: data.details || [],
     };

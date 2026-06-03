@@ -94,6 +94,52 @@ test("summary gives deterministic daily context for complete medium-or-high esti
   expect(screen.queryByText("Deterministic reflection")).not.toBeInTheDocument();
 });
 
+test("renders coaching recommendation card when response includes coaching", () => {
+  render(
+    <EmissionResult
+      response={v2Response(
+        [includedDetail({ category: "transport", activity_type: "car_ride", co2e: 2 })],
+        { score: 0.74, level: "medium" },
+        null,
+        null,
+        {
+          coaching: {
+            headline: "Try one transport swap",
+            message: "The car trip was the clearest opportunity in this entry.",
+            positive_feedback: ["Walking to the shop was a lower-carbon choice."],
+            actions: [
+              {
+                title: "Compare transit for the car trip",
+                reason: "It was the largest included activity.",
+                activity_ref: "drove 10 km in a petrol car",
+              },
+            ],
+            confidence_note: "This advice is directional because the estimate is partial.",
+          },
+        }
+      )}
+    />
+  );
+
+  const coaching = screen.getByLabelText("Coaching recommendation");
+  expect(within(coaching).getByText("Coach recommendation")).toBeInTheDocument();
+  expect(within(coaching).getByText("Try one transport swap")).toBeInTheDocument();
+  expect(
+    within(coaching).getByText("Walking to the shop was a lower-carbon choice.")
+  ).toBeInTheDocument();
+  expect(within(coaching).getByText("Compare transit for the car trip")).toBeInTheDocument();
+  expect(within(coaching).getByText(/drove 10 km in a petrol car/)).toBeInTheDocument();
+  expect(
+    within(coaching).getByText("This advice is directional because the estimate is partial.")
+  ).toBeInTheDocument();
+});
+
+test("does not render coaching recommendation card when coaching is absent", () => {
+  render(<EmissionResult response={v2Response([includedDetail()])} />);
+
+  expect(screen.queryByLabelText("Coaching recommendation")).not.toBeInTheDocument();
+});
+
 test("shows category command center in stable category order with included totals only", () => {
   render(
     <EmissionResult

@@ -196,6 +196,7 @@ export function buildDashboardModel(estimate) {
       estimate.total?.confidence,
       estimate.coverage
     ),
+    coaching: estimate.coaching || null,
     insight: buildInsight({
       breakdown,
       contributingTotal,

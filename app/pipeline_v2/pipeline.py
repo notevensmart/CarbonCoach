@@ -28,6 +28,11 @@ from app.pipeline_v2.parameter_builders import (
 )
 from app.pipeline_v2.quantity_normalizer import QuantityNormalizer
 from app.pipeline_v2.retrieval_diagnostics import with_fallback
+from app.pipeline_v2.sustainability_coach import (
+    LLMCoachingClient,
+    SustainabilityCoachService,
+    build_sustainability_coach,
+)
 
 
 class CarbonPipelineV2:
@@ -46,6 +51,8 @@ class CarbonPipelineV2:
         waste_builder: WasteParameterBuilder | None = None,
         emission_estimator: EmissionEstimator | None = None,
         fallback_estimator: LocalFallbackEstimator | None = None,
+        sustainability_coach: SustainabilityCoachService | None = None,
+        coaching_client: LLMCoachingClient | None = None,
     ) -> None:
         self.preprocessor = preprocessor or JournalPreprocessor()
         self.event_extractor = event_extractor or build_event_extractor(
@@ -61,6 +68,11 @@ class CarbonPipelineV2:
         self.waste_builder = waste_builder or WasteParameterBuilder()
         self.emission_estimator = emission_estimator or ClimatiqEmissionEstimator()
         self.fallback_estimator = fallback_estimator or LocalFallbackEstimator()
+        self.sustainability_coach = (
+            sustainability_coach
+            if sustainability_coach is not None
+            else build_sustainability_coach(client=coaching_client)
+        )
 
     def run(self, journal_entry: str) -> CarbonEstimateResponse:
         preprocessed = self.preprocessor.preprocess(journal_entry)
@@ -70,12 +82,22 @@ class CarbonPipelineV2:
         total = _build_total(details)
         coverage = _build_coverage(details)
         comparison = build_impact_comparison(total, coverage=coverage)
-        return CarbonEstimateResponse(
+        response = CarbonEstimateResponse(
             total=total,
             details=details,
             coverage=coverage,
             comparison=comparison,
         )
+        if self.sustainability_coach is None:
+            return response
+
+        coaching = self.sustainability_coach.recommend(
+            journal_entry,
+            response.model_copy(deep=True),
+        )
+        if coaching is None:
+            return response
+        return response.model_copy(update={"coaching": coaching})
 
     def _process_event(self, event: CarbonEvent) -> EstimateDetail:
         try:

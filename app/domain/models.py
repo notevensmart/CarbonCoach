@@ -195,9 +195,30 @@ class ImpactComparison(StrictBaseModel):
     approximate: Literal[True] = True
 
 
+class CoachingAction(StrictBaseModel):
+    title: str = Field(..., min_length=1, max_length=120)
+    reason: str = Field(..., min_length=1, max_length=300)
+    activity_ref: str | None = Field(default=None, max_length=200)
+
+
+class CoachingRecommendation(StrictBaseModel):
+    headline: str = Field(..., min_length=1, max_length=120)
+    message: str = Field(..., min_length=1, max_length=600)
+    positive_feedback: list[str] = Field(default_factory=list, max_length=3)
+    actions: list[CoachingAction] = Field(default_factory=list, max_length=2)
+    confidence_note: str | None = Field(default=None, max_length=300)
+
+
 class CarbonEstimateResponse(StrictBaseModel):
     version: Literal["v2"] = "v2"
     total: EstimateTotal
     details: list[EstimateDetail] = Field(default_factory=list)
     coverage: EstimateCoverage | None = None
     comparison: ImpactComparison | None = None
+    coaching: CoachingRecommendation | None = None
+
+    def model_dump(self, *args, **kwargs):
+        data = super().model_dump(*args, **kwargs)
+        if self.coaching is None:
+            data.pop("coaching", None)
+        return data

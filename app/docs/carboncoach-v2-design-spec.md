@@ -115,6 +115,7 @@ FastAPI endpoint
     -> ClimatiqClient
     -> FallbackEstimator
     -> ResponseBuilder
+    -> SustainabilityCoach
 ```
 
 ### Module Responsibilities
@@ -577,6 +578,272 @@ Builds user-facing structured response:
 }
 ```
 
+#### SustainabilityCoach
+
+Generates a bounded, user-facing coaching recommendation after the estimate has
+already been calculated.
+
+Purpose:
+
+- help users understand which decision would most improve their carbon impact
+- acknowledge lower-carbon choices the user already made, such as walking,
+  cycling, transit, recycling, composting, or choosing lower-emission purchases
+- turn structured estimate output into practical next-step guidance
+- preserve the calculation boundary: coaching must never recalculate, override,
+  or invent emissions values
+
+Inputs:
+
+- raw journal text
+- final total and unit
+- estimate coverage and confidence
+- estimated activity details, including category, activity type, raw text,
+  status, parameters, co2e, confidence, assumptions, and issues
+- detected zero-operational or not-estimated green activities, such as walking
+  or bicycle rides, when present
+- top deterministic insights from the response builder, when available
+
+Recommended output:
+
+```json
+{
+  "coaching": {
+    "headline": "Your biggest opportunity is transport",
+    "message": "The car trip was the largest contributor today. If this trip is regular, comparing transit, carpooling, or combining errands would likely make the biggest difference.",
+    "positive_feedback": [
+      "Taking the train was a lower-carbon choice compared with driving the same distance."
+    ],
+    "actions": [
+      {
+        "title": "Compare alternatives for the car trip",
+        "reason": "It was the largest estimated activity in this entry.",
+        "activity_ref": "drove 12 km in a petrol car"
+      }
+    ],
+    "confidence_note": "This advice is based on the activities CarbonCoach could estimate."
+  }
+}
+```
+
+Implementation approach:
+
+- use an LLM only after deterministic extraction, normalization, estimation,
+  fallback handling, and confidence calculation are complete
+- send a compact structured context object rather than the entire raw API
+  response
+- include the journal text only when coaching is enabled and documented as an
+  external LLM use case
+- require JSON-only model output and validate it with Pydantic before returning
+  it to the client
+- fail closed: if the LLM times out, returns invalid JSON, or violates schema,
+  omit `coaching` rather than delaying or corrupting the estimate response
+
+Prompt rules:
+
+- do not recalculate emissions
+- do not invent activities, quantities, prices, distances, or user intent
+- do not claim certainty beyond the estimate confidence
+- if the estimate is partial, low-confidence, or uses fallbacks, say that the
+  advice is directional
+- give at most one or two practical actions
+- use supportive, non-shaming language
+- include positive feedback when the user made a lower-carbon choice
+- avoid medical, financial, legal, or lifestyle claims that are not supported by
+  the estimate
+
+This feature should be treated as a coaching layer, not an accounting layer.
+The current deterministic "What stood out" summary remains useful even when
+LLM coaching is disabled.
+
+#### No-Pipeline Consumer UX Enhancements
+
+The product can become more useful before adding new extraction or estimation
+pathways by adding presentation-layer features that operate only on the current
+V2 response.
+
+These features should not change:
+
+- extracted events
+- calculation parameters
+- selected factors
+- emissions totals
+- confidence scores
+- assumptions or issues
+
+They should be implemented in the consumer frontend model layer first, using
+`buildDashboardModel` and the normalized estimate response. Backend response
+changes are optional and should only be introduced later if there is a clear
+reason to share derived UI data across clients.
+
+##### Green Wins
+
+Shows supportive feedback for lower-carbon decisions already present in the
+journal and recognized by the estimate response.
+
+Purpose:
+
+- make the product feel like CarbonCoach is noticing good decisions, not only
+  reporting emissions
+- reinforce useful behavior without requiring an LLM
+- avoid greenwashing by not claiming exact avoided emissions unless the system
+  has actually calculated a valid comparison
+
+Inputs:
+
+- `estimate.details`
+- each detail's `raw_text`, `category`, `activity_type`, `status`, `co2e`,
+  `parameters`, `confidence`, `assumptions`, and `issues`
+- `estimate.coverage`, so copy can avoid overclaiming when the estimate is
+  partial
+
+Deterministic green-win candidates:
+
+- `walking`: active transport with no operational emissions included
+- `bicycle_ride`: active transport with no operational emissions included
+- `train_ride`: lower-impact shared transport signal, especially when it is
+  estimated successfully
+- `bus_ride`: lower-impact shared transport signal, especially when it is
+  estimated successfully
+- `recycling`: waste diversion signal
+- `composting`: organic waste diversion signal
+
+Copy rules:
+
+- say what was observed, not what was invented
+- do not claim "you saved X kg" unless a real alternative scenario has been
+  calculated
+- phrase transit feedback as a lower-carbon habit or shared-transport choice,
+  not as an exact comparison against a private car
+- distinguish zero-operational-emissions boundary from full lifecycle impact
+- when the estimate is partial, keep the win local to the recognized activity
+  instead of implying the whole day was low-carbon
+- limit display to the strongest two or three wins to avoid noise
+
+Recommended derived frontend shape:
+
+```js
+{
+  greenWins: [
+    {
+      title: "Active transport win",
+      message: "Walking was recognized as an active transport choice with no operational emissions included.",
+      activityRef: "walked to the shops",
+      tone: "active_transport"
+    },
+    {
+      title: "Waste diversion win",
+      message: "Composting food scraps was recognized as a lower-waste choice.",
+      activityRef: "composted food scraps",
+      tone: "waste_diversion"
+    }
+  ]
+}
+```
+
+Frontend implementation:
+
+- add a `buildGreenWins(details, coverageSummary)` helper in the result
+  presentation layer
+- add `greenWins` to `buildDashboardModel`
+- render a dedicated `GreenWinsCard` in the overview tab when one or more wins
+  exist
+- keep it separate from `InsightSummary`, `ImpactComparisonCard`, and LLM
+  coaching so users can tell the difference between facts, comparisons, and
+  advice
+- hide the card entirely when there are no supported win signals
+
+##### Clarify And Rerun
+
+Turns the existing "next best clarification" prompt into an action the user can
+take immediately. This improves estimate quality without changing extraction or
+calculation logic.
+
+Purpose:
+
+- reduce the dead-end feeling of "we need more detail"
+- help users improve the estimate by appending missing context to the original
+  journal
+- preserve the user's original wording while making the added clarification
+  explicit
+
+Inputs:
+
+- original journal text submitted by the user
+- current estimate response
+- existing derived clarification object from `buildClarificationPriority`
+- current endpoint used for the estimate, normally `/api/estimate-v2`
+
+User flow:
+
+1. The user submits a journal entry.
+2. CarbonCoach displays the estimate and a clarification prompt when useful.
+3. The clarification card includes a small input for the missing detail.
+4. The user enters the extra detail and clicks a rerun action.
+5. The frontend resubmits an augmented journal string to the same estimate
+   endpoint.
+6. The new result replaces the old result, while the UI can optionally show
+   that the estimate was rerun with added context.
+
+Recommended augmented journal format:
+
+```text
+{original journal}
+
+Additional detail for CarbonCoach:
+- Regarding "{clarification.rawText}": {user clarification}
+```
+
+If `clarification.rawText` is missing, use:
+
+```text
+{original journal}
+
+Additional detail for CarbonCoach:
+- {user clarification}
+```
+
+This format keeps the original journal intact and makes the new user-provided
+detail explicit. The estimator receives plain text, so no backend contract
+change is required.
+
+UX requirements:
+
+- show the clarification prompt and input only when a clarification exists
+- keep the user-entered clarification editable before rerun
+- disable rerun when the clarification input is empty or whitespace-only
+- preserve loading, error, and retry states independently from the original
+  estimate submission
+- do not discard the original journal text in local component state
+- after rerun, clear the clarification input only after a successful response
+- make it visually clear that the new result is based on additional detail
+- avoid adding visible instructional copy beyond what the interaction needs
+
+Failure behavior:
+
+- if the rerun request fails, keep the current estimate visible
+- show a concise error near the clarification control
+- do not mutate the displayed estimate until a new estimate response succeeds
+
+Recommended frontend component changes:
+
+- store the last submitted journal in the top-level page component
+- pass an `onClarificationRerun(clarificationText, clarification)` callback to
+  the results dashboard
+- update `ClarificationPriorityCard` from display-only to an optional controlled
+  action card
+- keep `buildClarificationPriority` deterministic and side-effect free
+
+Testing expectations:
+
+- derived clarification still appears when unresolved activity details exist
+- rerun button is disabled for blank input
+- rerun submits the original journal plus explicit additional detail
+- failed rerun keeps the previous estimate visible
+- successful rerun replaces the estimate
+- clarification input clears after successful rerun
+- no rerun UI appears when no clarification is available
+- tests mock network calls and do not depend on live APIs
+
 ## Proposed Data Models
 
 Use Pydantic models for validation.
@@ -637,6 +904,30 @@ class EstimateDetail(BaseModel):
     assumptions: list[str] = []
     errors: list[str] = []
 ```
+
+```python
+class CoachingAction(BaseModel):
+    title: str
+    reason: str
+    activity_ref: str | None = None
+
+
+class CoachingRecommendation(BaseModel):
+    headline: str
+    message: str
+    positive_feedback: list[str] = []
+    actions: list[CoachingAction] = []
+    confidence_note: str | None = None
+```
+
+`CarbonEstimateResponse` may include:
+
+```python
+coaching: CoachingRecommendation | None = None
+```
+
+The field is optional so estimates remain available when coaching is disabled,
+times out, or fails validation.
 
 The established `confidence` field remains the user-facing overall
 confidence. Adding `parameter_confidence` and `factor_confidence` is an
@@ -816,6 +1107,39 @@ Pipeline regressions:
 - ambiguous input -> unresolved or low confidence, not silent nonsense
 - overall confidence is conservative across parameter, factor, and source confidence
 
+Sustainability coaching:
+
+- coaching prompt receives only a compact post-estimate context object
+- valid coaching JSON is included as optional response data
+- invalid coaching JSON is omitted without failing the estimate
+- coaching does not change total, details, confidence, or coverage
+- coaching recognizes lower-carbon choices with supportive feedback
+- coaching flags partial or low-confidence estimates as directional advice
+- tests use fake LLM clients and never require live LLM providers
+
+Green wins:
+
+- walking and bicycle details derive active-transport wins without backend
+  changes
+- recycling and composting details derive waste-diversion wins without backend
+  changes
+- train and bus details derive shared-transport wins without claiming exact
+  avoided emissions
+- no green-wins card renders when no supported win signal is present
+- copy does not claim exact savings unless a calculated comparison exists
+- partial estimates keep win copy scoped to the recognized activity
+
+Clarify and rerun UX:
+
+- clarification prompt remains deterministic from current response details
+- rerun action is disabled for empty clarification input
+- augmented journal preserves the original entry and appends explicit additional
+  detail
+- failed rerun leaves the current estimate visible
+- successful rerun replaces the current estimate with the new response
+- clarification input clears only after successful rerun
+- tests mock request/response behavior and do not require live APIs
+
 ### Golden Test Set
 
 Create `tests/fixtures/carbon_events.jsonl` with examples:
@@ -936,6 +1260,48 @@ Add further vertical slices for:
   maintained source-quality metadata explicitly supplies a lower cap; use
   maintained factor confidence for local fallbacks.
 - Keep CO2e calculations independent of confidence values.
+
+### Phase 4B: Sustainability Coaching
+
+- Add optional post-estimate coaching output behind an environment flag.
+- Build a compact coaching context from the existing estimate response.
+- Add an LLM client interface for coaching that is separate from structured
+  event extraction.
+- Validate the coaching response with strict Pydantic models.
+- Render the coaching result as a distinct consumer-facing card, separate from
+  deterministic estimate summaries and clarification prompts.
+- Include encouraging feedback when the journal includes lower-carbon choices.
+- Preserve graceful degradation: no coaching response should block or fail an
+  emissions estimate.
+
+### Phase 4C: Green Wins And Clarify/Rerun UX
+
+Deliver consumer value without adding new extraction or estimation pathways.
+
+Green wins:
+
+- Add deterministic `buildGreenWins(details, coverageSummary)` presentation
+  logic.
+- Render a distinct `GreenWinsCard` in the overview tab.
+- Recognize active transport, shared transport, recycling, and composting from
+  existing activity types and statuses.
+- Avoid exact avoided-emissions claims unless the app has calculated a valid
+  alternative scenario.
+- Hide the card when there are no supported win signals.
+
+Clarify and rerun:
+
+- Preserve the original submitted journal text in frontend state.
+- Convert the existing clarification card into an actionable card with a small
+  clarification input and rerun button.
+- Append the user's added detail to the original journal using the documented
+  "Additional detail for CarbonCoach" format.
+- Submit the augmented journal to the same v2 estimate endpoint.
+- Keep the previous estimate visible on rerun failure.
+- Replace the displayed estimate only after a successful rerun response.
+
+This phase should require frontend and presentation-model tests only unless a
+small API-client helper needs isolated unit coverage.
 
 ### Phase 5: Further External Enrichment
 
