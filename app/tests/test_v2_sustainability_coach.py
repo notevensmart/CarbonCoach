@@ -2,7 +2,11 @@ import json
 
 from app.domain.models import CarbonEvent, CoachingRecommendation, Confidence
 from app.pipeline_v2.pipeline import CarbonPipelineV2
-from app.pipeline_v2.sustainability_coach import SustainabilityCoach
+from app.pipeline_v2.sustainability_coach import (
+    LangChainCoachingClient,
+    SustainabilityCoach,
+    build_sustainability_coach,
+)
 
 
 class FakeCoachingClient:
@@ -132,6 +136,24 @@ def test_disabled_coaching_does_not_call_client(fake_climatiq_estimator):
 
     assert result.coaching is None
     assert client.prompts == []
+
+
+def test_default_coaching_builder_uses_provider_key_without_flag(monkeypatch):
+    monkeypatch.delenv("CARBONCOACH_V2_COACHING_ENABLED", raising=False)
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+
+    coach = build_sustainability_coach()
+
+    assert coach is not None
+    assert isinstance(coach.client, LangChainCoachingClient)
+    assert coach.client.api_key == "test-key"
+
+
+def test_default_coaching_builder_can_be_explicitly_disabled(monkeypatch):
+    monkeypatch.setenv("CARBONCOACH_V2_COACHING_ENABLED", "false")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+
+    assert build_sustainability_coach() is None
 
 
 def test_coaching_cannot_change_total_details_confidence_or_coverage(fake_climatiq_estimator):

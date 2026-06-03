@@ -3,8 +3,10 @@ from __future__ import annotations
 import json
 import os
 from collections.abc import Mapping
+from pathlib import Path
 from typing import Any, Protocol, runtime_checkable
 
+from dotenv import load_dotenv
 from pydantic import ValidationError
 
 from app.domain.models import (
@@ -15,6 +17,11 @@ from app.domain.models import (
 
 
 COACHING_ENABLED_ENV = "CARBONCOACH_V2_COACHING_ENABLED"
+COACHING_MODEL_ENV = "CARBONCOACH_V2_COACHING_MODEL"
+COACHING_BASE_URL_ENV = "CARBONCOACH_V2_COACHING_BASE_URL"
+COACHING_API_KEY_ENV = "CARBONCOACH_V2_COACHING_API_KEY"
+DEFAULT_OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+DEFAULT_COACHING_MODEL = "deepseek/deepseek-chat-v3-0324:free"
 GREEN_ACTIVITY_TYPES = {"walking", "bicycle_ride", "recycling", "composting"}
 INCLUDED_STATUSES = {"estimated", "fallback_estimated"}
 ATTENTION_STATUSES = {"unresolved", "failed"}
@@ -96,18 +103,73 @@ def build_sustainability_coach(
     enabled: bool | None = None,
 ) -> SustainabilityCoach | None:
     is_enabled = coaching_enabled() if enabled is None else enabled
-    if not is_enabled or client is None:
+    if not is_enabled:
+        return None
+    if client is None:
+        client = build_default_coaching_client()
+    if client is None:
         return None
     return SustainabilityCoach(client=client, enabled=True)
 
 
+def build_default_coaching_client() -> LLMCoachingClient | None:
+    _load_env_file("key.env")
+    api_key = (
+        os.getenv(COACHING_API_KEY_ENV)
+        or os.getenv("OPENROUTER_API_KEY")
+        or os.getenv("OPENAI_API_KEY")
+    )
+    if not api_key:
+        return None
+
+    base_url = os.getenv(COACHING_BASE_URL_ENV)
+    if base_url is None and os.getenv("OPENROUTER_API_KEY"):
+        base_url = DEFAULT_OPENROUTER_BASE_URL
+
+    return LangChainCoachingClient(
+        api_key=api_key,
+        base_url=base_url,
+        model=os.getenv(COACHING_MODEL_ENV, DEFAULT_COACHING_MODEL),
+    )
+
+
 def coaching_enabled() -> bool:
-    return os.getenv(COACHING_ENABLED_ENV, "false").strip().lower() in {
-        "1",
-        "true",
-        "yes",
-        "on",
-    }
+    _load_env_file("key.env")
+    configured = os.getenv(COACHING_ENABLED_ENV)
+    if configured is None:
+        return True
+    return configured.strip().lower() not in {"0", "false", "no", "off"}
+
+
+class LangChainCoachingClient:
+    def __init__(
+        self,
+        api_key: str,
+        model: str = DEFAULT_COACHING_MODEL,
+        base_url: str | None = DEFAULT_OPENROUTER_BASE_URL,
+    ) -> None:
+        self.api_key = api_key
+        self.model = model
+        self.base_url = base_url
+        self._llm = None
+
+    def generate_coaching_json(self, prompt: str) -> str:
+        response = self._model().invoke(prompt)
+        return str(getattr(response, "content", response)).strip()
+
+    def _model(self):
+        if self._llm is None:
+            from langchain_openai import ChatOpenAI
+
+            kwargs: dict[str, Any] = {
+                "model": self.model,
+                "api_key": self.api_key,
+                "temperature": 0,
+            }
+            if self.base_url:
+                kwargs["base_url"] = self.base_url
+            self._llm = ChatOpenAI(**kwargs)
+        return self._llm
 
 
 def build_coaching_context(
@@ -266,3 +328,12 @@ def _messages(items: list[Any]) -> list[str]:
 def _truncate(value: str, limit: int = MAX_CONTEXT_TEXT_LENGTH) -> str:
     text = " ".join(str(value).split())
     return text if len(text) <= limit else f"{text[: limit - 3]}..."
+
+
+def _load_env_file(filename: str) -> None:
+    here = Path(__file__).resolve()
+    for parent in [here.parent, *here.parents]:
+        candidate = parent / filename
+        if candidate.exists():
+            load_dotenv(dotenv_path=candidate)
+            return
