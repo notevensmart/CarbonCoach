@@ -71,15 +71,16 @@ def test_valid_coaching_json_appears_in_pipeline_response(fake_climatiq_estimato
     result = pipeline.run("I drove 10 km in a petrol car.")
 
     assert result.coaching is not None
-    assert result.coaching.headline == "Your biggest opportunity is transport"
+    assert result.coaching.headline == "Try one transport swap"
     assert result.coaching.actions[0].activity_ref == "drove 10 km in a petrol car"
-    assert result.model_dump()["coaching"]["headline"] == "Your biggest opportunity is transport"
+    assert result.model_dump()["coaching"]["headline"] == "Try one transport swap"
     assert len(client.prompts) == 1
     assert "Post-estimate context JSON" in client.prompts[0]
+    assert "Do not repeat the deterministic Summary" in client.prompts[0]
     assert "factor_diagnostics" not in client.prompts[0]
 
 
-def test_invalid_coaching_json_is_omitted(fake_climatiq_estimator):
+def test_invalid_coaching_json_uses_deterministic_fallback(fake_climatiq_estimator):
     pipeline = CarbonPipelineV2(
         emission_estimator=fake_climatiq_estimator,
         sustainability_coach=SustainabilityCoach(
@@ -90,12 +91,12 @@ def test_invalid_coaching_json_is_omitted(fake_climatiq_estimator):
 
     result = pipeline.run("I drove 10 km in a petrol car.")
 
-    assert result.coaching is None
-    assert "coaching" not in result.model_dump()
+    assert result.coaching is not None
+    assert result.coaching.headline == "Try one transport swap"
     assert result.details[0].status == "estimated"
 
 
-def test_invalid_coaching_schema_is_omitted(fake_climatiq_estimator):
+def test_invalid_coaching_schema_uses_deterministic_fallback(fake_climatiq_estimator):
     pipeline = CarbonPipelineV2(
         emission_estimator=fake_climatiq_estimator,
         sustainability_coach=SustainabilityCoach(
@@ -106,11 +107,12 @@ def test_invalid_coaching_schema_is_omitted(fake_climatiq_estimator):
 
     result = pipeline.run("I drove 10 km in a petrol car.")
 
-    assert result.coaching is None
+    assert result.coaching is not None
+    assert result.coaching.actions[0].title == "Compare a lower-carbon trip option"
     assert result.total.co2e == 1.92
 
 
-def test_coaching_exceptions_are_omitted(fake_climatiq_estimator):
+def test_coaching_exceptions_use_deterministic_fallback(fake_climatiq_estimator):
     pipeline = CarbonPipelineV2(
         emission_estimator=fake_climatiq_estimator,
         sustainability_coach=SustainabilityCoach(
@@ -121,8 +123,49 @@ def test_coaching_exceptions_are_omitted(fake_climatiq_estimator):
 
     result = pipeline.run("I drove 10 km in a petrol car.")
 
-    assert result.coaching is None
+    assert result.coaching is not None
+    assert result.coaching.actions[0].activity_ref == "I drove 10 km in a petrol car."
     assert result.details[0].status == "estimated"
+
+
+def test_summary_like_llm_coaching_uses_action_focused_fallback(fake_climatiq_estimator):
+    pipeline = CarbonPipelineV2(
+        emission_estimator=fake_climatiq_estimator,
+        sustainability_coach=SustainabilityCoach(
+            FakeCoachingClient(
+                json.dumps(
+                    {
+                        "headline": "Your biggest opportunity is transport",
+                        "message": "Car Ride was the largest contributor today.",
+                        "positive_feedback": [],
+                        "actions": [
+                            {
+                                "title": "Compare alternatives",
+                                "reason": "It was the largest included activity.",
+                                "activity_ref": "I drove 10 km in a petrol car.",
+                            }
+                        ],
+                        "confidence_note": None,
+                    }
+                )
+            ),
+            enabled=True,
+        ),
+    )
+
+    result = pipeline.run("I drove 10 km in a petrol car.")
+    rendered = " ".join(
+        [
+            result.coaching.headline,
+            result.coaching.message,
+            result.coaching.actions[0].reason,
+        ]
+    ).lower()
+
+    assert result.coaching.headline == "Try one transport swap"
+    assert "biggest opportunity" not in rendered
+    assert "largest contributor" not in rendered
+    assert "largest included activity" not in rendered
 
 
 def test_disabled_coaching_does_not_call_client(fake_climatiq_estimator):
@@ -147,6 +190,39 @@ def test_default_coaching_builder_uses_provider_key_without_flag(monkeypatch):
     assert coach is not None
     assert isinstance(coach.client, LangChainCoachingClient)
     assert coach.client.api_key == "test-key"
+    assert coach.client.seed == 42
+
+
+def test_default_coaching_builder_accepts_custom_seed(monkeypatch):
+    monkeypatch.delenv("CARBONCOACH_V2_COACHING_ENABLED", raising=False)
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setenv("CARBONCOACH_V2_COACHING_SEED", "123")
+
+    coach = build_sustainability_coach()
+
+    assert coach.client.seed == 123
+
+
+def test_default_coaching_builder_can_disable_seed(monkeypatch):
+    monkeypatch.delenv("CARBONCOACH_V2_COACHING_ENABLED", raising=False)
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setenv("CARBONCOACH_V2_COACHING_SEED", "off")
+
+    coach = build_sustainability_coach()
+
+    assert coach.client.seed is None
+
+
+def test_default_coaching_builder_uses_fallback_without_provider_key(monkeypatch):
+    monkeypatch.delenv("CARBONCOACH_V2_COACHING_ENABLED", raising=False)
+    monkeypatch.setenv("CARBONCOACH_V2_COACHING_API_KEY", "")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "")
+    monkeypatch.setenv("OPENAI_API_KEY", "")
+
+    coach = build_sustainability_coach()
+
+    assert coach is not None
+    assert coach.client is None
 
 
 def test_default_coaching_builder_can_be_explicitly_disabled(monkeypatch):
@@ -240,19 +316,36 @@ def _coaching_json(
 ):
     return json.dumps(
         {
-            "headline": "Your biggest opportunity is transport",
+            "headline": "Try one transport swap",
             "message": (
-                "The car trip was the largest contributor today. If this trip is "
-                "regular, compare transit, carpooling, or combining errands."
+                "Use the car trip as one practical experiment for the next similar day."
             ),
             "positive_feedback": positive_feedback or [],
             "actions": [
                 {
                     "title": "Compare alternatives for the car trip",
-                    "reason": "It was the largest estimated activity in this entry.",
+                    "reason": "It is a concrete trip you can compare against transit or carpooling.",
                     "activity_ref": "drove 10 km in a petrol car",
                 }
             ],
             "confidence_note": confidence_note,
         }
     )
+
+
+def test_heater_fallback_coaching_is_concrete_and_not_summary_like(fake_climatiq_estimator):
+    pipeline = CarbonPipelineV2(
+        emission_estimator=fake_climatiq_estimator,
+        sustainability_coach=SustainabilityCoach(
+            FakeCoachingClient("not-json"),
+            enabled=True,
+        ),
+    )
+
+    result = pipeline.run("I used the heater for 3 hours.")
+
+    assert result.coaching.headline == "Try one heater tweak next time"
+    assert "setting a timer for a shorter session" in result.coaching.message
+    assert result.coaching.actions[0].title == "Use a timer for the heater"
+    assert "largest" not in result.coaching.message.lower()
+    assert "verdict" not in result.coaching.message.lower()
